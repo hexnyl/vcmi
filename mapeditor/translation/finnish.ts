@@ -75,7 +75,7 @@
     <name>CampaignEditor</name>
     <message>
         <location filename="../campaigneditor/campaigneditor.ui" line="14"/>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="174"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="188"/>
         <source>VCMI Campaign Editor</source>
         <translation type="unfinished">VCMI-kampanjamuokkain</translation>
     </message>
@@ -158,33 +158,33 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="139"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="153"/>
         <source>Scenario editor</source>
         <translation type="unfinished">Skenaariomuokkain</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="162"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="176"/>
         <source>Confirmation</source>
         <translation type="unfinished">Vahvistus</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="162"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="176"/>
         <source>Unsaved changes will be lost, are you sure?</source>
         <translation type="unfinished">Tallentamattomat muutokset menetetään,oletko varma?</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="81"/>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="446"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="82"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="462"/>
         <source>Failed to open campaign</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="188"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="202"/>
         <source>Validation failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="188"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="202"/>
         <source>Campaign has no maps defined.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -193,53 +193,53 @@
         <translation type="obsolete">Avaa kartta</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="266"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="280"/>
         <source>Open campaign</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="268"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="282"/>
         <source>All supported campaigns (*.vcmp *.h3c);;VCMI campaigns(*.vcmp);;HoMM3 campaigns(*.h3c)</source>
         <translation type="unfinished">Kaikki tuetut kampanjat (*.vcmp *.h3c);;VCMI-kampanjat (*.vcmp);;HoMM3-kampanjat (*.h3c)</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="297"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="311"/>
         <source>Open Campaign set</source>
         <translation type="unfinished">Avaa kampanjasarja</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="297"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="311"/>
         <source>Select Campaign set</source>
         <translation type="unfinished">Valitse kampanjasarja</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="309"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="325"/>
         <source>Open Campaign</source>
         <translation type="unfinished">Avaa kampanja</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="309"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="325"/>
         <source>Select Campaign</source>
         <translation type="unfinished">Valitse kampanja</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="325"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="341"/>
         <source>Save campaign</source>
         <translation type="unfinished">Tallenna kampanja</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="327"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="343"/>
         <source>VCMI campaigns (*.vcmp)</source>
         <translation type="unfinished">VCMI-kampanjat (*.vcmp)</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="464"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="480"/>
         <source>Mods are required</source>
         <translation>Modit vaaditaan</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="472"/>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="477"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="488"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="493"/>
         <source>Failed to open map</source>
         <translation>Karttaa ei voitu avata</translation>
     </message>
@@ -248,7 +248,7 @@
     <name>CampaignProperties</name>
     <message>
         <location filename="../campaigneditor/campaignproperties.ui" line="14"/>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="29"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="30"/>
         <source>Campaign Properties</source>
         <translation type="unfinished">Kampanjan ominaisuudet</translation>
     </message>
@@ -369,42 +369,42 @@
         <translation type="unfinished">Lopetusvideo</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="58"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="59"/>
         <source>Custom</source>
         <translation type="unfinished">Mukautettu</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="150"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="151"/>
         <source>Infix</source>
         <translation type="unfinished">Väliosa</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="150"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="151"/>
         <source>X</source>
         <translation type="unfinished">X</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="150"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="151"/>
         <source>Y</source>
         <translation type="unfinished">Y</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="150"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="151"/>
         <source>Label Pos X</source>
         <translation type="unfinished">Tekstin sijainti X</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="150"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="151"/>
         <source>Label Pos Y</source>
         <translation type="unfinished">Tekstin sijainti Y</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="202"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="203"/>
         <source>Fewer Scenarios</source>
         <translation type="unfinished">Vähemmän skenaarioita</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaignproperties.cpp" line="202"/>
+        <location filename="../campaigneditor/campaignproperties.cpp" line="203"/>
         <source>New Region setup supports fewer scenarios than before. Some will removed. Continue?</source>
         <translation type="unfinished">Uusi alueasetus tukee vähemmän skenaarioita kuin aiemmin. Jotkut poistetaan. Jatketaanko?</translation>
     </message>
@@ -413,7 +413,7 @@
     <name>EditorMainWindow</name>
     <message>
         <location filename="../mainwindow.ui" line="14"/>
-        <location filename="../mainwindow.cpp" line="539"/>
+        <location filename="../mainwindow.cpp" line="529"/>
         <source>VCMI Map Editor</source>
         <translation>VCMI-karttaeditori</translation>
     </message>
@@ -719,15 +719,15 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1256"/>
-        <location filename="../mainwindow.cpp" line="1545"/>
+        <location filename="../mainwindow.cpp" line="1537"/>
         <source>Select map layer type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1267"/>
-        <location filename="../mainwindow.cpp" line="1454"/>
-        <location filename="../mainwindow.cpp" line="1458"/>
-        <location filename="../mainwindow.cpp" line="1516"/>
+        <location filename="../mainwindow.cpp" line="1446"/>
+        <location filename="../mainwindow.cpp" line="1450"/>
+        <location filename="../mainwindow.cpp" line="1508"/>
         <source>Update appearance</source>
         <translation type="unfinished">Päivitä ulkoasu</translation>
     </message>
@@ -930,308 +930,308 @@
         <translation type="unfinished">Ctrl+Shift+=</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="485"/>
+        <location filename="../mainwindow.cpp" line="475"/>
         <source>Mapeditor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="486"/>
+        <location filename="../mainwindow.cpp" line="476"/>
         <source>Mapeditor on Android is experimental.
 
 For the best experience, we recommend using the map editor on a tablet (or with a mouse/pen).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="505"/>
+        <location filename="../mainwindow.cpp" line="495"/>
         <source>Confirmation</source>
         <translation type="unfinished">Vahvistus</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="505"/>
+        <location filename="../mainwindow.cpp" line="495"/>
         <source>Unsaved changes will be lost, are you sure?</source>
         <translation type="unfinished">Tallentamattomat muutokset menetetään,oletko varma?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="578"/>
-        <location filename="../mainwindow.cpp" line="1562"/>
+        <location filename="../mainwindow.cpp" line="568"/>
+        <location filename="../mainwindow.cpp" line="1554"/>
         <source>Level %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="604"/>
+        <location filename="../mainwindow.cpp" line="594"/>
         <source>Mods are required</source>
         <translation type="unfinished">Modit vaaditaan</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="612"/>
-        <location filename="../mainwindow.cpp" line="618"/>
+        <location filename="../mainwindow.cpp" line="602"/>
+        <location filename="../mainwindow.cpp" line="608"/>
         <source>Failed to open map</source>
         <translation type="unfinished">Karttaa ei voitu avata</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="649"/>
+        <location filename="../mainwindow.cpp" line="639"/>
         <source>Open map</source>
         <translation type="unfinished">Avaa kartta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="651"/>
+        <location filename="../mainwindow.cpp" line="641"/>
         <source>All supported maps (*.vmap *.h3m);;VCMI maps(*.vmap);;HoMM3 maps(*.h3m)</source>
         <translation type="unfinished">Kaikki tuetut kartat (*.vmap *.h3m);;VCMI-kartat(*.vmap);;HoMM3-kartat(*.h3m)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="706"/>
+        <location filename="../mainwindow.cpp" line="696"/>
         <source>Recently Opened Files</source>
         <translation type="unfinished">Viimeksi avatut tiedostot</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="759"/>
+        <location filename="../mainwindow.cpp" line="749"/>
         <source>Map validation</source>
         <translation type="unfinished">Kartan tarkistus</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="761"/>
+        <location filename="../mainwindow.cpp" line="751"/>
         <source>Map has critical problems and most probably will not be playable. Open Validator from the Map menu to see issues found</source>
         <translation type="unfinished">Kartassa on kriittisiä ongelmia,eikä se todennäköisesti ole pelattavissa. Avaa tarkistus Kartta-valikosta nähdäksesi löydetyt virheet</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="763"/>
+        <location filename="../mainwindow.cpp" line="753"/>
         <source>Map has some errors. Open Validator from the Map menu to see issues found</source>
         <translation type="unfinished">Kartassa on joitakin virheitä. Avaa tarkistus Kartta-valikosta nähdäksesi löydetyt virheet</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="790"/>
+        <location filename="../mainwindow.cpp" line="780"/>
         <source>Failed to save map</source>
         <translation type="unfinished">Karttaa ei voitu tallentaa</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="803"/>
+        <location filename="../mainwindow.cpp" line="793"/>
         <source>Save map</source>
         <translation type="unfinished">Tallenna kartta</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="804"/>
+        <location filename="../mainwindow.cpp" line="794"/>
         <source>VCMI maps (*.vmap)</source>
         <translation type="unfinished">VCMI-kartat (*.vmap)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1017"/>
+        <location filename="../mainwindow.cpp" line="1009"/>
         <source>Type</source>
         <translation type="unfinished">Tyyppi</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1030"/>
+        <location filename="../mainwindow.cpp" line="1022"/>
         <source>Towns</source>
         <translation type="unfinished">Kaupungit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1031"/>
+        <location filename="../mainwindow.cpp" line="1023"/>
         <source>Objects</source>
         <translation type="unfinished">Objektit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1032"/>
+        <location filename="../mainwindow.cpp" line="1024"/>
         <source>Heroes</source>
         <translation type="unfinished">Sankarit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1033"/>
+        <location filename="../mainwindow.cpp" line="1025"/>
         <source>Artifacts</source>
         <translation type="unfinished">Artefaktit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1034"/>
+        <location filename="../mainwindow.cpp" line="1026"/>
         <source>Resources</source>
         <translation type="unfinished">Resurssit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1035"/>
+        <location filename="../mainwindow.cpp" line="1027"/>
         <source>Banks</source>
         <translation type="unfinished">Pankit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1036"/>
+        <location filename="../mainwindow.cpp" line="1028"/>
         <source>Dwellings</source>
         <translation type="unfinished">Asuinpaikat</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1037"/>
+        <location filename="../mainwindow.cpp" line="1029"/>
         <source>Grounds</source>
         <translation type="unfinished">Maastot</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1038"/>
+        <location filename="../mainwindow.cpp" line="1030"/>
         <source>Teleports</source>
         <translation type="unfinished">Teleportit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1039"/>
+        <location filename="../mainwindow.cpp" line="1031"/>
         <source>Mines</source>
         <translation type="unfinished">Kaivokset</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1040"/>
+        <location filename="../mainwindow.cpp" line="1032"/>
         <source>Triggers</source>
         <translation type="unfinished">Laukaisimet</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1041"/>
+        <location filename="../mainwindow.cpp" line="1033"/>
         <source>Monsters</source>
         <translation type="unfinished">Hirviöt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1042"/>
+        <location filename="../mainwindow.cpp" line="1034"/>
         <source>Quests</source>
         <translation type="unfinished">Tehtävät</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1043"/>
+        <location filename="../mainwindow.cpp" line="1035"/>
         <source>Wog Objects</source>
         <translation type="unfinished">WoG-objektit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1044"/>
+        <location filename="../mainwindow.cpp" line="1036"/>
         <source>Obstacles</source>
         <translation type="unfinished">Esteet</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1045"/>
+        <location filename="../mainwindow.cpp" line="1037"/>
         <source>Other</source>
         <translation type="unfinished">Muut</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1182"/>
+        <location filename="../mainwindow.cpp" line="1174"/>
         <source>Mods loading problem</source>
         <translation type="unfinished">Modien latausongelma</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1182"/>
+        <location filename="../mainwindow.cpp" line="1174"/>
         <source>Critical error during Mods loading. Disable invalid mods and restart.</source>
         <translation type="unfinished">Kriittinen virhe modien latauksessa. Poista virheelliset modit käytöstä ja käynnistä uudelleen.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1188"/>
+        <location filename="../mainwindow.cpp" line="1180"/>
         <source>Undo clicked</source>
         <translation type="unfinished">Kumoa napsautettu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1199"/>
+        <location filename="../mainwindow.cpp" line="1191"/>
         <source>Redo clicked</source>
         <translation type="unfinished">Tee uudelleen napsautettu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1210"/>
+        <location filename="../mainwindow.cpp" line="1202"/>
         <source>Passability clicked</source>
         <translation type="unfinished">Kuljettavuus napsautettu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1223"/>
+        <location filename="../mainwindow.cpp" line="1215"/>
         <source>Grid clicked</source>
         <translation type="unfinished">Ruudukko napsautettu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1304"/>
+        <location filename="../mainwindow.cpp" line="1296"/>
         <source>Fill clicked</source>
         <translation type="unfinished">Täyttö napsautettu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1454"/>
+        <location filename="../mainwindow.cpp" line="1446"/>
         <source>No objects selected</source>
         <translation type="unfinished">Ei valittuja objekteja</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1458"/>
+        <location filename="../mainwindow.cpp" line="1450"/>
         <source>This operation is irreversible. Do you want to continue?</source>
         <translation type="unfinished">Tätä toimintoa ei voi perua. Haluatko jatkaa?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1516"/>
+        <location filename="../mainwindow.cpp" line="1508"/>
         <source>Errors occurred. %1 objects were not updated</source>
         <translation type="unfinished">Tapahtui virheitä. %1 objektia ei päivitetty</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1546"/>
+        <location filename="../mainwindow.cpp" line="1538"/>
         <source>Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1607"/>
+        <location filename="../mainwindow.cpp" line="1599"/>
         <source>Image format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1608"/>
+        <location filename="../mainwindow.cpp" line="1600"/>
         <source>Select image format:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1622"/>
-        <location filename="../mainwindow.cpp" line="1626"/>
+        <location filename="../mainwindow.cpp" line="1614"/>
+        <location filename="../mainwindow.cpp" line="1618"/>
         <source>Save to image</source>
         <translation type="unfinished">Tallenna kuvana</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1668"/>
+        <location filename="../mainwindow.cpp" line="1660"/>
         <source>Failed to save image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1668"/>
+        <location filename="../mainwindow.cpp" line="1660"/>
         <source>Cannot save image to %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1688"/>
+        <location filename="../mainwindow.cpp" line="1680"/>
         <source>Select maps to convert</source>
         <translation type="unfinished">Valitse kartat muunnettavaksi</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1690"/>
+        <location filename="../mainwindow.cpp" line="1682"/>
         <source>HoMM3 maps(*.h3m)</source>
         <translation type="unfinished">HoMM3-kartat (*.h3m)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1696"/>
-        <location filename="../mainwindow.cpp" line="1703"/>
+        <location filename="../mainwindow.cpp" line="1688"/>
+        <location filename="../mainwindow.cpp" line="1695"/>
         <source>Choose directory to save converted maps</source>
         <translation type="unfinished">Valitse hakemisto muunnettujen karttojen tallennukseen</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1698"/>
+        <location filename="../mainwindow.cpp" line="1690"/>
         <source>Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1719"/>
+        <location filename="../mainwindow.cpp" line="1711"/>
         <source>Operation completed</source>
         <translation type="unfinished">Toiminto suoritettu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1719"/>
+        <location filename="../mainwindow.cpp" line="1711"/>
         <source>Successfully converted %1 maps</source>
         <translation type="unfinished">%1 karttaa muunnettiin onnistuneesti</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1723"/>
+        <location filename="../mainwindow.cpp" line="1715"/>
         <source>Failed to convert the map. Abort operation</source>
         <translation type="unfinished">Kartan muuntaminen epäonnistui. Keskeytetään</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1731"/>
+        <location filename="../mainwindow.cpp" line="1723"/>
         <source>Select campaign to convert</source>
         <translation type="unfinished">Valitse muunnettava kampanja</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1732"/>
+        <location filename="../mainwindow.cpp" line="1724"/>
         <source>HoMM3 campaigns (*.h3c)</source>
         <translation type="unfinished">HoMM3-kampanjat (*.h3c)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1738"/>
+        <location filename="../mainwindow.cpp" line="1730"/>
         <source>Select destination file</source>
         <translation type="unfinished">Valitse kohdetiedosto</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1739"/>
+        <location filename="../mainwindow.cpp" line="1731"/>
         <source>VCMI campaigns (*.vcmp)</source>
         <translation type="unfinished">VCMI-kampanjat (*.vcmp)</translation>
     </message>
@@ -1268,7 +1268,7 @@ For the best experience, we recommend using the map editor on a tablet (or with 
         <translation type="unfinished">Poista</translation>
     </message>
     <message>
-        <location filename="../mapsettings/eventsettings.cpp" line="150"/>
+        <location filename="../mapsettings/eventsettings.cpp" line="151"/>
         <source>New event</source>
         <translation type="unfinished">Uusi tapahtuma</translation>
     </message>
@@ -1506,27 +1506,27 @@ For the best experience, we recommend using the map editor on a tablet (or with 
         <translation type="unfinished">Parametrit</translation>
     </message>
     <message>
-        <location filename="../mapsettings/loseconditions.cpp" line="37"/>
+        <location filename="../mapsettings/loseconditions.cpp" line="38"/>
         <source>No special loss</source>
         <translation type="unfinished">Ei erityistä tappiota</translation>
     </message>
     <message>
-        <location filename="../mapsettings/loseconditions.cpp" line="38"/>
+        <location filename="../mapsettings/loseconditions.cpp" line="39"/>
         <source>Lose castle</source>
         <translation type="unfinished">Menetä linna</translation>
     </message>
     <message>
-        <location filename="../mapsettings/loseconditions.cpp" line="39"/>
+        <location filename="../mapsettings/loseconditions.cpp" line="40"/>
         <source>Lose hero</source>
         <translation type="unfinished">Menetä sankari</translation>
     </message>
     <message>
-        <location filename="../mapsettings/loseconditions.cpp" line="40"/>
+        <location filename="../mapsettings/loseconditions.cpp" line="41"/>
         <source>Time expired</source>
         <translation type="unfinished">Aika loppui</translation>
     </message>
     <message>
-        <location filename="../mapsettings/loseconditions.cpp" line="41"/>
+        <location filename="../mapsettings/loseconditions.cpp" line="42"/>
         <source>Days without town</source>
         <translation type="unfinished">Päiviä ilman kaupunkia</translation>
     </message>
@@ -1534,17 +1534,17 @@ For the best experience, we recommend using the map editor on a tablet (or with 
 <context>
     <name>MapController</name>
     <message>
-        <location filename="../mapcontroller.cpp" line="612"/>
+        <location filename="../mapcontroller.cpp" line="622"/>
         <source>Hero %1 cannot be created as NEUTRAL.</source>
         <translation type="unfinished">Sankaria %1 ei voida luoda NEUTRAALINA.</translation>
     </message>
     <message>
-        <location filename="../mapcontroller.cpp" line="626"/>
+        <location filename="../mapcontroller.cpp" line="636"/>
         <source>Missing Required Mod</source>
         <translation type="unfinished">Vaadittu modi puuttuu</translation>
     </message>
     <message>
-        <location filename="../mapcontroller.cpp" line="626"/>
+        <location filename="../mapcontroller.cpp" line="636"/>
         <source>
 
 Do you want to do that now ?</source>
@@ -1554,7 +1554,7 @@ Do you want to do that now ?</source>
 Haluatko tehdä sen nyt?</translation>
     </message>
     <message>
-        <location filename="../mapcontroller.cpp" line="636"/>
+        <location filename="../mapcontroller.cpp" line="646"/>
         <source>This object&apos;s mod is mandatory for map to remain valid.</source>
         <translation type="unfinished">Tämän objektin modi on pakollinen,jotta kartta pysyy kelvollisena.</translation>
     </message>
@@ -1562,7 +1562,7 @@ Haluatko tehdä sen nyt?</translation>
 <context>
     <name>MapEditor::MapView</name>
     <message>
-        <location filename="../mapview.cpp" line="664"/>
+        <location filename="../mapview.cpp" line="671"/>
         <source>Can&apos;t place object</source>
         <translation type="unfinished">Objektia ei voi sijoittaa</translation>
     </message>
@@ -1774,134 +1774,134 @@ Haluatko tehdä sen nyt?</translation>
         <translation type="unfinished">Kielletyt objektikategoriat</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="34"/>
+        <location filename="../templateeditor/objectselector.cpp" line="35"/>
         <source>Object Selector</source>
         <translation type="unfinished">Objektivalitsin</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="97"/>
+        <location filename="../templateeditor/objectselector.cpp" line="99"/>
         <source>Category</source>
         <translation type="unfinished">Kategoria</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="97"/>
-        <location filename="../templateeditor/objectselector.cpp" line="165"/>
-        <location filename="../templateeditor/objectselector.cpp" line="227"/>
-        <location filename="../templateeditor/objectselector.cpp" line="311"/>
+        <location filename="../templateeditor/objectselector.cpp" line="99"/>
+        <location filename="../templateeditor/objectselector.cpp" line="167"/>
+        <location filename="../templateeditor/objectselector.cpp" line="229"/>
+        <location filename="../templateeditor/objectselector.cpp" line="313"/>
         <source>Action</source>
         <translation type="unfinished">Toiminto</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="101"/>
+        <location filename="../templateeditor/objectselector.cpp" line="103"/>
         <source>Other</source>
         <translation>Muut</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="102"/>
+        <location filename="../templateeditor/objectselector.cpp" line="104"/>
         <source>All</source>
         <translation>Kaikki</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="103"/>
-        <location filename="../templateeditor/objectselector.cpp" line="258"/>
+        <location filename="../templateeditor/objectselector.cpp" line="105"/>
+        <location filename="../templateeditor/objectselector.cpp" line="260"/>
         <source>None</source>
         <translation type="unfinished">Ei mitään</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="104"/>
+        <location filename="../templateeditor/objectselector.cpp" line="106"/>
         <source>Creature bank</source>
         <translation type="unfinished">Olentopankki</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="105"/>
+        <location filename="../templateeditor/objectselector.cpp" line="107"/>
         <source>Bonus</source>
         <translation type="unfinished">Boonus</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="106"/>
+        <location filename="../templateeditor/objectselector.cpp" line="108"/>
         <source>Dwelling</source>
         <translation type="unfinished">Asumus</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="107"/>
+        <location filename="../templateeditor/objectselector.cpp" line="109"/>
         <source>Resource</source>
         <translation>Resurssi</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="108"/>
+        <location filename="../templateeditor/objectselector.cpp" line="110"/>
         <source>Resource generator</source>
         <translation type="unfinished">Resurssigeneraattori</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="109"/>
+        <location filename="../templateeditor/objectselector.cpp" line="111"/>
         <source>Spell scroll</source>
         <translation>Loitsukäärö</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="110"/>
+        <location filename="../templateeditor/objectselector.cpp" line="112"/>
         <source>Random artifact</source>
         <translation type="unfinished">Satunnainen artefakti</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="111"/>
+        <location filename="../templateeditor/objectselector.cpp" line="113"/>
         <source>Pandoras box</source>
         <translation type="unfinished">Pandoran lipas</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="112"/>
+        <location filename="../templateeditor/objectselector.cpp" line="114"/>
         <source>Quest artifact</source>
         <translation type="unfinished">Tehtäväartefakti</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="113"/>
+        <location filename="../templateeditor/objectselector.cpp" line="115"/>
         <source>Seer hut</source>
         <translation type="unfinished">Näköalijan maja</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="125"/>
-        <location filename="../templateeditor/objectselector.cpp" line="185"/>
-        <location filename="../templateeditor/objectselector.cpp" line="262"/>
-        <location filename="../templateeditor/objectselector.cpp" line="346"/>
+        <location filename="../templateeditor/objectselector.cpp" line="127"/>
+        <location filename="../templateeditor/objectselector.cpp" line="187"/>
+        <location filename="../templateeditor/objectselector.cpp" line="264"/>
+        <location filename="../templateeditor/objectselector.cpp" line="348"/>
         <source>Delete</source>
         <translation type="unfinished">Poista</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="140"/>
-        <location filename="../templateeditor/objectselector.cpp" line="200"/>
-        <location filename="../templateeditor/objectselector.cpp" line="279"/>
-        <location filename="../templateeditor/objectselector.cpp" line="361"/>
+        <location filename="../templateeditor/objectselector.cpp" line="142"/>
+        <location filename="../templateeditor/objectselector.cpp" line="202"/>
+        <location filename="../templateeditor/objectselector.cpp" line="281"/>
+        <location filename="../templateeditor/objectselector.cpp" line="363"/>
         <source>Add</source>
         <translation type="unfinished">Lisää</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="165"/>
-        <location filename="../templateeditor/objectselector.cpp" line="227"/>
-        <location filename="../templateeditor/objectselector.cpp" line="311"/>
+        <location filename="../templateeditor/objectselector.cpp" line="167"/>
+        <location filename="../templateeditor/objectselector.cpp" line="229"/>
+        <location filename="../templateeditor/objectselector.cpp" line="313"/>
         <source>Object</source>
         <translation type="unfinished">Objekti</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="227"/>
+        <location filename="../templateeditor/objectselector.cpp" line="229"/>
         <source>Count</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="227"/>
+        <location filename="../templateeditor/objectselector.cpp" line="229"/>
         <source>Guard</source>
         <translation type="unfinished">Vartio</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="311"/>
+        <location filename="../templateeditor/objectselector.cpp" line="313"/>
         <source>Value</source>
         <translation>Arvo</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="311"/>
+        <location filename="../templateeditor/objectselector.cpp" line="313"/>
         <source>Probability</source>
         <translation type="unfinished">Todennäköisyys</translation>
     </message>
     <message>
-        <location filename="../templateeditor/objectselector.cpp" line="311"/>
+        <location filename="../templateeditor/objectselector.cpp" line="313"/>
         <source>Max per zone</source>
         <translation type="unfinished">Maks. per vyöhyke</translation>
     </message>
@@ -1954,12 +1954,12 @@ Haluatko tehdä sen nyt?</translation>
         <translation type="unfinished">(oletus)</translation>
     </message>
     <message>
-        <location filename="../playerparams.cpp" line="27"/>
+        <location filename="../playerparams.cpp" line="28"/>
         <source>No team</source>
         <translation type="unfinished">Ei joukkuetta</translation>
     </message>
     <message>
-        <location filename="../playerparams.cpp" line="108"/>
+        <location filename="../playerparams.cpp" line="109"/>
         <source>Player ID: %1</source>
         <translation type="unfinished">Pelaajan tunnus: %1</translation>
     </message>
@@ -2040,99 +2040,99 @@ Haluatko tehdä sen nyt?</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../inspector/heroskillswidget.cpp" line="23"/>
+        <location filename="../inspector/heroskillswidget.cpp" line="24"/>
         <source>Beginner</source>
         <translation type="unfinished">Aloittelija</translation>
     </message>
     <message>
-        <location filename="../inspector/heroskillswidget.cpp" line="24"/>
+        <location filename="../inspector/heroskillswidget.cpp" line="25"/>
         <source>Advanced</source>
         <translation type="unfinished">Edistynyt</translation>
     </message>
     <message>
-        <location filename="../inspector/heroskillswidget.cpp" line="25"/>
+        <location filename="../inspector/heroskillswidget.cpp" line="26"/>
         <source>Expert</source>
         <translation type="unfinished">Asiantuntija</translation>
     </message>
     <message>
-        <location filename="../inspector/heroskillswidget.cpp" line="172"/>
+        <location filename="../inspector/heroskillswidget.cpp" line="173"/>
         <source>Default secondary skills:</source>
         <translation type="unfinished">Oletustoissijaiset taidot:</translation>
     </message>
     <message>
-        <location filename="../inspector/heroskillswidget.cpp" line="177"/>
+        <location filename="../inspector/heroskillswidget.cpp" line="178"/>
         <source>Random hero secondary skills</source>
         <translation type="unfinished">Satunnaiset sankarin toissijaiset taidot</translation>
     </message>
     <message>
-        <location filename="../inspector/heroskillswidget.cpp" line="183"/>
+        <location filename="../inspector/heroskillswidget.cpp" line="184"/>
         <source>Secondary skills:</source>
         <translation type="unfinished">Toissijaiset taidot:</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="1008"/>
+        <location filename="../inspector/inspector.cpp" line="1009"/>
         <source>Compliant</source>
         <translation type="unfinished">Myöntyvä</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="1009"/>
+        <location filename="../inspector/inspector.cpp" line="1010"/>
         <source>Friendly</source>
         <translation type="unfinished">Ystävällinen</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="1010"/>
+        <location filename="../inspector/inspector.cpp" line="1011"/>
         <source>Aggressive</source>
         <translation type="unfinished">Aggressiivinen</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="1011"/>
+        <location filename="../inspector/inspector.cpp" line="1012"/>
         <source>Hostile</source>
         <translation type="unfinished">Vihamielinen</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="1012"/>
+        <location filename="../inspector/inspector.cpp" line="1013"/>
         <source>Savage</source>
         <translation type="unfinished">Raivoisa</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="361"/>
-        <location filename="../inspector/inspector.cpp" line="364"/>
+        <location filename="../inspector/inspector.cpp" line="362"/>
+        <location filename="../inspector/inspector.cpp" line="365"/>
         <source>No patrol</source>
         <translation type="unfinished">Ei partiointia</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="304"/>
+        <location filename="../inspector/inspector.cpp" line="305"/>
         <source>POWER RANK</source>
         <translation type="unfinished">VOIMATASO</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="304"/>
+        <location filename="../inspector/inspector.cpp" line="305"/>
         <source>HERO TYPE</source>
         <translation type="unfinished">SANKARITYYPPI</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="327"/>
+        <location filename="../inspector/inspector.cpp" line="328"/>
         <source>Hero class</source>
         <translation type="unfinished">Sankariluokka</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="336"/>
+        <location filename="../inspector/inspector.cpp" line="337"/>
         <source>Portrait</source>
         <translation type="unfinished">Muotokuva</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="339"/>
+        <location filename="../inspector/inspector.cpp" line="340"/>
         <source>Skills</source>
         <translation type="unfinished">Taidot</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="341"/>
+        <location filename="../inspector/inspector.cpp" line="342"/>
         <source>Artifacts</source>
         <translation type="unfinished">Artefaktit</translation>
     </message>
     <message numerus="yes">
-        <location filename="../inspector/inspector.cpp" line="363"/>
         <location filename="../inspector/inspector.cpp" line="364"/>
+        <location filename="../inspector/inspector.cpp" line="365"/>
         <source>%n tile(s)</source>
         <translation type="unfinished">
             <numerusform>%n ruutu</numerusform>
@@ -2140,208 +2140,208 @@ Haluatko tehdä sen nyt?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="376"/>
+        <location filename="../inspector/inspector.cpp" line="377"/>
         <source>Buildings</source>
         <translation type="unfinished">Rakennukset</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="378"/>
+        <location filename="../inspector/inspector.cpp" line="379"/>
         <source>Events</source>
         <translation type="unfinished">Tapahtumat</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="418"/>
+        <location filename="../inspector/inspector.cpp" line="419"/>
         <source>Resource</source>
         <translation type="unfinished">Resurssi</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="449"/>
+        <location filename="../inspector/inspector.cpp" line="450"/>
         <source>Artifact reward</source>
         <translation type="unfinished">Artefaktipalkinto</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="517"/>
+        <location filename="../inspector/inspector.cpp" line="518"/>
         <source>Quest</source>
         <translation type="unfinished">Tehtävä</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="535"/>
+        <location filename="../inspector/inspector.cpp" line="536"/>
         <source>Identifier</source>
         <translation type="unfinished">Tunniste</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="536"/>
+        <location filename="../inspector/inspector.cpp" line="537"/>
         <source>ID</source>
         <translation type="unfinished">ID</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="537"/>
+        <location filename="../inspector/inspector.cpp" line="538"/>
         <source>SubID</source>
         <translation type="unfinished">Alitunniste</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="538"/>
+        <location filename="../inspector/inspector.cpp" line="539"/>
         <source>InstanceName</source>
         <translation type="unfinished">Instanssinimi</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="543"/>
+        <location filename="../inspector/inspector.cpp" line="544"/>
         <source>IsStatic</source>
         <translation type="unfinished">OnStaattinen</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="934"/>
-        <location filename="../inspector/inspector.cpp" line="1062"/>
+        <location filename="../inspector/inspector.cpp" line="935"/>
+        <location filename="../inspector/inspector.cpp" line="1063"/>
         <source>neutral</source>
         <translation type="unfinished">neutraali</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="252"/>
-        <location filename="../inspector/inspector.cpp" line="450"/>
+        <location filename="../inspector/inspector.cpp" line="253"/>
+        <location filename="../inspector/inspector.cpp" line="451"/>
         <source>Army</source>
         <translation type="unfinished">Armeija</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="259"/>
-        <location filename="../inspector/inspector.cpp" line="272"/>
-        <location filename="../inspector/inspector.cpp" line="279"/>
-        <location filename="../inspector/inspector.cpp" line="287"/>
-        <location filename="../inspector/inspector.cpp" line="294"/>
-        <location filename="../inspector/inspector.cpp" line="325"/>
-        <location filename="../inspector/inspector.cpp" line="416"/>
-        <location filename="../inspector/inspector.cpp" line="546"/>
-        <location filename="../inspector/inspector.cpp" line="593"/>
+        <location filename="../inspector/inspector.cpp" line="260"/>
+        <location filename="../inspector/inspector.cpp" line="273"/>
+        <location filename="../inspector/inspector.cpp" line="280"/>
+        <location filename="../inspector/inspector.cpp" line="288"/>
+        <location filename="../inspector/inspector.cpp" line="295"/>
+        <location filename="../inspector/inspector.cpp" line="326"/>
+        <location filename="../inspector/inspector.cpp" line="417"/>
+        <location filename="../inspector/inspector.cpp" line="547"/>
+        <location filename="../inspector/inspector.cpp" line="594"/>
         <source>Owner</source>
         <translation type="unfinished">Omistaja</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="264"/>
-        <location filename="../inspector/inspector.cpp" line="718"/>
+        <location filename="../inspector/inspector.cpp" line="265"/>
+        <location filename="../inspector/inspector.cpp" line="719"/>
         <source>Same as town</source>
         <translation type="unfinished">Sama kuin kaupungilla</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="280"/>
-        <location filename="../inspector/inspector.cpp" line="733"/>
+        <location filename="../inspector/inspector.cpp" line="281"/>
+        <location filename="../inspector/inspector.cpp" line="734"/>
         <source>Removable units</source>
         <translation type="unfinished">Poistettavat yksiköt</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="305"/>
-        <location filename="../inspector/inspector.cpp" line="741"/>
+        <location filename="../inspector/inspector.cpp" line="306"/>
+        <location filename="../inspector/inspector.cpp" line="742"/>
         <source>Placeholder type</source>
         <translation type="unfinished">Paikanpitotyyppi</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="308"/>
-        <location filename="../inspector/inspector.cpp" line="759"/>
+        <location filename="../inspector/inspector.cpp" line="309"/>
+        <location filename="../inspector/inspector.cpp" line="760"/>
         <source>Power rank</source>
         <translation type="unfinished">Voimatason sijoitus</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="316"/>
-        <location filename="../inspector/inspector.cpp" line="356"/>
-        <location filename="../inspector/inspector.cpp" line="762"/>
-        <location filename="../inspector/inspector.cpp" line="786"/>
+        <location filename="../inspector/inspector.cpp" line="317"/>
+        <location filename="../inspector/inspector.cpp" line="357"/>
+        <location filename="../inspector/inspector.cpp" line="763"/>
+        <location filename="../inspector/inspector.cpp" line="787"/>
         <source>Hero type</source>
         <translation type="unfinished">Sankarityyppi</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="326"/>
-        <location filename="../inspector/inspector.cpp" line="783"/>
+        <location filename="../inspector/inspector.cpp" line="327"/>
+        <location filename="../inspector/inspector.cpp" line="784"/>
         <source>Experience</source>
         <translation type="unfinished">Kokemus</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="331"/>
         <location filename="../inspector/inspector.cpp" line="332"/>
+        <location filename="../inspector/inspector.cpp" line="333"/>
         <source>MALE</source>
         <translation type="unfinished">MIES</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="331"/>
         <location filename="../inspector/inspector.cpp" line="332"/>
+        <location filename="../inspector/inspector.cpp" line="333"/>
         <source>FEMALE</source>
         <translation type="unfinished">NAINEN</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="332"/>
-        <location filename="../inspector/inspector.cpp" line="772"/>
+        <location filename="../inspector/inspector.cpp" line="333"/>
+        <location filename="../inspector/inspector.cpp" line="773"/>
         <source>Gender</source>
         <translation type="unfinished">Sukupuoli</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="334"/>
-        <location filename="../inspector/inspector.cpp" line="775"/>
+        <location filename="../inspector/inspector.cpp" line="335"/>
+        <location filename="../inspector/inspector.cpp" line="776"/>
         <source>Name</source>
         <translation type="unfinished">Nimi</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="335"/>
-        <location filename="../inspector/inspector.cpp" line="779"/>
+        <location filename="../inspector/inspector.cpp" line="336"/>
+        <location filename="../inspector/inspector.cpp" line="780"/>
         <source>Biography</source>
         <translation type="unfinished">Elämäkerta</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="340"/>
-        <location filename="../inspector/inspector.cpp" line="377"/>
+        <location filename="../inspector/inspector.cpp" line="341"/>
+        <location filename="../inspector/inspector.cpp" line="378"/>
         <source>Spells</source>
         <translation type="unfinished">Loitsut</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="365"/>
-        <location filename="../inspector/inspector.cpp" line="798"/>
+        <location filename="../inspector/inspector.cpp" line="366"/>
+        <location filename="../inspector/inspector.cpp" line="799"/>
         <source>Patrol radius</source>
         <translation type="unfinished">Partiointisäde</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="373"/>
-        <location filename="../inspector/inspector.cpp" line="675"/>
+        <location filename="../inspector/inspector.cpp" line="374"/>
+        <location filename="../inspector/inspector.cpp" line="676"/>
         <source>Town name</source>
         <translation type="unfinished">Kaupungin nimi</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="380"/>
-        <location filename="../inspector/inspector.cpp" line="679"/>
+        <location filename="../inspector/inspector.cpp" line="381"/>
+        <location filename="../inspector/inspector.cpp" line="680"/>
         <source>Same as player</source>
         <translation type="unfinished">Sama kuin pelaajalla</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="387"/>
-        <location filename="../inspector/inspector.cpp" line="427"/>
-        <location filename="../inspector/inspector.cpp" line="434"/>
-        <location filename="../inspector/inspector.cpp" line="441"/>
-        <location filename="../inspector/inspector.cpp" line="491"/>
-        <location filename="../inspector/inspector.cpp" line="635"/>
-        <location filename="../inspector/inspector.cpp" line="687"/>
-        <location filename="../inspector/inspector.cpp" line="704"/>
-        <location filename="../inspector/inspector.cpp" line="823"/>
+        <location filename="../inspector/inspector.cpp" line="388"/>
+        <location filename="../inspector/inspector.cpp" line="428"/>
+        <location filename="../inspector/inspector.cpp" line="435"/>
+        <location filename="../inspector/inspector.cpp" line="442"/>
+        <location filename="../inspector/inspector.cpp" line="492"/>
+        <location filename="../inspector/inspector.cpp" line="636"/>
+        <location filename="../inspector/inspector.cpp" line="688"/>
+        <location filename="../inspector/inspector.cpp" line="705"/>
+        <location filename="../inspector/inspector.cpp" line="824"/>
         <source>Message</source>
         <translation type="unfinished">Viesti</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="407"/>
-        <location filename="../inspector/inspector.cpp" line="708"/>
+        <location filename="../inspector/inspector.cpp" line="408"/>
+        <location filename="../inspector/inspector.cpp" line="709"/>
         <source>Spell</source>
         <translation type="unfinished">Loitsu</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="419"/>
-        <location filename="../inspector/inspector.cpp" line="696"/>
+        <location filename="../inspector/inspector.cpp" line="420"/>
+        <location filename="../inspector/inspector.cpp" line="697"/>
         <source>Productivity</source>
         <translation type="unfinished">Tuottavuus</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="426"/>
-        <location filename="../inspector/inspector.cpp" line="451"/>
-        <location filename="../inspector/inspector.cpp" line="815"/>
-        <location filename="../inspector/inspector.cpp" line="832"/>
+        <location filename="../inspector/inspector.cpp" line="427"/>
+        <location filename="../inspector/inspector.cpp" line="452"/>
+        <location filename="../inspector/inspector.cpp" line="816"/>
+        <location filename="../inspector/inspector.cpp" line="833"/>
         <source>Amount</source>
         <translation type="unfinished">Määrä</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="445"/>
-        <location filename="../inspector/inspector.cpp" line="826"/>
+        <location filename="../inspector/inspector.cpp" line="446"/>
+        <location filename="../inspector/inspector.cpp" line="827"/>
         <source>Character</source>
         <translation type="unfinished">Hahmo</translation>
     </message>
@@ -2350,112 +2350,112 @@ Haluatko tehdä sen nyt?</translation>
         <translation type="obsolete">Kyvyt</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="502"/>
-        <location filename="../inspector/inspector.cpp" line="653"/>
+        <location filename="../inspector/inspector.cpp" line="503"/>
+        <location filename="../inspector/inspector.cpp" line="654"/>
         <source>Available for</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="977"/>
+        <location filename="../inspector/inspector.cpp" line="978"/>
         <source>Select town</source>
         <translation type="unfinished">Valitse kaupunki</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="988"/>
-        <location filename="../inspector/playerselectionwidget.cpp" line="103"/>
+        <location filename="../inspector/inspector.cpp" line="989"/>
+        <location filename="../inspector/playerselectionwidget.cpp" line="104"/>
         <source>Available for:
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="447"/>
-        <location filename="../inspector/inspector.cpp" line="828"/>
+        <location filename="../inspector/inspector.cpp" line="448"/>
+        <location filename="../inspector/inspector.cpp" line="829"/>
         <source>Never flees</source>
         <translation type="unfinished">Ei koskaan pakene</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="448"/>
-        <location filename="../inspector/inspector.cpp" line="830"/>
+        <location filename="../inspector/inspector.cpp" line="449"/>
+        <location filename="../inspector/inspector.cpp" line="831"/>
         <source>Not growing</source>
         <translation type="unfinished">Ei kasva</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="484"/>
-        <location filename="../inspector/inspector.cpp" line="525"/>
+        <location filename="../inspector/inspector.cpp" line="485"/>
+        <location filename="../inspector/inspector.cpp" line="526"/>
         <source>Reward</source>
         <translation type="unfinished">Palkinto</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="498"/>
-        <location filename="../inspector/inspector.cpp" line="644"/>
+        <location filename="../inspector/inspector.cpp" line="499"/>
+        <location filename="../inspector/inspector.cpp" line="645"/>
         <source>Remove after</source>
         <translation type="unfinished">Poista jälkeen</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="499"/>
-        <location filename="../inspector/inspector.cpp" line="647"/>
+        <location filename="../inspector/inspector.cpp" line="500"/>
+        <location filename="../inspector/inspector.cpp" line="648"/>
         <source>Human trigger</source>
         <translation type="unfinished">Ihmisen laukaisija</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="500"/>
-        <location filename="../inspector/inspector.cpp" line="650"/>
+        <location filename="../inspector/inspector.cpp" line="501"/>
+        <location filename="../inspector/inspector.cpp" line="651"/>
         <source>Cpu trigger</source>
         <translation type="unfinished">Tietokoneen laukaisija</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="509"/>
-        <location filename="../inspector/inspector.cpp" line="840"/>
+        <location filename="../inspector/inspector.cpp" line="510"/>
+        <location filename="../inspector/inspector.cpp" line="841"/>
         <source>First visit text</source>
         <translation type="unfinished">Ensimmäinen vierailuteksti</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="510"/>
-        <location filename="../inspector/inspector.cpp" line="843"/>
+        <location filename="../inspector/inspector.cpp" line="511"/>
+        <location filename="../inspector/inspector.cpp" line="844"/>
         <source>Next visit text</source>
         <translation type="unfinished">Seuraavan vierailun teksti</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="511"/>
-        <location filename="../inspector/inspector.cpp" line="846"/>
+        <location filename="../inspector/inspector.cpp" line="512"/>
+        <location filename="../inspector/inspector.cpp" line="847"/>
         <source>Completed text</source>
         <translation type="unfinished">Suoritettu teksti</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="512"/>
-        <location filename="../inspector/inspector.cpp" line="526"/>
-        <location filename="../inspector/inspector.cpp" line="849"/>
+        <location filename="../inspector/inspector.cpp" line="513"/>
+        <location filename="../inspector/inspector.cpp" line="527"/>
+        <location filename="../inspector/inspector.cpp" line="850"/>
         <source>Repeat quest</source>
         <translation type="unfinished">Toista tehtävä</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="513"/>
-        <location filename="../inspector/inspector.cpp" line="851"/>
+        <location filename="../inspector/inspector.cpp" line="514"/>
+        <location filename="../inspector/inspector.cpp" line="852"/>
         <source>Time limit</source>
         <translation type="unfinished">Aikaraja</translation>
     </message>
     <message>
-        <location filename="../inspector/inspector.cpp" line="932"/>
+        <location filename="../inspector/inspector.cpp" line="933"/>
         <source>UNFLAGGABLE</source>
         <translation type="unfinished">EI LIPUTETTAVISSA</translation>
     </message>
     <message>
-        <location filename="../mapcontroller.cpp" line="417"/>
+        <location filename="../mapcontroller.cpp" line="427"/>
         <source>Can&apos;t place object</source>
         <translation type="unfinished">Objektia ei voi sijoittaa</translation>
     </message>
     <message>
-        <location filename="../mapcontroller.cpp" line="594"/>
+        <location filename="../mapcontroller.cpp" line="604"/>
         <source>There can only be one grail object on the map.</source>
         <translation type="unfinished">Kartalla voi olla vain yksi Graali-objekti.</translation>
     </message>
     <message>
-        <location filename="../mapcontroller.cpp" line="649"/>
+        <location filename="../mapcontroller.cpp" line="659"/>
         <source> (submod of %1)</source>
         <translation type="unfinished"> (alalisäosa %1)</translation>
     </message>
     <message>
-        <location filename="../mapcontroller.cpp" line="651"/>
+        <location filename="../mapcontroller.cpp" line="661"/>
         <source>The mod &apos;%1&apos;%2, is required by an object on the map.
 Add it to the map&apos;s required mods in Map-&gt;General settings.</source>
         <comment>should be consistent with Map-&gt;General menu entry translation</comment>
@@ -2477,7 +2477,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
     <message>
         <location filename="../inspector/abilitieswidget.cpp" line="216"/>
         <location filename="../inspector/portraitwidget.cpp" line="153"/>
-        <location filename="../inspector/scholarwidget.cpp" line="206"/>
+        <location filename="../inspector/scholarwidget.cpp" line="207"/>
         <source>Default</source>
         <translation type="unfinished">Oletus</translation>
     </message>
@@ -2487,126 +2487,126 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished">Mukautettu</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="451"/>
+        <location filename="../inspector/questwidget.cpp" line="452"/>
         <source>Quest:</source>
         <translation type="unfinished">Tehtävä:</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="452"/>
+        <location filename="../inspector/questwidget.cpp" line="453"/>
         <source>Day of Week: %1</source>
         <translation type="unfinished">Viikonpäivä: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="453"/>
+        <location filename="../inspector/questwidget.cpp" line="454"/>
         <source>Days Passed: %1</source>
         <translation type="unfinished">Päiviä kulunut: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="454"/>
-        <location filename="../inspector/rewardswidget.cpp" line="794"/>
+        <location filename="../inspector/questwidget.cpp" line="455"/>
+        <location filename="../inspector/rewardswidget.cpp" line="795"/>
         <source>Hero Level: %1</source>
         <translation type="unfinished">Sankarin taso: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="455"/>
-        <location filename="../inspector/rewardswidget.cpp" line="795"/>
+        <location filename="../inspector/questwidget.cpp" line="456"/>
+        <location filename="../inspector/rewardswidget.cpp" line="796"/>
         <source>Hero Experience: %1</source>
         <translation type="unfinished">Sankarin kokemus: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="456"/>
+        <location filename="../inspector/questwidget.cpp" line="457"/>
         <source>Mana Points: %1</source>
         <translation type="unfinished">Manapisteet: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="457"/>
-        <location filename="../inspector/rewardswidget.cpp" line="797"/>
+        <location filename="../inspector/questwidget.cpp" line="458"/>
+        <location filename="../inspector/rewardswidget.cpp" line="798"/>
         <source>Mana Percentage: %1</source>
         <translation type="unfinished">Manaprosentti: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="458"/>
-        <location filename="../inspector/rewardswidget.cpp" line="800"/>
+        <location filename="../inspector/questwidget.cpp" line="459"/>
+        <location filename="../inspector/rewardswidget.cpp" line="801"/>
         <source>Primary Skills: %1/%2/%3/%4</source>
         <translation type="unfinished">Päätaidot: %1/%2/%3/%4</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="469"/>
-        <location filename="../inspector/rewardswidget.cpp" line="810"/>
+        <location filename="../inspector/questwidget.cpp" line="470"/>
+        <location filename="../inspector/rewardswidget.cpp" line="811"/>
         <source>Resources: %1</source>
         <translation type="unfinished">Resurssit: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="476"/>
-        <location filename="../inspector/rewardswidget.cpp" line="816"/>
+        <location filename="../inspector/questwidget.cpp" line="477"/>
+        <location filename="../inspector/rewardswidget.cpp" line="817"/>
         <source>Artifacts: %1</source>
         <translation type="unfinished">Artefaktit: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="483"/>
-        <location filename="../inspector/rewardswidget.cpp" line="822"/>
+        <location filename="../inspector/questwidget.cpp" line="484"/>
+        <location filename="../inspector/rewardswidget.cpp" line="823"/>
         <source>Spells: %1</source>
         <translation type="unfinished">Loitsut: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="490"/>
-        <location filename="../inspector/rewardswidget.cpp" line="828"/>
+        <location filename="../inspector/questwidget.cpp" line="491"/>
+        <location filename="../inspector/rewardswidget.cpp" line="829"/>
         <source>Secondary Skills: %1</source>
         <translation type="unfinished">Toissijaiset taidot: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="497"/>
-        <location filename="../inspector/rewardswidget.cpp" line="834"/>
+        <location filename="../inspector/questwidget.cpp" line="498"/>
+        <location filename="../inspector/rewardswidget.cpp" line="835"/>
         <source>Creatures: %1</source>
         <translation type="unfinished">Yksiköt: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="504"/>
+        <location filename="../inspector/questwidget.cpp" line="505"/>
         <source>Heroes: %1</source>
         <translation type="unfinished">Sankarit: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="511"/>
+        <location filename="../inspector/questwidget.cpp" line="512"/>
         <source>Hero Classes: %1</source>
         <translation type="unfinished">Sankariluokat: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="520"/>
+        <location filename="../inspector/questwidget.cpp" line="521"/>
         <source>Players: %1</source>
         <translation type="unfinished">Pelaajat: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="790"/>
+        <location filename="../inspector/rewardswidget.cpp" line="791"/>
         <source>Rewards:</source>
         <translation type="unfinished">Palkinnot:</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="793"/>
+        <location filename="../inspector/rewardswidget.cpp" line="794"/>
         <source>Reward Message: %1</source>
         <translation type="unfinished">Palkintoviesti: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="796"/>
+        <location filename="../inspector/rewardswidget.cpp" line="797"/>
         <source>Mana Diff: %1</source>
         <translation type="unfinished">Manaero: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="798"/>
+        <location filename="../inspector/rewardswidget.cpp" line="799"/>
         <source>Move Points: %1</source>
         <translation type="unfinished">Liikkumispisteet: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="799"/>
+        <location filename="../inspector/rewardswidget.cpp" line="800"/>
         <source>Move Percentage: %1</source>
         <translation type="unfinished">Liikkumisprosentti: %1</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="837"/>
+        <location filename="../inspector/rewardswidget.cpp" line="838"/>
         <source>Spell Cast: %1 (%2)</source>
         <translation type="unfinished">Loitsu heitetty: %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="845"/>
+        <location filename="../inspector/rewardswidget.cpp" line="846"/>
         <source>Bonuses: %1</source>
         <translation type="unfinished">Bonukset: %1</translation>
     </message>
@@ -2621,7 +2621,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished">Kielletyt rakennukset:</translation>
     </message>
     <message>
-        <location filename="../inspector/towneventswidget.cpp" line="185"/>
+        <location filename="../inspector/towneventswidget.cpp" line="186"/>
         <source>Town Events:</source>
         <translation type="unfinished">Kaupunkitapahtumat:</translation>
     </message>
@@ -2636,7 +2636,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished">Mahdollinen:</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/campaigneditor.cpp" line="235"/>
+        <location filename="../campaigneditor/campaigneditor.cpp" line="249"/>
         <source>Failed to open campaign</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2663,17 +2663,17 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../helper.cpp" line="95"/>
+        <location filename="../helper.cpp" line="96"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../inspector/scholarwidget.cpp" line="215"/>
+        <location filename="../inspector/scholarwidget.cpp" line="216"/>
         <source>Invalid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mapsettings/abstractsettings.cpp" line="115"/>
+        <location filename="../mapsettings/abstractsettings.cpp" line="116"/>
         <source>Hero placeholder (power rank %1)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2806,12 +2806,12 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished">Pelaajat</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="42"/>
+        <location filename="../inspector/questwidget.cpp" line="43"/>
         <source>None</source>
         <translation type="unfinished">Ei mitään</translation>
     </message>
     <message>
-        <location filename="../inspector/questwidget.cpp" line="44"/>
+        <location filename="../inspector/questwidget.cpp" line="45"/>
         <source>Day %1</source>
         <translation type="unfinished">Päivä %1</translation>
     </message>
@@ -3089,18 +3089,18 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished">Pelaajat</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="56"/>
+        <location filename="../inspector/rewardswidget.cpp" line="57"/>
         <source>None</source>
         <translation type="unfinished">Ei mitään</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="58"/>
+        <location filename="../inspector/rewardswidget.cpp" line="59"/>
         <source>Day %1</source>
         <translation type="unfinished">Päivä %1</translation>
     </message>
     <message>
-        <location filename="../inspector/rewardswidget.cpp" line="251"/>
-        <location filename="../inspector/rewardswidget.cpp" line="624"/>
+        <location filename="../inspector/rewardswidget.cpp" line="252"/>
+        <location filename="../inspector/rewardswidget.cpp" line="625"/>
         <source>Reward %1</source>
         <translation type="unfinished">Palkinto %1</translation>
     </message>
@@ -3128,7 +3128,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished">Poista</translation>
     </message>
     <message>
-        <location filename="../mapsettings/rumorsettings.cpp" line="59"/>
+        <location filename="../mapsettings/rumorsettings.cpp" line="60"/>
         <source>New rumor</source>
         <translation type="unfinished">Uusi huhu</translation>
     </message>
@@ -3137,7 +3137,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
     <name>ScenarioProperties</name>
     <message>
         <location filename="../campaigneditor/scenarioproperties.ui" line="14"/>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="39"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="40"/>
         <source>Scenario Properties</source>
         <translation type="unfinished">Skenaarion ominaisuudet</translation>
     </message>
@@ -3332,8 +3332,8 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
     </message>
     <message>
         <location filename="../campaigneditor/scenarioproperties.ui" line="545"/>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="476"/>
         <location filename="../campaigneditor/scenarioproperties.cpp" line="486"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="496"/>
         <source>Player position</source>
         <translation type="unfinished">Pelaajan sijainti</translation>
     </message>
@@ -3358,74 +3358,74 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished">Muokkaa...</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="125"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="126"/>
         <source>Strongest</source>
         <translation type="unfinished">Vahvin</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="126"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="127"/>
         <source>Generated</source>
         <translation type="unfinished">Luotu</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="127"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="128"/>
         <source>Random</source>
         <translation type="unfinished">Satunnainen</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="144"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="154"/>
         <source>No map</source>
         <translation type="unfinished">Ei karttaa</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="187"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="197"/>
         <source>Player</source>
         <translation type="unfinished">Pelaaja</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="395"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="405"/>
         <source>Open map</source>
         <translation type="unfinished">Avaa kartta</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="397"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="407"/>
         <source>All supported maps (*.vmap *.h3m);;VCMI maps(*.vmap);;HoMM3 maps(*.h3m)</source>
         <translation type="unfinished">Kaikki tuetut kartat (*.vmap *.h3m);;VCMI-kartat (*.vmap);;HoMM3-kartat (*.h3m)</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="406"/>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="445"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="416"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="455"/>
         <source>Error</source>
         <translation type="unfinished">Virhe</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="406"/>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="445"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="416"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="455"/>
         <source>Could not open the file.</source>
         <translation type="unfinished">Tiedoston avaaminen epäonnistui.</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="433"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="443"/>
         <source>Save map</source>
         <translation type="unfinished">Tallenna kartta</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="435"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="445"/>
         <source>VCMI maps (*.vmap);</source>
         <translation type="unfinished">VCMI-kartat (*.vmap);</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="435"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="445"/>
         <source>HoMM3 maps (*.h3m);</source>
         <translation type="unfinished">HoMM3-kartat (*.h3m);</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="476"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="486"/>
         <source>Source scenario</source>
         <translation type="unfinished">Lähdeskenaario</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/scenarioproperties.cpp" line="486"/>
+        <location filename="../campaigneditor/scenarioproperties.cpp" line="496"/>
         <source>Hero</source>
         <translation type="unfinished">Sankari</translation>
     </message>
@@ -3524,7 +3524,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <location filename="../campaigneditor/startingbonus.ui" line="41"/>
         <location filename="../campaigneditor/startingbonus.ui" line="184"/>
         <location filename="../campaigneditor/startingbonus.ui" line="190"/>
-        <location filename="../campaigneditor/startingbonus.cpp" line="364"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="365"/>
         <source>Building</source>
         <translation type="unfinished">Rakennus</translation>
     </message>
@@ -3551,14 +3551,14 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <location filename="../campaigneditor/startingbonus.ui" line="69"/>
         <location filename="../campaigneditor/startingbonus.ui" line="364"/>
         <location filename="../campaigneditor/startingbonus.ui" line="380"/>
-        <location filename="../campaigneditor/startingbonus.cpp" line="388"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="389"/>
         <source>Secondary skill</source>
         <translation type="unfinished">Sivutaidot</translation>
     </message>
     <message>
         <location filename="../campaigneditor/startingbonus.ui" line="76"/>
         <location filename="../campaigneditor/startingbonus.ui" line="414"/>
-        <location filename="../campaigneditor/startingbonus.cpp" line="392"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="393"/>
         <source>Resource</source>
         <translation type="unfinished">Resurssi</translation>
     </message>
@@ -3614,82 +3614,82 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished">Resurssityyppi</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="35"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="36"/>
         <source>Edit Starting Bonus</source>
         <translation type="unfinished">Muokkaa aloitusbonusta</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="63"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="64"/>
         <source>Strongest</source>
         <translation type="unfinished">Vahvin</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="64"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="65"/>
         <source>Generated</source>
         <translation type="unfinished">Luotu</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="65"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="66"/>
         <source>Random</source>
         <translation type="unfinished">Satunnainen</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="96"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="97"/>
         <source>Main town is of random faction</source>
         <translation type="unfinished">Pääkaupunki on satunnaisen ryhmittymän</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="108"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="109"/>
         <source>Player does not have a main town!</source>
         <translation type="unfinished">Pelaajalla ei ole pääkaupunkia!</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="133"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="134"/>
         <source>Common (%1 and %2)</source>
         <translation type="unfinished">Yhteinen (%1 ja %2)</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="138"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="139"/>
         <source>Rare (%1, %2, %3, %4)</source>
         <translation type="unfinished">Harvinainen (%1, %2, %3, %4)</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="320"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="321"/>
         <source>strongest hero</source>
         <translation type="unfinished">vahvin sankari</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="322"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="323"/>
         <source>generated hero</source>
         <translation type="unfinished">luotu sankari</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="324"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="325"/>
         <source>random hero</source>
         <translation type="unfinished">satunnainen sankari</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="355"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="356"/>
         <source>%1 spell for %2</source>
         <translation type="unfinished">%1-loitsu kohteelle %2</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="360"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="361"/>
         <source>%1 %2 for %3</source>
         <translation type="unfinished">%1 %2 kohteelle %3</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="369"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="370"/>
         <source>%1 artifact for %2</source>
         <translation type="unfinished">%1-artefakti kohteelle %2</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="374"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="375"/>
         <source>%1 spell scroll for %2</source>
         <translation type="unfinished">%1-loitsukäärö kohteelle %2</translation>
     </message>
     <message>
-        <location filename="../campaigneditor/startingbonus.cpp" line="379"/>
+        <location filename="../campaigneditor/startingbonus.cpp" line="380"/>
         <source>Primary skill (Attack: %1, Defense: %2, Spell: %3, Knowledge: %4) for %5</source>
         <translation type="unfinished">Päätaidot (Hyökkäys: %1, Puolustus: %2, Loitsu: %3, Tiede: %4) kohteelle %5</translation>
     </message>
@@ -3698,7 +3698,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
     <name>TemplateEditor</name>
     <message>
         <location filename="../templateeditor/templateeditor.ui" line="14"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="662"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="663"/>
         <source>VCMI Template Editor</source>
         <translation type="unfinished">VCMI Mallieditori</translation>
     </message>
@@ -3730,7 +3730,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
     <message>
         <location filename="../templateeditor/templateeditor.ui" line="139"/>
         <location filename="../templateeditor/templateeditor.ui" line="1327"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="282"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="283"/>
         <source>Add</source>
         <translation>Lisää</translation>
     </message>
@@ -3808,14 +3808,14 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
     </message>
     <message>
         <location filename="../templateeditor/templateeditor.ui" line="480"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="420"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="433"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="421"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="434"/>
         <source>None</source>
         <translation type="unfinished">Ei mitään</translation>
     </message>
     <message>
         <location filename="../templateeditor/templateeditor.ui" line="487"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="436"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="437"/>
         <source>Normal</source>
         <translation>Normaali</translation>
     </message>
@@ -3877,7 +3877,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
     </message>
     <message>
         <location filename="../templateeditor/templateeditor.ui" line="691"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="454"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="455"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
@@ -3925,7 +3925,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <location filename="../templateeditor/templateeditor.ui" line="787"/>
         <location filename="../templateeditor/templateeditor.ui" line="1231"/>
         <location filename="../templateeditor/templateeditor.ui" line="1237"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="395"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="396"/>
         <source>Treasure</source>
         <translation type="unfinished">Aarre</translation>
     </message>
@@ -4072,7 +4072,7 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
     </message>
     <message>
         <location filename="../templateeditor/templateeditor.ui" line="1391"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="485"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="486"/>
         <source>Del</source>
         <translation>Del</translation>
     </message>
@@ -4137,149 +4137,149 @@ Lisää se kartan vaadittuihin lisäosiin valikosta Kartta → Yleiset asetukset
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="253"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="254"/>
         <source>Min</source>
         <translation type="unfinished">Min</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="253"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="254"/>
         <source>Max</source>
         <translation type="unfinished">Maks</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="253"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="254"/>
         <source>Action</source>
         <translation type="unfinished">Toiminto</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="271"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="486"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="272"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="487"/>
         <source>Delete</source>
         <translation type="unfinished">Poista</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="310"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="311"/>
         <source>ID: %1</source>
         <translation type="unfinished">ID: %1</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="312"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="313"/>
         <source>Max treasure: %1</source>
         <translation type="unfinished">Maks. aarre: %1</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="393"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="394"/>
         <source>Player start</source>
         <translation type="unfinished">Pelaajan aloitus</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="394"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="395"/>
         <source>CPU start</source>
         <translation type="unfinished">CPU-aloitus</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="396"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="397"/>
         <source>Junction</source>
         <translation type="unfinished">Liittymäkohta</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="397"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="398"/>
         <source>Water</source>
         <translation type="unfinished">Vesi</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="398"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="399"/>
         <source>Sealed</source>
         <translation type="unfinished">Sinetöity</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="425"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="426"/>
         <source>Automatic</source>
         <translation type="unfinished">Automaattinen</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="426"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="427"/>
         <source>Surface</source>
         <translation>Pinta</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="427"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="428"/>
         <source>Underground</source>
         <translation>Maanalainen</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="434"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="473"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="435"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="474"/>
         <source>Random</source>
         <translation>Satunnainen</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="435"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="436"/>
         <source>Weak</source>
         <translation>Heikko</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="437"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="438"/>
         <source>Strong</source>
         <translation>Vahva</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="454"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="455"/>
         <source>Zone A</source>
         <translation type="unfinished">Vyöhyke A</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="454"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="455"/>
         <source>Zone B</source>
         <translation type="unfinished">Vyöhyke B</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="454"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="455"/>
         <source>Guard</source>
         <translation type="unfinished">Vartio</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="454"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="455"/>
         <source>Road</source>
         <translation type="unfinished">Tie</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="468"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="469"/>
         <source>Guarded</source>
         <translation type="unfinished">Vartioitu</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="469"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="470"/>
         <source>Fictive</source>
         <translation type="unfinished">Fiktiivinen</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="470"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="471"/>
         <source>Repulsive</source>
         <translation type="unfinished">Hylkivä</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="471"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="472"/>
         <source>Wide</source>
         <translation type="unfinished">Leveä</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="472"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="473"/>
         <source>Force portal</source>
         <translation type="unfinished">Pakota portaali</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="474"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="475"/>
         <source>Yes</source>
         <translation type="unfinished">Kyllä</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="475"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="476"/>
         <source>No</source>
         <translation type="unfinished">Ei</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="590"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="591"/>
         <source>Zone A: %1
 Zone B: %2
 Guard: %3</source>
@@ -4288,109 +4288,109 @@ Vyöhyke B: %2
 Vartio: %3</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="650"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="651"/>
         <source>Confirmation</source>
         <translation>Vahvistus</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="650"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="651"/>
         <source>Unsaved changes will be lost, are you sure?</source>
         <translation>Tallentamattomat muutokset menetetään,oletko varma?</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="674"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="675"/>
         <source>Validation failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="679"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="680"/>
         <source>No player range defined.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="686"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="687"/>
         <source>Invalid range for players.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="694"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="695"/>
         <source>Invalid range for human players.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="709"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="710"/>
         <source>Connection references non-existing zone(s): %1 - %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="721"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="722"/>
         <source>Zone %1 has no connections.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="745"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="746"/>
         <source>Player %1 must have exactly one player start zone (found %2).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="782"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="783"/>
         <source>Open template</source>
         <translation type="unfinished">Avaa malli</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="784"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="785"/>
         <source>VCMI templates(*.json)</source>
         <translation type="unfinished">VCMI-mallit (*.json)</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="802"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="803"/>
         <source>Save template</source>
         <translation type="unfinished">Tallenna malli</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="803"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="804"/>
         <source>VCMI templates (*.json)</source>
         <translation type="unfinished">VCMI-mallit (*.json)</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="942"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="983"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="943"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="984"/>
         <source>Enter Name</source>
         <translation type="unfinished">Anna nimi</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="942"/>
-        <location filename="../templateeditor/templateeditor.cpp" line="983"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="943"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="984"/>
         <source>Name:</source>
         <translation type="unfinished">Nimi:</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="949"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="950"/>
         <source>Already existing!</source>
         <translation type="unfinished">On jo olemassa!</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="949"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="950"/>
         <source>A template with this name is already existing.</source>
         <translation type="unfinished">Tämänniminen malli on jo olemassa.</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="966"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="967"/>
         <source>Too few templates!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="966"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="967"/>
         <source>At least one template should remain after removing.</source>
         <translation type="unfinished">Poistamisen jälkeen tulee jäädä vähintään yksi malli.</translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="1216"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="1217"/>
         <source>Too few zones</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../templateeditor/templateeditor.cpp" line="1216"/>
+        <location filename="../templateeditor/templateeditor.cpp" line="1217"/>
         <source>Create at least two zones before adding a connection.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4584,12 +4584,12 @@ Vartio: %3</translation>
         <translation type="unfinished">OK</translation>
     </message>
     <message>
-        <location filename="../inspector/towneventdialog.cpp" line="174"/>
+        <location filename="../inspector/towneventdialog.cpp" line="175"/>
         <source>Creature level %1 / Creature level %1 Upgrade</source>
         <translation type="unfinished">Yksikkötaso %1 / Yksikkötaso %1 Parannus</translation>
     </message>
     <message>
-        <location filename="../inspector/towneventdialog.cpp" line="216"/>
+        <location filename="../inspector/towneventdialog.cpp" line="217"/>
         <source>Day %1 - %2</source>
         <translation type="unfinished">Päivä %1 - %2</translation>
     </message>
@@ -4597,7 +4597,7 @@ Vartio: %3</translation>
 <context>
     <name>TownEventsDelegate</name>
     <message>
-        <location filename="../inspector/towneventswidget.cpp" line="189"/>
+        <location filename="../inspector/towneventswidget.cpp" line="190"/>
         <source>Day %1 - %2</source>
         <translation type="unfinished">Päivä %1 - %2</translation>
     </message>
@@ -4625,12 +4625,12 @@ Vartio: %3</translation>
         <translation type="unfinished">Poista</translation>
     </message>
     <message>
-        <location filename="../inspector/towneventswidget.cpp" line="109"/>
+        <location filename="../inspector/towneventswidget.cpp" line="110"/>
         <source>Day %1 - %2</source>
         <translation type="unfinished">Päivä %1 - %2</translation>
     </message>
     <message>
-        <location filename="../inspector/towneventswidget.cpp" line="130"/>
+        <location filename="../inspector/towneventswidget.cpp" line="131"/>
         <source>New event</source>
         <translation type="unfinished">Uusi tapahtuma</translation>
     </message>
@@ -4873,172 +4873,172 @@ Vartio: %3</translation>
         <translation type="unfinished">Kartantarkastuksen tulokset</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="50"/>
+        <location filename="../validator.cpp" line="51"/>
         <source>Map is not loaded</source>
         <translation type="unfinished">Karttaa ei ole ladattu</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="72"/>
+        <location filename="../validator.cpp" line="73"/>
         <source>No factions allowed for player %1</source>
         <translation type="unfinished">Pelaajalle %1 ei ole sallittuja ryhmiä</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="75"/>
+        <location filename="../validator.cpp" line="76"/>
         <source>No players allowed to play this map</source>
         <translation type="unfinished">Yhtään pelaajaa ei ole sallittu pelaamaan tätä karttaa</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="77"/>
+        <location filename="../validator.cpp" line="78"/>
         <source>Map is allowed for one player and cannot be started</source>
         <translation type="unfinished">Kartta on sallittu yhdelle pelaajalle eikä sitä voi aloittaa</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="79"/>
+        <location filename="../validator.cpp" line="80"/>
         <source>No human players allowed to play this map</source>
         <translation type="unfinished">Yhtään ihmispelaajaa ei ole sallittu pelaamaan tätä karttaa</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="90"/>
+        <location filename="../validator.cpp" line="91"/>
         <source>Object&apos;s %1 visitable position %2 is outside of the map bounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="105"/>
+        <location filename="../validator.cpp" line="106"/>
         <source>Object %1 is assigned to non-playable player %2</source>
         <translation type="unfinished">Objekti %1 on määritetty ei-pelattavalle pelaajalle %2</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="150"/>
+        <location filename="../validator.cpp" line="151"/>
         <source>Spell scroll %1 doesn&apos;t have instance assigned and must be removed</source>
         <translation type="unfinished">Loitsukäärö %1 ei ole liitetty mihinkään instanssiin ja se täytyy poistaa</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="156"/>
+        <location filename="../validator.cpp" line="157"/>
         <source>Artifact %1 is prohibited by map settings</source>
         <translation type="unfinished">Artefakti %1 on estetty kartan asetuksissa</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="226"/>
+        <location filename="../validator.cpp" line="227"/>
         <source>Player %1 has no towns and heroes assigned</source>
         <translation type="unfinished">Pelaajalla %1 ei ole kaupunkeja tai sankareita määritettynä</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="118"/>
+        <location filename="../validator.cpp" line="119"/>
         <source>Prison %1 must be a NEUTRAL</source>
         <translation type="unfinished">Vankila %1 täytyy olla NEUTRAALI</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="99"/>
+        <location filename="../validator.cpp" line="100"/>
         <source>Ownable object %1 is UNFLAGGABLE but must have NEUTRAL or player owner</source>
         <translation type="unfinished">Omistettava objekti %1 on LIPUTTAMATON, mutta sillä täytyy olla NEUTRAALI tai pelaajan omistaja</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="123"/>
+        <location filename="../validator.cpp" line="124"/>
         <source>Hero %1 must have an owner</source>
         <translation type="unfinished">Sankarilla %1 täytyy olla omistaja</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="130"/>
+        <location filename="../validator.cpp" line="131"/>
         <source>Hero %1 is prohibited by map settings</source>
         <translation type="unfinished">Sankari %1 on estetty kartan asetuksissa</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="133"/>
+        <location filename="../validator.cpp" line="134"/>
         <source>Hero %1 has duplicate on map</source>
         <translation type="unfinished">Sankari %1 esiintyy kartalla kahteen kertaan</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="136"/>
+        <location filename="../validator.cpp" line="137"/>
         <source>Hero %1 has an empty type and must be removed</source>
         <translation type="unfinished">Sankarilla %1 ei ole tyyppiä ja se täytyy poistaa</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="147"/>
+        <location filename="../validator.cpp" line="148"/>
         <source>Spell scroll %1 is prohibited by map settings</source>
         <translation type="unfinished">Loitsukäärö %1 on estetty kartan asetuksissa</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="165"/>
+        <location filename="../validator.cpp" line="166"/>
         <source>A witch hut at x: %1 y: %2 on %3 layer holds an invalid reward.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="170"/>
+        <location filename="../validator.cpp" line="171"/>
         <source>A witch hut at x: %1 y: %2 on %3 cannot be validated by the editor.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="183"/>
+        <location filename="../validator.cpp" line="184"/>
         <source>A scholar at x: %1 y: %2 on layer %3 holds an invalid reward.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="189"/>
+        <location filename="../validator.cpp" line="190"/>
         <source>A scholar at x: %1 y: %2 on layer %3 grants a reward prohibited by map setting. Is it intentional?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="195"/>
+        <location filename="../validator.cpp" line="196"/>
         <source>A scholar at x: %1 y: %2 on layer %3 cannot be validated by the editor.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="206"/>
+        <location filename="../validator.cpp" line="207"/>
         <source>A shrine at x: %1 y: %2 on layer %3 holds an invalid spell.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="212"/>
+        <location filename="../validator.cpp" line="213"/>
         <source>A shrine at x: %1 y: %2 on layer %3 grants a spell prohibited by map setting. Is it intentional?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="228"/>
+        <location filename="../validator.cpp" line="229"/>
         <source>Player %1 doesn&apos;t have any starting town</source>
         <translation type="unfinished">Pelaajalla %1 ei ole yhtään aloituskaupunkia</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="234"/>
+        <location filename="../validator.cpp" line="235"/>
         <source>Map name is not specified</source>
         <translation type="unfinished">Kartalla ei ole nimeä</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="236"/>
+        <location filename="../validator.cpp" line="237"/>
         <source>Map description is not specified</source>
         <translation type="unfinished">Kartalla ei ole kuvausta</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="253"/>
+        <location filename="../validator.cpp" line="254"/>
         <source>defeat a specific hero</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="254"/>
+        <location filename="../validator.cpp" line="255"/>
         <source>lose a specific hero</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="257"/>
+        <location filename="../validator.cpp" line="258"/>
         <source>hero placeholder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="259"/>
+        <location filename="../validator.cpp" line="260"/>
         <source>Triggered event &apos;%1&apos; uses %2 condition targeting %3 at %4. This setup is unusual and should be avoided; map will stay playable, but the condition remains unresolved unless placeholder replacement is supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="327"/>
+        <location filename="../validator.cpp" line="328"/>
         <source>The map is valid and has no issues.</source>
         <translation type="unfinished">Kartta on kelvollinen eikä siinä ole virheitä.</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="272"/>
+        <location filename="../validator.cpp" line="273"/>
         <source>Exception occurs during validation: %1</source>
         <translation type="unfinished">Poikkeus tapahtui tarkistuksen aikana: %1</translation>
     </message>
     <message>
-        <location filename="../validator.cpp" line="276"/>
+        <location filename="../validator.cpp" line="277"/>
         <source>Unknown exception occurs during validation</source>
         <translation type="unfinished">Tuntematon poikkeus tapahtui tarkistuksen aikana</translation>
     </message>
@@ -5071,52 +5071,52 @@ Vartio: %3</translation>
         <translation type="unfinished">Parametrit</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="41"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="42"/>
         <source>No special victory</source>
         <translation type="unfinished">Ei erikoisvoittoa</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="42"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="43"/>
         <source>Capture artifact</source>
         <translation type="unfinished">Valtaa artefakti</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="43"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="44"/>
         <source>Hire creatures</source>
         <translation type="unfinished">Palkkaa yksiköitä</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="44"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="45"/>
         <source>Accumulate resources</source>
         <translation type="unfinished">Kokoa resursseja</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="45"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="46"/>
         <source>Construct building</source>
         <translation type="unfinished">Rakenna rakennus</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="46"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="47"/>
         <source>Capture town</source>
         <translation type="unfinished">Valtaa kaupunki</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="47"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="48"/>
         <source>Defeat hero</source>
         <translation type="unfinished">Voita sankari</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="48"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="49"/>
         <source>Transport artifact</source>
         <translation type="unfinished">Kuljeta artefakti</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="49"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="50"/>
         <source>Kill monster</source>
         <translation type="unfinished">Tapa hirviö</translation>
     </message>
     <message>
-        <location filename="../mapsettings/victoryconditions.cpp" line="436"/>
+        <location filename="../mapsettings/victoryconditions.cpp" line="437"/>
         <source>Any town</source>
         <translation type="unfinished">Mikä tahansa kaupunki</translation>
     </message>
@@ -5352,27 +5352,27 @@ Vartio: %3</translation>
 <context>
     <name>main</name>
     <message>
-        <location filename="../mainwindow.cpp" line="195"/>
+        <location filename="../mainwindow.cpp" line="185"/>
         <source>Filepath of the map to open.</source>
         <translation type="unfinished">Avattavan kartan tiedostopolku.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="198"/>
+        <location filename="../mainwindow.cpp" line="188"/>
         <source>Extract original H3 archives into a separate folder.</source>
         <translation type="unfinished">Pura alkuperäiset H3-arkistot erilliseen kansioon.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="199"/>
+        <location filename="../mainwindow.cpp" line="189"/>
         <source>From an extracted archive, it Splits TwCrPort, CPRSMALL, FlagPort, ITPA, ITPt, Un32 and Un44 into individual PNG&apos;s.</source>
         <translation type="unfinished">Puretusta arkistosta jakaa TwCrPort, CPRSMALL, FlagPort, ITPA, ITPt, Un32 ja Un44 yksittäisiin PNG-kuviin.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="200"/>
+        <location filename="../mainwindow.cpp" line="190"/>
         <source>From an extracted archive, Converts single Images (found in Images folder) from .pcx to png.</source>
         <translation type="unfinished">Puretusta arkistosta muuntaa yksittäiset kuvat (.pcx) PNG-muotoon (löytyvät Images-kansiosta).</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="201"/>
+        <location filename="../mainwindow.cpp" line="191"/>
         <source>Delete original files, for the ones split / converted.</source>
         <translation type="unfinished">Poista alkuperäiset tiedostot niiltä osin, mitkä jaettiin / muunnettiin.</translation>
     </message>
