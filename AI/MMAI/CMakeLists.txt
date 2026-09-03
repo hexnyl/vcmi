@@ -130,6 +130,8 @@ if(ENABLE_MMAI_TEST)
   include(CheckCXXCompilerFlag)
   enable_testing()
 
+  target_compile_definitions(MMAI PRIVATE ENABLE_MMAI_TEST)
+
   target_link_libraries(MMAI PUBLIC gtest gtest_main)
 
   target_include_directories(MMAI PRIVATE "${CMAKE_SOURCE_DIR}/test/googletest/googletest/include")
@@ -137,6 +139,12 @@ if(ENABLE_MMAI_TEST)
   add_executable(MMAI_test test/encoder_test.cpp)
   target_link_libraries(MMAI_test PRIVATE MMAI)
   gtest_discover_tests(MMAI_test)
+
+  add_executable(MMAI_router_test test/router_test.cpp StdInc.cpp)
+  target_compile_definitions(MMAI_router_test PRIVATE ENABLE_MMAI_TEST)
+  target_link_libraries(MMAI_router_test PRIVATE MMAI vcmi gtest gtest_main)
+  enable_pch(MMAI_router_test)
+  gtest_discover_tests(MMAI_router_test)
 
   # default visibility is needed for testing
   set_target_properties(MMAI PROPERTIES CXX_VISIBILITY_PRESET "default")
