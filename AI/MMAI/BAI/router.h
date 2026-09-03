@@ -63,15 +63,33 @@ public:
 	void battleUnitsChanged(const BattleID & bid, const std::vector<UnitChanges> & changes) override;
 	void yourTacticPhase(const BattleID & bid, int distance) override;
 
+#ifdef ENABLE_MMAI_TEST
+	using TestBattleAIFactory = std::function<std::shared_ptr<CBattleGameInterface>(const BattleID &, BattleSide side)>;
+	void setTestBattleAIFactory(TestBattleAIFactory factory);
+#endif
+
 private:
+	struct BattleContext
+	{
+		std::shared_ptr<CBattleGameInterface> bai;
+	};
+
 	std::shared_ptr<Environment> env;
 	std::shared_ptr<CBattleCallback> cb;
-	std::shared_ptr<CBattleGameInterface> bai; // calls will be delegated to this object
+	std::map<BattleID, BattleContext> battles;
 
 	bool wasWaitingForRealize = false;
 	AutocombatPreferences autocombatPreferences;
 	std::string addrstr = "?";
 	std::string colorname = "?";
+
+#ifdef ENABLE_MMAI_TEST
+	TestBattleAIFactory testBattleAIFactory;
+#endif
+
+	CBattleGameInterface & getBattleAI(const BattleID & bid);
+	std::shared_ptr<CBattleGameInterface> createDelegatedBAI(BattleSide side);
+	std::string formatActiveBattleIds() const;
 
 	void error(const std::string & text) const;
 	void warn(const std::string & text) const;

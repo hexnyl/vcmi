@@ -123,6 +123,13 @@ namespace
 
 		return it->second.get();
 	}
+
+	std::string MakeAddrStr(const CBattleGameInterface * bai)
+	{
+		std::ostringstream oss;
+		oss << static_cast<const void *>(bai);
+		return oss.str();
+	}
 }
 
 Router::Router()
@@ -138,8 +145,16 @@ Router::Router()
 Router::~Router()
 {
 	info("--- destructor ---");
-	cb->waitTillRealize = wasWaitingForRealize;
+	if(cb)
+		cb->waitTillRealize = wasWaitingForRealize;
 }
+
+#ifdef ENABLE_MMAI_TEST
+void Router::setTestBattleAIFactory(TestBattleAIFactory factory)
+{
+	testBattleAIFactory = std::move(factory);
+}
+#endif
 
 void Router::initBattleInterface(std::shared_ptr<Environment> ENV, std::shared_ptr<CBattleCallback> CB)
 {
@@ -150,7 +165,7 @@ void Router::initBattleInterface(std::shared_ptr<Environment> ENV, std::shared_p
 	wasWaitingForRealize = cb->waitTillRealize;
 
 	cb->waitTillRealize = false;
-	bai.reset();
+	battles.clear();
 }
 
 void Router::initBattleInterface(std::shared_ptr<Environment> ENV, std::shared_ptr<CBattleCallback> CB, AutocombatPreferences prefs)
@@ -159,83 +174,167 @@ void Router::initBattleInterface(std::shared_ptr<Environment> ENV, std::shared_p
 	initBattleInterface(ENV, CB);
 }
 
+CBattleGameInterface & Router::getBattleAI(const BattleID & bid)
+{
+	const auto it = battles.find(bid);
+	if(it == battles.end())
+	{
+		const auto message = "MMAI Router: no BAI for BattleID " + std::to_string(bid.getNum()) + ", active battles: [" + formatActiveBattleIds() + "]";
+		error(message);
+		throw std::runtime_error(message);
+	}
+
+	if(!it->second.bai)
+	{
+		const auto message = "MMAI Router: null BAI for BattleID " + std::to_string(bid.getNum());
+		error(message);
+		throw std::runtime_error(message);
+	}
+
+	trace("BattleID " + std::to_string(bid.getNum()) + " -> BAI " + MakeAddrStr(it->second.bai.get()));
+	return *it->second.bai;
+}
+
+std::string Router::formatActiveBattleIds() const
+{
+	std::string result;
+	for(const auto & [battleId, context] : battles)
+	{
+		if(!result.empty())
+			result += ", ";
+		result += std::to_string(battleId.getNum());
+		if(context.bai)
+			result += "@" + MakeAddrStr(context.bai.get());
+	}
+	if(result.empty())
+		return "none";
+	return result;
+}
+
+std::shared_ptr<CBattleGameInterface> Router::createDelegatedBAI(BattleSide side)
+{
+	const std::string modelkey = side == BattleSide::ATTACKER ? "attacker" : "defender";
+	Schema::IModel * model = GetModel(modelkey);
+
+	auto modelside = model->getSide();
+	auto realside = static_cast<Schema::Side>(EI(side));
+
+	if(modelside != realside && modelside != Schema::Side::BOTH)
+		logAi->warn("The loaded '%s' model was not trained to play as %s", modelkey, modelkey);
+
+	switch(model->getType())
+	{
+		case Schema::ModelType::SCRIPTED:
+			if(model->getName() == "StupidAI")
+			{
+				auto bai = CDynLibHandler::getNewBattleAI("StupidAI");
+				bai->initBattleInterface(env, cb, autocombatPreferences);
+				return bai;
+			}
+			if(model->getName() == "BattleAI")
+			{
+				auto bai = CDynLibHandler::getNewBattleAI("BattleAI");
+				bai->initBattleInterface(env, cb, autocombatPreferences);
+				return bai;
+			}
+			THROW_FORMAT("Unexpected scripted model name: %s", model->getName());
+		case Schema::ModelType::NN:
+			// XXX: must not call initBattleInterface here
+			return Base::Create(model, env, cb, autocombatPreferences.enableSpellsUsage);
+		default:
+			THROW_FORMAT("Unexpected model type: %d", EI(model->getType()));
+	}
+}
+
 /*
  * Delegated methods
  */
 
 void Router::actionFinished(const BattleID & bid, const BattleAction & action)
 {
-	bai->actionFinished(bid, action);
+	getBattleAI(bid).actionFinished(bid, action);
 }
 
 void Router::actionStarted(const BattleID & bid, const BattleAction & action)
 {
-	bai->actionStarted(bid, action);
+	getBattleAI(bid).actionStarted(bid, action);
 }
 
 void Router::activeStack(const BattleID & bid, const CStack * astack)
 {
-	bai->activeStack(bid, astack);
+	getBattleAI(bid).activeStack(bid, astack);
 }
 
 void Router::battleAttack(const BattleID & bid, const BattleAttack * ba)
 {
-	bai->battleAttack(bid, ba);
+	getBattleAI(bid).battleAttack(bid, ba);
 }
 
 void Router::battleCatapultAttacked(const BattleID & bid, const CatapultAttack & ca)
 {
-	bai->battleCatapultAttacked(bid, ca);
+	getBattleAI(bid).battleCatapultAttacked(bid, ca);
 }
 
 void Router::battleEnd(const BattleID & bid, const BattleResult * br, QueryID queryID)
 {
+	const auto it = battles.find(bid);
+	if(it == battles.end())
+	{
+		const auto message = "MMAI Router: battleEnd for unknown BattleID " + std::to_string(bid.getNum()) + ", active battles: [" + formatActiveBattleIds() + "]";
+		error(message);
+		throw std::runtime_error(message);
+	}
+
+	debug("battleEnd bid=" + std::to_string(bid.getNum()) + " -> BAI " + MakeAddrStr(it->second.bai.get()));
+	auto bai = it->second.bai;
+	battles.erase(it);
 	bai->battleEnd(bid, br, queryID);
+	debug("remaining battles: [" + formatActiveBattleIds() + "]");
 }
 
 void Router::battleGateStateChanged(const BattleID & bid, const EGateState state)
 {
-	bai->battleGateStateChanged(bid, state);
+	getBattleAI(bid).battleGateStateChanged(bid, state);
 };
 
 void Router::battleLogMessage(const BattleID & bid, const std::vector<MetaString> & lines)
 {
-	bai->battleLogMessage(bid, lines);
+	getBattleAI(bid).battleLogMessage(bid, lines);
 };
 
 void Router::battleNewRound(const BattleID & bid)
 {
-	bai->battleNewRound(bid);
+	getBattleAI(bid).battleNewRound(bid);
 }
 
 void Router::battleNewRoundFirst(const BattleID & bid)
 {
-	bai->battleNewRoundFirst(bid);
+	getBattleAI(bid).battleNewRoundFirst(bid);
 }
 
 void Router::battleObstaclesChanged(const BattleID & bid, const std::vector<ObstacleChanges> & obstacles)
 {
-	bai->battleObstaclesChanged(bid, obstacles);
+	getBattleAI(bid).battleObstaclesChanged(bid, obstacles);
 };
 
 void Router::battleSpellCast(const BattleID & bid, const BattleSpellCast * sc)
 {
-	bai->battleSpellCast(bid, sc);
+	getBattleAI(bid).battleSpellCast(bid, sc);
 }
 
 void Router::battleStackMoved(const BattleID & bid, const CStack * stack, const BattleHexArray & dest, int distance, bool teleport)
 {
-	bai->battleStackMoved(bid, stack, dest, distance, teleport);
+	getBattleAI(bid).battleStackMoved(bid, stack, dest, distance, teleport);
 }
 
 void Router::battleStacksAttacked(const BattleID & bid, const std::vector<BattleStackAttacked> & bsa, bool ranged)
 {
-	bai->battleStacksAttacked(bid, bsa, ranged);
+	getBattleAI(bid).battleStacksAttacked(bid, bsa, ranged);
 }
 
 void Router::battleStacksEffectsSet(const BattleID & bid, const SetStackEffect & sse)
 {
-	bai->battleStacksEffectsSet(bid, sse);
+	getBattleAI(bid).battleStacksEffectsSet(bid, sse);
 }
 
 void Router::battleStart(
@@ -249,59 +348,41 @@ void Router::battleStart(
 	bool replayAllowed
 )
 {
-	Schema::IModel * model;
-	const std::string modelkey = side == BattleSide::ATTACKER ? "attacker" : "defender";
-	model = GetModel(modelkey);
-
-	auto modelside = model->getSide();
-	auto realside = static_cast<Schema::Side>(EI(side));
-
-	if(modelside != realside && modelside != Schema::Side::BOTH)
-		logAi->warn("The loaded '%s' model was not trained to play as %s", modelkey, modelkey);
-
-	switch(model->getType())
+	if(battles.contains(bid))
 	{
-		case Schema::ModelType::SCRIPTED:
-			if(model->getName() == "StupidAI")
-			{
-				bai = CDynLibHandler::getNewBattleAI("StupidAI");
-				bai->initBattleInterface(env, cb, autocombatPreferences);
-			}
-			else if(model->getName() == "BattleAI")
-			{
-				bai = CDynLibHandler::getNewBattleAI("BattleAI");
-				bai->initBattleInterface(env, cb, autocombatPreferences);
-			}
-			else
-			{
-				THROW_FORMAT("Unexpected scripted model name: %s", model->getName());
-			}
-			break;
-		case Schema::ModelType::NN:
-			// XXX: must not call initBattleInterface here
-			bai = Base::Create(model, env, cb, autocombatPreferences.enableSpellsUsage);
-			break;
-
-		default:
-			THROW_FORMAT("Unexpected model type: %d", EI(model->getType()));
+		const auto message = "MMAI Router: duplicate battleStart for BattleID " + std::to_string(bid.getNum()) + ", active battles: [" + formatActiveBattleIds() + "]";
+		error(message);
+		throw std::runtime_error(message);
 	}
 
-	bai->battleStart(bid, army1, army2, tile, hero1, hero2, side, replayAllowed);
+#ifdef ENABLE_MMAI_TEST
+	std::shared_ptr<CBattleGameInterface> newBai;
+	if(testBattleAIFactory)
+		newBai = testBattleAIFactory(bid, side);
+	else
+		newBai = createDelegatedBAI(side);
+#else
+	auto newBai = createDelegatedBAI(side);
+#endif
+
+	debug("battleStart bid=" + std::to_string(bid.getNum()) + " -> BAI " + MakeAddrStr(newBai.get()));
+	battles.emplace(bid, BattleContext{newBai});
+	newBai->battleStart(bid, army1, army2, tile, hero1, hero2, side, replayAllowed);
 }
 
 void Router::battleTriggerEffect(const BattleID & bid, const BattleTriggerEffect & bte)
 {
-	bai->battleTriggerEffect(bid, bte);
+	getBattleAI(bid).battleTriggerEffect(bid, bte);
 }
 
 void Router::battleUnitsChanged(const BattleID & bid, const std::vector<UnitChanges> & changes)
 {
-	bai->battleUnitsChanged(bid, changes);
+	getBattleAI(bid).battleUnitsChanged(bid, changes);
 }
 
 void Router::yourTacticPhase(const BattleID & bid, int distance)
 {
-	bai->yourTacticPhase(bid, distance);
+	getBattleAI(bid).yourTacticPhase(bid, distance);
 }
 
 /*
