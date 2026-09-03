@@ -127,15 +127,20 @@ if(ENABLE_MMAI_TEST)
   target_link_libraries(MMAI_test PRIVATE MMAI)
   gtest_discover_tests(MMAI_test)
 
-  add_executable(MMAI_router_test test/router_test.cpp)
-  target_compile_definitions(MMAI_router_test PRIVATE ENABLE_MMAI_TEST)
-  target_link_libraries(MMAI_router_test PRIVATE MMAI)
-  gtest_discover_tests(MMAI_router_test)
-
   # default visibility is needed for testing
   set_target_properties(MMAI PROPERTIES CXX_VISIBILITY_PRESET "default")
   set_target_properties(MMAI_test PROPERTIES CXX_VISIBILITY_PRESET "default")
-  set_target_properties(MMAI_router_test PROPERTIES CXX_VISIBILITY_PRESET "default")
+
+  # The vcmi facade is created after AI/, so defer this target until it exists.
+  function(vcmi_add_mmai_router_test)
+    add_executable(MMAI_router_test ${CMAKE_SOURCE_DIR}/AI/MMAI/test/router_test.cpp)
+    target_compile_definitions(MMAI_router_test PRIVATE ENABLE_MMAI_TEST)
+    target_include_directories(MMAI_router_test PRIVATE ${CMAKE_SOURCE_DIR}/AI/MMAI)
+    target_link_libraries(MMAI_router_test PRIVATE vcmi gtest gtest_main)
+    gtest_discover_tests(MMAI_router_test)
+    set_target_properties(MMAI_router_test PROPERTIES CXX_VISIBILITY_PRESET "default")
+  endfunction()
+  cmake_language(DEFER DIRECTORY ${CMAKE_SOURCE_DIR} CALL vcmi_add_mmai_router_test)
 
   # Run tests with:
   # ctest --test-dir build/AI/MMAI/
