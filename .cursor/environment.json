@@ -1,0 +1,5 @@
+{
+  "name": "VCMI (Linux)",
+  "user": "ubuntu",
+  "install": "./.cursor/install.sh"
+}
