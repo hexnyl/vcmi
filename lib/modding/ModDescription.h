@@ -9,8 +9,6 @@
  */
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 struct CModVersion;
 struct ModVerificationInfo;
 class JsonNode;
@@ -64,10 +62,9 @@ public:
 	bool affectsGameplay() const;
 	bool isCompatibility() const;
 	bool isTranslation() const;
+	bool isDemoSupport() const;
 	bool keepDisabled() const;
 	bool isInstalled() const;
 
 	static void mergeModDescriptions(JsonNode & config, const std::string & fullDescription);
 };
-
-VCMI_LIB_NAMESPACE_END

@@ -16,6 +16,7 @@
 #include "../lib/GameLibrary.h"
 #include "../lib/mapping/CMapEditManager.h"
 #include "../lib/mapping/MapFormat.h"
+#include "../lib/modding/ModScope.h"
 #include "../lib/texts/CGeneralTextHandler.h"
 #include "../lib/CRandomGenerator.h"
 #include "../lib/serializer/JsonSerializer.h"
@@ -24,9 +25,11 @@
 #include "../vcmiqt/launcherdirs.h"
 #include "../vcmiqt/jsonutils.h"
 #include "windownewmap.h"
+#include "helper.h"
 #include "ui_windownewmap.h"
 #include "mainwindow.h"
 #include "generatorprogress.h"
+#include "maplayerselectiondialog.h"
 
 WindowNewMap::WindowNewMap(QWidget *parent) :
 	QDialog(parent),
@@ -34,7 +37,9 @@ WindowNewMap::WindowNewMap(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+	Helper::decorateDialog(this);
+
+	setFixedSize(this->width(), this->height());
 
 	setAttribute(Qt::WA_DeleteOnClose);
 
@@ -70,6 +75,8 @@ WindowNewMap::WindowNewMap(QWidget *parent) :
 	}
 
 	show();
+
+	initDefaultMapLayers();
 
 	if (!useLoaded)
 	{
@@ -107,6 +114,7 @@ bool WindowNewMap::loadUserSettings()
 	if (settings.isValid())
 	{
 		auto node = JsonUtils::toJson(settings);
+		node.setModScope(ModScope::scopeMap());
 		JsonDeserializer handler(nullptr, node);
 		handler.serializeStruct("lastSettings", mapGenOptions);
 		templ = mapGenOptions.getMapTemplate(); // Remember for later
@@ -189,6 +197,7 @@ void WindowNewMap::saveUserSettings()
 	JsonSerializer ser(nullptr, data);
 
 	ser.serializeStruct("lastSettings", mapGenOptions);
+	data.setModScope(ModScope::scopeMap());
 
 	auto variant = JsonUtils::toVariant(data);
 	s.setValue(newMapWindow, variant);
@@ -201,7 +210,7 @@ void WindowNewMap::on_cancelButton_clicked()
 	close();
 }
 
-void generateRandomMap(CMapGenerator & gen, MainWindow * window)
+void generateRandomMap(CMapGenerator & gen, EditorMainWindow * window)
 {
 	window->controller.setMap(gen.generate());
 }
@@ -213,16 +222,7 @@ std::unique_ptr<CMap> generateEmptyMap(CMapGenOptions & options)
 	map->creationDateTime = std::time(nullptr);
 	map->width = options.getWidth();
 	map->height = options.getHeight();
-	map->mapLayers.clear();
-	for(int i = 0; i < options.getLevels(); i++)
-	{
-		if(i == 0)
-			map->mapLayers.push_back(MapLayerId::SURFACE);
-		else if(i == 1)
-			map->mapLayers.push_back(MapLayerId::UNDERGROUND);
-		else
-			map->mapLayers.push_back(MapLayerId::UNKNOWN);
-	}
+	map->mapLayers = options.getLevelMapLayers();
 	
 	map->initTerrain();
 	map->getEditManager()->clearTerrain(&CRandomGenerator::getDefault());
@@ -239,6 +239,22 @@ std::pair<int, int> getSelectedMapSize(QComboBox* comboBox, const std::map<int, 
 	}
 
 	return { 0, 0 };
+}
+
+void WindowNewMap::initDefaultMapLayers()
+{
+	std::vector<MapLayerId> layers;
+	for(int i = 0; i < ui->spinBoxLevels->value(); i++)
+		layers.push_back(CMapGenOptions::getDefaultLayerForLevel(i));
+	mapGenOptions.setLevelMapLayers(layers);
+}
+
+void WindowNewMap::on_btnMapLayers_clicked()
+{
+	auto layers = mapGenOptions.getLevelMapLayers();
+	MapLayerSelectionDialog dlg(ui->spinBoxLevels->value(), layers, this);
+	if(dlg.exec() == QDialog::Accepted)
+		mapGenOptions.setLevelMapLayers(dlg.getSelectedLayers());
 }
 
 void WindowNewMap::on_okButton_clicked()
@@ -284,7 +300,7 @@ void WindowNewMap::on_okButton_clicked()
 	saveUserSettings();
 
 	std::unique_ptr<CMap> nmap;
-	auto & mapController = static_cast<MainWindow *>(parent())->controller;
+	auto & mapController = static_cast<EditorMainWindow *>(parent())->controller;
 
 	if(ui->randomMapCheck->isChecked())
 	{
@@ -324,7 +340,7 @@ void WindowNewMap::on_okButton_clicked()
 	
 	nmap->mods = MapController::modAssessmentMap(*nmap);
 	mapController.setMap(std::move(nmap));
-	static_cast<MainWindow *>(parent())->initializeMap(true);
+	static_cast<EditorMainWindow *>(parent())->initializeMap(true);
 	close();
 }
 
@@ -339,11 +355,15 @@ void WindowNewMap::on_sizeCombo_activated(int index)
 
 void WindowNewMap::on_spinBoxLevels_valueChanged(int value)
 {
-	if(value > 2)
+	if(value > 2 && !layerWarningShown)
+	{
 		QMessageBox::warning(this, tr("Multilevel support"), tr("Multilevel support is highly experimental yet. Expect issues.")); // TODO: multilevel support
+		layerWarningShown = true;
+	}
 
 	mapGenOptions.setLevels(ui->spinBoxLevels->value());
 	updateTemplateList();
+	initDefaultMapLayers();
 }
 
 

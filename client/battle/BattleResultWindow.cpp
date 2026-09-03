@@ -95,7 +95,7 @@ BattleResultWindow::BattleResultWindow(const BattleResult & br, CPlayerInterface
 		if(heroInfo.portraitSource.isValid()) //attacking hero
 		{
 			icons.push_back(std::make_shared<CAnimImage>(AnimationPath::builtin("PortraitsLarge"), heroInfo.getIconIndex(), 0, xs[static_cast<int>(i)], 38));
-			sideNames[static_cast<int>(i)] = heroInfo.name;
+			sideNames[static_cast<int>(i)] = heroInfo.name.toString(&GAME->translator());
 		}
 		else
 		{
@@ -136,10 +136,10 @@ BattleResultWindow::BattleResultWindow(const BattleResult & br, CPlayerInterface
 			int yPos = 344 + static_cast<int>(step) * 97;
 			for(auto & elem : br.casualties[step])
 			{
-				const auto * creature = elem.first.toEntity(LIBRARY);
-				if (creature->getId() == CreatureID::ARROW_TOWERS )
+				if (elem.first == CreatureID::ARROW_TOWERS)
 					continue; // do not show destroyed towers in battle results
 
+				const auto * creature = elem.first.toEntity(LIBRARY);
 				icons.push_back(std::make_shared<CAnimImage>(AnimationPath::builtin("CPRSMALL"), creature->getIconIndex(), 0, xPos, yPos));
 				std::ostringstream amount;
 				amount<<elem.second;
@@ -151,7 +151,7 @@ BattleResultWindow::BattleResultWindow(const BattleResult & br, CPlayerInterface
 
 	auto resources = getResources(br);
 
-	description = std::make_shared<CTextBox>(resources.resultText.toString(), Rect(69, 203, 330, 68), 0, FONT_SMALL, ETextAlignment::CENTER, Colors::WHITE);
+	description = std::make_shared<CTextBox>(resources.resultText.toString(&GAME->translator()), Rect(69, 203, 330, 68), 0, FONT_SMALL, ETextAlignment::CENTER, Colors::WHITE);
 	videoPlayer = std::make_shared<VideoWidget>(Point(107, 70), resources.prologueVideo, resources.loopedVideo, false);
 
 	ENGINE->music().playMusic(resources.musicName, false, true);

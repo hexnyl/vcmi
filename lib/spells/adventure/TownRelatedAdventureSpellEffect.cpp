@@ -13,15 +13,13 @@
 
 #include "AdventureSpellMechanics.h"
 
-#include "../CSpellHandler.h"
+#include "../CSpell.h"
 
 #include "../../CPlayerState.h"
 #include "../../callback/IGameInfoCallback.h"
 #include "../../mapObjects/CGHeroInstance.h"
 #include "../../mapObjects/CGTownInstance.h"
 #include "../../networkPacks/PacksForClient.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 namespace spells
 {
@@ -87,7 +85,7 @@ ESpellCastResult TownRelatedAdventureSpellEffect::onNoTownToSelect(SpellCastEnvi
 {
 	InfoWindow iw;
 	iw.player = parameters.caster->getCasterOwner();
-	iw.text.appendLocalString(EMetaText::GENERAL_TXT, 124);
+	iw.text.appendTextID("core.genrltxt.124");
 	env->apply(iw);
 	return ESpellCastResult::CANCEL;
 }
@@ -168,5 +166,3 @@ ESpellCastResult TownRelatedAdventureSpellEffect::beginCast(SpellCastEnvironment
 }
 }
 }
-
-VCMI_LIB_NAMESPACE_END

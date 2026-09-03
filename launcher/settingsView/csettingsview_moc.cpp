@@ -16,7 +16,7 @@
 
 #include "../modManager/cmodlistview_moc.h"
 #include "../helper.h"
-#include "../vcmiqt/jsonutils.h"
+#include "../../vcmiqt/jsonutils.h"
 #include "../languages.h"
 
 #include <QFileInfo>
@@ -81,24 +81,30 @@ static constexpr std::array downscalingFilterTypes =
 
 void CSettingsView::setDisplayList()
 {
+	// Rebuilding the list must not be interpreted as a user-selected display change.
+	QSignalBlocker guard(ui->comboBoxDisplayIndex);
 	QStringList list;
 
-	for (const auto screen : QGuiApplication::screens())
+	for(const auto screen : QGuiApplication::screens())
 		list << QString{"%1 - %2"}.arg(screen->name(), resolutionToString(screen->size()));
 
-	if(list.count() < 2)
+	ui->comboBoxDisplayIndex->clear();
+	ui->comboBoxDisplayIndex->addItems(list);
+
+	if(list.isEmpty())
+		return;
+
+	int displayIndex = settings["video"]["displayIndex"].Integer();
+	if(displayIndex < 0 || displayIndex >= list.count())
 	{
-		ui->comboBoxDisplayIndex->hide();
-		ui->labelDisplayIndex->hide();
-		fillValidResolutionsForScreen(0);
+		displayIndex = 0;
+		Settings node = settings.write["video"]["displayIndex"];
+		node->Integer() = displayIndex;
 	}
-	else
-	{
-		int displayIndex = settings["video"]["displayIndex"].Integer();
-		ui->comboBoxDisplayIndex->addItems(list);
-		// calls fillValidResolutions() in slot
-		ui->comboBoxDisplayIndex->setCurrentIndex(displayIndex);
-	}
+
+	ui->comboBoxDisplayIndex->setCurrentIndex(displayIndex);
+	fillValidResolutionsForScreen(displayIndex);
+	fillValidScalingRange();
 }
 
 void CSettingsView::setCheckbuttonState(QToolButton * button, bool checked)
@@ -140,10 +146,6 @@ void CSettingsView::fillValidAdventureAILibraries(QComboBox * comboBox, QString 
 {
 	comboBox->blockSignals(true);
 	comboBox->clear();
-
-#ifdef ENABLE_NULLKILLER_AI
-	comboBox->addItem(tr("Nullkiller (superseded by Nullkiller2)"), "Nullkiller");
-#endif
 
 #ifdef ENABLE_NULLKILLER2_AI
 	comboBox->addItem(tr("Nullkiller2 (default, recommended)"), "Nullkiller2");
@@ -241,9 +243,6 @@ void CSettingsView::loadSettings()
 
 	ui->spinBoxAutoSaveLimit->setValue(settings["general"]["autosaveCountLimit"].Integer());
 
-	ui->lineEditAutoSavePrefix->setText(QString::fromStdString(settings["general"]["savePrefix"].String()));
-	ui->lineEditAutoSavePrefix->setEnabled(settings["general"]["useSavePrefix"].Bool());
-
 	Languages::fillLanguages(ui->comboBoxLanguage, false);
 	fillValidRenderers();
 
@@ -297,9 +296,9 @@ void CSettingsView::loadToggleButtonSettings()
 	setCheckbuttonState(ui->buttonRepositoryExtra, settings["launcher"]["extraRepositoryEnabled"].Bool());
 
 	setCheckbuttonState(ui->buttonIgnoreSslErrors, settings["launcher"]["ignoreSslErrors"].Bool());
-	setCheckbuttonState(ui->buttonAutoSave, settings["general"]["saveFrequency"].Integer() > 0);
-
-	setCheckbuttonState(ui->buttonAutoSavePrefix, settings["general"]["useSavePrefix"].Bool());
+	const bool autosaveEnabled = settings["general"]["saveFrequency"].Integer() > 0;
+	setCheckbuttonState(ui->buttonAutoSave, autosaveEnabled);
+	ui->spinBoxAutoSaveLimit->setEnabled(autosaveEnabled);
 
 	setCheckbuttonState(ui->buttonRelativeCursorMode, settings["general"]["userRelativePointer"].Bool());
 	setCheckbuttonState(ui->buttonHapticFeedback, settings["general"]["hapticFeedback"].Bool());
@@ -344,6 +343,13 @@ QSize CSettingsView::getPreferredRenderingResolution()
 		return QSize(resX, resY);
 	}
 #endif
+
+	const auto screens = QGuiApplication::screens();
+	int displayIndex = settings["video"]["displayIndex"].Integer();
+
+	if(displayIndex >= 0 && displayIndex < screens.size())
+		return screens[displayIndex]->geometry().size() * screens[displayIndex]->devicePixelRatio();
+
 	return QApplication::primaryScreen()->geometry().size() * QApplication::primaryScreen()->devicePixelRatio();
 }
 
@@ -368,7 +374,7 @@ void CSettingsView::fillValidScalingRange()
 
 static QStringList getAvailableRenderingDrivers()
 {
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
 	QStringList result;
 
 	result += QString(); // empty value for autoselection
@@ -382,7 +388,7 @@ static QStringList getAvailableRenderingDrivers()
 			result += QString::fromLatin1(info.name);
 	}
 
-	SDL_Quit();
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 	return result;
 }
 
@@ -391,11 +397,11 @@ static QVector<QSize> findAvailableResolutions(int displayIndex)
 	// Ugly workaround since we don't actually need SDL in Launcher
 	// However Qt at the moment provides no way to query list of available resolutions
 	QVector<QSize> result;
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
 
 	int modesCount = SDL_GetNumDisplayModes(displayIndex);
 
-	for (int i =0; i < modesCount; ++i)
+	for (int i = 0; i < modesCount; ++i)
 	{
 		SDL_DisplayMode mode;
 		if (SDL_GetDisplayMode(displayIndex, i, &mode) != 0)
@@ -406,14 +412,14 @@ static QVector<QSize> findAvailableResolutions(int displayIndex)
 		result.push_back(resolution);
 	}
 
-	boost::range::sort(result, [](const auto & left, const auto & right)
+	std::ranges::sort(result, [](const auto & left, const auto & right)
 	{
 		return left.height() * left.width() < right.height() * right.width();
 	});
 
-	result.erase(boost::unique(result).end(), result.end());
+	result.erase(std::ranges::unique(result).end(), result.end());
 
-	SDL_Quit();
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
 	return result;
 }
@@ -435,7 +441,17 @@ void CSettingsView::fillValidResolutionsForScreen(int screenIndex)
 	{
 		QVector<QSize> resolutions = findAvailableResolutions(screenIndex);
 
-		if(!resolutions.contains(currentRes))
+		// Windowed mode allows custom resolutions, but only while they still fit on
+		// the selected display. This prevents stale 4K TV resolutions from keeping
+		// oversized scaling ranges after switching to a smaller monitor.
+		const auto screens = QGuiApplication::screens();
+		QSize desktopResolution;
+		if(screenIndex >= 0 && screenIndex < screens.size())
+			desktopResolution = screens[screenIndex]->geometry().size() * screens[screenIndex]->devicePixelRatio();
+
+		bool currentWindowedResolutionFits = !fullscreen && desktopResolution.isValid() && currentRes.width() <= desktopResolution.width() && currentRes.height() <= desktopResolution.height();
+
+		if(currentWindowedResolutionFits && !resolutions.contains(currentRes))
 			resolutions.append(currentRes);
 
 		for(const auto & entry : resolutions)
@@ -451,8 +467,21 @@ void CSettingsView::fillValidResolutionsForScreen(int screenIndex)
 	ui->comboBoxResolution->setCurrentIndex(resIndex);
 
 	// if selected resolution no longer exists, force update value to the largest (last) resolution
-	if(resIndex == -1)
+	if(resIndex == -1 && ui->comboBoxResolution->count() > 0)
+	{
 		ui->comboBoxResolution->setCurrentIndex(ui->comboBoxResolution->count() - 1);
+
+		// Borderless fullscreen uses desktop resolution only for display purposes.
+		// Persist fallback resolution only for modes where this setting is selectable.
+		if(!fullscreen || realFullscreen)
+		{
+			QStringList selectedResolution = ui->comboBoxResolution->currentText().split("x");
+
+			Settings node = settings.write["video"]["resolution"];
+			node["width"].Integer() = selectedResolution[0].toInt();
+			node["height"].Integer() = selectedResolution[1].toInt();
+		}
+	}
 }
 
 void CSettingsView::fillValidRenderers()
@@ -504,8 +533,8 @@ void CSettingsView::on_comboBoxResolution_currentTextChanged(const QString & arg
 	QStringList list = arg1.split("x");
 
 	Settings node = settings.write["video"]["resolution"];
-	node["width"].Float() = list[0].toInt();
-	node["height"].Float() = list[1].toInt();
+	node["width"].Integer() = list[0].toInt();
+	node["height"].Integer() = list[1].toInt();
 
 	fillValidResolutions();
 	fillValidScalingRange();
@@ -539,9 +568,13 @@ void CSettingsView::on_buttonFullModExtraction_toggled(bool value)
 void CSettingsView::on_comboBoxDisplayIndex_currentIndexChanged(int index)
 {
 	Settings node = settings.write["video"];
-	node["displayIndex"].Float() = index;
+	node["displayIndex"].Integer() = index;
 
 	fillValidResolutionsForScreen(index);
+	fillValidScalingRange();
+
+	if(auto * mainWindow = Helper::getMainWindow())
+		mainWindow->moveToScreen(index);
 }
 
 void CSettingsView::on_comboBoxFriendlyAI_currentIndexChanged(int index)
@@ -620,6 +653,7 @@ void CSettingsView::on_buttonAutoSave_toggled(bool value)
 	Settings node = settings.write["general"]["saveFrequency"];
 	node->Integer() = value ? 1 : 0;
 	updateCheckbuttonText(ui->buttonAutoSave);
+	ui->spinBoxAutoSaveLimit->setEnabled(value);
 }
 
 void CSettingsView::on_comboBoxLanguage_currentIndexChanged(int index)
@@ -774,24 +808,10 @@ void CSettingsView::on_buttonVSync_toggled(bool value)
 	ui->spinBoxFramerateLimit->setDisabled(settings["video"]["vsync"].Bool());
 }
 
-void CSettingsView::on_buttonAutoSavePrefix_toggled(bool value)
-{
-	Settings node = settings.write["general"]["useSavePrefix"];
-	node->Bool() = value;
-	ui->lineEditAutoSavePrefix->setEnabled(value);
-	updateCheckbuttonText(ui->buttonAutoSavePrefix);
-}
-
 void CSettingsView::on_spinBoxAutoSaveLimit_valueChanged(int arg1)
 {
 	Settings node = settings.write["general"]["autosaveCountLimit"];
 	node->Float() = arg1;
-}
-
-void CSettingsView::on_lineEditAutoSavePrefix_textEdited(const QString & arg1)
-{
-	Settings node = settings.write["general"]["savePrefix"];
-	node->String() = arg1.toStdString();
 }
 
 void CSettingsView::on_sliderReservedArea_valueChanged(int arg1)

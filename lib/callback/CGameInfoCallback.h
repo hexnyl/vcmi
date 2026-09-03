@@ -11,9 +11,8 @@
 
 #include "MapInfoCallback.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 struct SThievesGuildInfo;
+class ITranslator;
 class Player;
 
 class DLL_LINKAGE CGameInfoCallback : public MapInfoCallback
@@ -26,9 +25,11 @@ protected:
 public:
 	//various
 
-	int getDate(Date mode=Date::DAY)const override; //mode=0 - total days in game, mode=1 - day of week, mode=2 - current week, mode=3 - current month
+	Calendar getCalendar() const override;
+	using MapInfoCallback::getCalendar;
 	const StartInfo * getStartInfo() const override;
 	const StartInfo * getInitialStartInfo() const;
+	const scripting::Pool & getScriptContextPool() const override;
 
 	//player
 
@@ -89,7 +90,7 @@ public:
 
 	int howManyTowns(PlayerColor Player) const;
 	std::vector<const CGHeroInstance *> getAvailableHeroes(const CGObjectInstance * townOrTavern) const;
-	std::string getTavernRumor(const CGObjectInstance * townOrTavern) const;
+	std::string getTavernRumor(const CGObjectInstance * townOrTavern, const ITranslator * translator) const;
 	EBuildingState canBuildStructure(const CGTownInstance *t, BuildingID ID) const;
 	bool getTownInfo(const CGObjectInstance * town, InfoAboutTown & dest, const CGObjectInstance * selectedObject = nullptr) const;
 
@@ -116,10 +117,4 @@ public:
 	void getAllTiles(FowTilesType &tiles, std::optional<PlayerColor> player, int level, const std::function<bool(const TerrainTile *)> & filter) const override;
 
 	void getAllowedSpells(std::vector<SpellID> &out, std::optional<ui16> level = std::nullopt) const;
-
-#if SCRIPTING_ENABLED
-	virtual scripting::Pool * getGlobalContextPool() const override;
-#endif
 };
-
-VCMI_LIB_NAMESPACE_END

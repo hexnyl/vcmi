@@ -13,8 +13,6 @@
 #include "../bonuses/BonusSelector.h"
 #include "../bonuses/BonusCache.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CGHeroInstance;
 
 class TurnInfoBonusList
@@ -61,6 +59,7 @@ private:
 	int moveCostBaseValue;
 	int movePointsLimitLand;
 	int movePointsLimitWater;
+	int movePointsLimitAir;
 
 	bool waterWalkingTest;
 	bool flyingMovementTest;
@@ -78,10 +77,9 @@ public:
 	int getMovementCostBase() const;
 	int getMovePointsLimitLand() const;
 	int getMovePointsLimitWater() const;
+	int getMovePointsLimitAir() const;
 
 	TurnInfo(TurnInfoCache * sharedCache, const CGHeroInstance * target, int Turn);
 	bool isLayerAvailable(const EPathfindingLayer & layer) const;
 	int getMaxMovePoints(const EPathfindingLayer & layer) const;
 };
-
-VCMI_LIB_NAMESPACE_END

@@ -15,8 +15,6 @@
 #include "../../GameLibrary.h"
 #include "../../texts/CGeneralTextHandler.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 CFaction::CFaction() = default;
 CFaction::~CFaction() = default;
 
@@ -106,19 +104,7 @@ BoatId CFaction::getBoatType() const
 	return boatType;
 }
 
-TerrainId CFaction::getNativeTerrain() const
+bool CFaction::isNativeTerrain(TerrainId terrain) const
 {
-	return nativeTerrain;
+	return vstd::contains(nativeTerrains, terrain);
 }
-
-void CFaction::updateFrom(const JsonNode & data)
-{
-
-}
-
-void CFaction::serializeJson(JsonSerializeFormat & handler)
-{
-
-}
-
-VCMI_LIB_NAMESPACE_END

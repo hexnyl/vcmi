@@ -15,8 +15,6 @@
 #include "../mapObjects/CGHeroInstance.h"
 #include "../mapping/CMap.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 TavernHeroesPool::TavernHeroesPool(CGameState * owner)
 	: owner(owner)
 {}
@@ -66,7 +64,7 @@ void TavernHeroesPool::setHeroForPlayer(PlayerColor player, TavernHeroSlot slot,
 
 	if (replenishPoints)
 	{
-		h->setMovementPoints(h->movementPointsLimit(true));
+		h->setMovementPoints(h->movementPointsLimit());
 		h->mana = h->manaLimit();
 	}
 
@@ -78,7 +76,7 @@ void TavernHeroesPool::setHeroForPlayer(PlayerColor player, TavernHeroSlot slot,
 
 	currentTavern.push_back(newSlot);
 
-	boost::range::sort(currentTavern, [](const TavernSlot & left, const TavernSlot & right)
+	std::ranges::sort(currentTavern, [](const TavernSlot & left, const TavernSlot & right)
 	{
 		if (left.slot == right.slot)
 			return left.player < right.player;
@@ -137,7 +135,7 @@ void TavernHeroesPool::onNewDay()
 		if (vstd::contains(unusedHeroes, heroID))
 			continue;
 
-		heroPtr->setMovementPoints(heroPtr->movementPointsLimit(true));
+		heroPtr->setMovementPoints(heroPtr->movementPointsLimit());
 		heroPtr->mana = heroPtr->getManaNewTurn();
 	}
 }
@@ -152,5 +150,3 @@ void TavernHeroesPool::setAvailability(HeroTypeID hero, std::set<PlayerColor> ma
 {
 	perPlayerAvailability[hero] = mask;
 }
-
-VCMI_LIB_NAMESPACE_END

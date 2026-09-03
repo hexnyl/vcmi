@@ -10,8 +10,7 @@
 #pragma once
 
 #include "BattleSide.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include <vcmi/scripting/ApiTags.h>
 
 //TODO: change to enum class
 
@@ -30,7 +29,7 @@ class BattleHexArray;
  * Valid hexes are within the range 0 to 186, excluding some invalid values, ex. castle towers (-2, -3, -4).
  * Available hexes are those valid ones but NOT in the first or last column.
  */
-class DLL_LINKAGE BattleHex
+class DLL_LINKAGE BattleHex : public scripting::ApiCopyable<BattleHex>
 {
 public:
 
@@ -129,11 +128,14 @@ public:
 		setXY(xy.first, xy.second);
 	}
 
+	/// Column of this hex, 0 to BFIELD_WIDTH - 1. Columns 0 and BFIELD_WIDTH - 1 are not part of the
+	/// playable field - they only hold the heroes, so no unit ever stands there (see isAvailable).
 	[[nodiscard]] si16 getX() const noexcept
 	{
 		return hex % GameConstants::BFIELD_WIDTH;
 	}
 
+	/// Row of this hex, 0 to BFIELD_HEIGHT - 1. Odd rows are drawn shifted half a hex to the right.
 	[[nodiscard]] si16 getY() const noexcept
 	{
 		return hex / GameConstants::BFIELD_WIDTH;
@@ -183,6 +185,13 @@ public:
 		result.moveInDirection(dir, hasToBeValid);
 		return result;
 	}
+
+	[[nodiscard]] BattleHex copyToNorthWest() const { return cloneInDirection(TOP_LEFT,     false); }
+	[[nodiscard]] BattleHex copyToNorthEast() const { return cloneInDirection(TOP_RIGHT,    false); }
+	[[nodiscard]] BattleHex copyToEast()      const { return cloneInDirection(RIGHT,        false); }
+	[[nodiscard]] BattleHex copyToSouthEast() const { return cloneInDirection(BOTTOM_RIGHT, false); }
+	[[nodiscard]] BattleHex copyToSouthWest() const { return cloneInDirection(BOTTOM_LEFT,  false); }
+	[[nodiscard]] BattleHex copyToWest()      const { return cloneInDirection(LEFT,         false); }
 
 	[[nodiscard]] static uint8_t getDistance(const BattleHex & hex1, const BattleHex & hex2) noexcept
 	{
@@ -294,5 +303,3 @@ private:
 };
 
 DLL_EXPORT std::ostream & operator<<(std::ostream & os, const BattleHex & hex);
-
-VCMI_LIB_NAMESPACE_END

@@ -9,11 +9,10 @@
  */
 #pragma once
 
-#include "callback/GameCallbackHolder.h"
 #include "GameConstants.h"
+#include "JsonKeyExtractor.h"
 #include "ResourceSet.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "callback/GameCallbackHolder.h"
 
 namespace vstd
 {
@@ -38,24 +37,10 @@ public:
 class JsonRandom : public GameCallbackHolder
 {
 	IGameRandomizer & gameRandomizer;
+	JsonKeyExtractor jsonKeyExtractor;
 	vstd::RNG & rng;
 public:
 	using Variables = std::map<std::string, int>;
-
-private:
-	template<typename IdentifierType>
-	std::set<IdentifierType> filterKeys(const JsonNode & value, const std::set<IdentifierType> & valuesSet, const Variables & variables);
-
-	template<typename IdentifierType>
-	std::set<IdentifierType> filterKeysTyped(const JsonNode & value, const std::set<IdentifierType> & valuesSet);
-
-	template<typename IdentifierType>
-	IdentifierType decodeKey(const std::string & modScope, const std::string & value, const Variables & variables);
-
-	template<typename IdentifierType>
-	IdentifierType decodeKey(const JsonNode & value, const Variables & variables);
-
-	si32 loadVariable(const std::string & variableGroup, const std::string & value, const Variables & variables, si32 defaultValue);
 
 public:
 	JsonRandom(IGameInfoCallback *cb, IGameRandomizer & gameRandomizer);
@@ -95,5 +80,3 @@ public:
 
 	static std::vector<std::shared_ptr<Bonus>> loadBonuses(const JsonNode & value);
 };
-
-VCMI_LIB_NAMESPACE_END

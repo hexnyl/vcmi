@@ -10,17 +10,18 @@
 
 #pragma once
 
-#if SCRIPTING_ENABLED
 #include <vcmi/Environment.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include <boost/filesystem/path.hpp>
 
-class Services;
-class JsonNode;
-class ServerCallback;
+class CGameState;
+
+class ScriptService;
 
 namespace scripting
 {
+
+class MapEventDispatcher;
 
 using BattleCb = Environment::BattleCb;
 using GameCb = Environment::GameCb;
@@ -29,24 +30,6 @@ class DLL_LINKAGE Context
 {
 public:
 	virtual ~Context() = default;
-
-	virtual void run(const JsonNode & initialState) = 0;
-	virtual void run(ServerCallback * server, const JsonNode & initialState) = 0;
-
-	virtual JsonNode callGlobal(const std::string & name, const JsonNode & parameters) = 0;
-	virtual JsonNode callGlobal(ServerCallback * server, const std::string & name, const JsonNode & parameters) = 0;
-
-	virtual void setGlobal(const std::string & name, int value) = 0;
-	virtual void setGlobal(const std::string & name, const std::string & value) = 0;
-	virtual void setGlobal(const std::string & name, double value) = 0;
-	virtual void setGlobal(const std::string & name, const JsonNode & value) = 0;
-
-	virtual void getGlobal(const std::string & name, int & value) = 0;
-	virtual void getGlobal(const std::string & name, std::string & value) = 0;
-	virtual void getGlobal(const std::string & name, double & value) = 0;
-	virtual void getGlobal(const std::string & name, JsonNode & value) = 0;
-
-	virtual JsonNode saveState() = 0;
 };
 
 class DLL_LINKAGE Script
@@ -54,10 +37,7 @@ class DLL_LINKAGE Script
 public:
 	virtual ~Script() = default;
 
-	virtual const std::string & getName() const = 0;
-	virtual const std::string & getSource() const = 0;
-
-	virtual std::shared_ptr<Context> createContext(const Environment * env) const = 0;
+	virtual std::string getIdentifier() const = 0;
 };
 
 class DLL_LINKAGE Pool
@@ -65,9 +45,7 @@ class DLL_LINKAGE Pool
 public:
 	virtual ~Pool() = default;
 
-	virtual void serializeState(const bool saving, JsonNode & data) = 0;
-
-	virtual std::shared_ptr<Context> getContext(const Script * script) = 0;
+	virtual std::shared_ptr<Context> getContext(const Script * script) const = 0;
 };
 
 class DLL_LINKAGE Service
@@ -75,12 +53,16 @@ class DLL_LINKAGE Service
 public:
 	virtual ~Service() = default;
 
-	virtual void performRegistration(Services * services) const = 0;
-	virtual void run(std::shared_ptr<Pool> pool) const = 0;
+	/// Registers this language as a script backend. Called once, before any content is loaded.
+	virtual void installScripting(ScriptService & scripts) = 0;
+
+	virtual std::unique_ptr<Pool> createPoolInstance(const Environment * ENV) const = 0;
+
+	/// Builds the dispatcher for the game's map event script, or nullptr if the map has none
+	virtual std::unique_ptr<MapEventDispatcher> createMapScriptDispatcher(CGameState & gs, bool runInit) const = 0;
+
+	/// Writes Markdown and Lua Language Server reference files describing every exposed API type into the given output directory
+	virtual void exportDocs(const boost::filesystem::path & outDir) const = 0;
 };
 
-
 }
-
-VCMI_LIB_NAMESPACE_END
-#endif

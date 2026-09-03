@@ -23,16 +23,17 @@
 #include "../gameState/EVictoryLossCheckResult.h"
 #include "../gameState/RumorState.h"
 #include "../gameState/QuestInfo.h"
+#include "../gameState/ScenarioEventJournalEntry.h"
 #include "../gameState/TavernSlot.h"
 #include "../gameState/GameStatistics.h"
 #include "../int3.h"
 #include "../mapObjects/army/CSimpleArmy.h"
 #include "../spells/ViewSpellInt.h"
 
+#include <vcmi/scripting/ApiTags.h>
+
 class CClient;
 class CGameHandler;
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 class CGameState;
 class CArtifact;
@@ -79,6 +80,24 @@ struct DLL_LINKAGE PackageApplied : public CPackForClient
 		h & requestID;
 		h & packType;
 		h & result;
+	}
+};
+
+struct DLL_LINKAGE QueryResolved : public CPackForClient
+{
+	QueryResolved() = default;
+	explicit QueryResolved(QueryID queryID)
+		: queryID(queryID)
+	{
+	}
+
+	void visitTyped(ICPackVisitor & visitor) override;
+
+	QueryID queryID = QueryID::NONE;
+
+	template <typename Handler> void serialize(Handler & h)
+	{
+		h & queryID;
 	}
 };
 
@@ -208,7 +227,7 @@ struct DLL_LINKAGE DaysWithoutTown : public CPackForClient
 	}
 };
 
-struct DLL_LINKAGE EntitiesChanged : public CPackForClient
+struct DLL_LINKAGE EntitiesChanged : public CPackForClient, public scripting::ApiSharedPointer<EntitiesChanged>
 {
 	std::vector<EntityChanges> changes;
 
@@ -220,7 +239,7 @@ struct DLL_LINKAGE EntitiesChanged : public CPackForClient
 	}
 };
 
-struct DLL_LINKAGE SetResources : public CPackForClient
+struct DLL_LINKAGE SetResources : public CPackForClient, public scripting::ApiSharedPointer<SetResources>
 {
 	void visitTyped(ICPackVisitor & visitor) override;
 
@@ -335,12 +354,14 @@ struct DLL_LINKAGE ChangeSpells : public CPackForClient
 	ui8 learn = 1; //1 - gives spell, 0 - takes
 	ObjectInstanceID hid;
 	std::set<SpellID> spells;
+	bool eagleEyeBonus = false;
 
 	template <typename Handler> void serialize(Handler & h)
 	{
 		h & learn;
 		h & hid;
 		h & spells;
+		h & eagleEyeBonus;
 	}
 };
 
@@ -1177,13 +1198,14 @@ struct DLL_LINKAGE HeroVisit : public CPackForClient
 	}
 };
 
-struct DLL_LINKAGE InfoWindow : public CPackForClient //103  - displays simple info window
+struct DLL_LINKAGE InfoWindow : public CPackForClient, public scripting::ApiSharedPointer<InfoWindow>
 {
 	EInfoWindowMode type = EInfoWindowMode::MODAL;
 	MetaString text;
 	std::vector<Component> components;
 	PlayerColor player;
 	ui16 soundID = 0;
+	std::optional<ScenarioEventJournalInfo> journalInfo;
 
 	void visitTyped(ICPackVisitor & visitor) override;
 
@@ -1194,6 +1216,8 @@ struct DLL_LINKAGE InfoWindow : public CPackForClient //103  - displays simple i
 		h & components;
 		h & player;
 		h & soundID;
+		if(h.hasFeature(Handler::Version::SCENARIO_EVENT_JOURNAL))
+			h & journalInfo;
 	}
 	InfoWindow() = default;
 };
@@ -1245,6 +1269,22 @@ struct DLL_LINKAGE SetObjectProperty : public CPackForClient
 		h & id;
 		h & what;
 		h & identifier;
+	}
+};
+
+struct DLL_LINKAGE SetQuestHint : public CPackForClient
+{
+	ObjectInstanceID object;
+	MetaString hint;
+
+	SetQuestHint() = default;
+
+	void visitTyped(ICPackVisitor & visitor) override;
+
+	template <typename Handler> void serialize(Handler & h)
+	{
+		h & object;
+		h & hint;
 	}
 };
 
@@ -1553,5 +1593,3 @@ struct DLL_LINKAGE ResponseStatistic : public CPackForClient
 		h & statistic;
 	}
 };
-
-VCMI_LIB_NAMESPACE_END

@@ -12,12 +12,15 @@
 #include "../../lib/CStack.h" // TODO: remove
                               // Eventually only IBattleInfoCallback and battle::Unit should be used, 
                               // CUnitState should be private and CStack should be removed completely
-#include "../../lib/spells/CSpellHandler.h"
 #include "../../lib/spells/ISpellMechanics.h"
 #include "../../lib/spells/ObstacleCasterProxy.h"
 #include "../../lib/battle/CObstacleInstance.h"
 
 #include "../../lib/GameLibrary.h"
+
+#include <vcmi/spells/Service.h>
+#include <vcmi/spells/Spell.h>
+
 
 uint64_t averageDmg(const DamageRange & range)
 {
@@ -232,9 +235,9 @@ float AttackPossibility::calculateDamageReduce(
 			{
 				return u->unitSide() != defender->unitSide()
 					&& !u->isTurret()
-					&& u->creatureId() != CreatureID::CATAPULT
-					&& u->creatureId() != CreatureID::BALLISTA
-					&& u->creatureId() != CreatureID::FIRST_AID_TENT
+					&& !u->isCatapult()
+					&& !u->isBallista()
+					&& !u->isFirstAidTent()
 					&& u->getCount();
 			});
 
@@ -332,7 +335,7 @@ AttackPossibility AttackPossibility::evaluate(
 	if(attackInfo.shooting)
 		defenderHex.insert(defender->getPosition());
 	else
-		defenderHex = CStack::meleeAttackHexes(attacker, defender, hex);
+		defenderHex = state->meleeAttackHexes(attacker, defender, hex);
 
 	for(const BattleHex & defHex : defenderHex)
 	{
@@ -472,7 +475,7 @@ AttackPossibility AttackPossibility::evaluate(
 					ap.collateralDamageReduce += defenderDamageReduce;
 
 				if(u->unitId() == defender->unitId()
-					|| (!attackInfo.shooting && CStack::isMeleeAttackPossible(u, attacker, hex)))
+					|| (!attackInfo.shooting && state->isMeleeAttackPossible(u, attacker, hex)))
 				{
 					//FIXME: handle RANGED_RETALIATION ?
 					ap.attackerDamageReduce += attackerDamageReduce;

@@ -15,8 +15,6 @@
 #include "../callback/IGameInfoCallback.h"
 #include "CGPathNode.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace PathfinderUtil
 {
 	using FoW = MapTilesStorage<uint8_t>;
@@ -84,6 +82,13 @@ namespace PathfinderUtil
 
 			break;
 
+		case ELayer::AVIATE:
+			//cannot aviate over blocked and visitable tiles (use FLY layer instead)
+			if(tinfo.blocked() || tinfo.visitable())
+				return EPathAccessibility::BLOCKED;
+			return EPathAccessibility::ACCESSIBLE;
+			break;
+
 		case ELayer::AIR:
 			return EPathAccessibility::FLYABLE;
 
@@ -93,5 +98,3 @@ namespace PathfinderUtil
 		return EPathAccessibility::ACCESSIBLE;
 	}
 }
-
-VCMI_LIB_NAMESPACE_END

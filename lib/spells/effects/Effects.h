@@ -13,8 +13,6 @@
 #include "Effect.h"
 #include "../../GameConstants.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace spells
 {
 namespace effects
@@ -23,7 +21,7 @@ namespace effects
 class DLL_LINKAGE Effects
 {
 public:
-	using EffectsToApply = std::vector<std::pair<const Effect *, EffectTarget>>;
+	using EffectsToApply = std::vector<std::pair<const Effect *, Target>>;
 
 	using EffectsMap = std::map<std::string, std::shared_ptr<Effect>>;
 	using EffectData = std::array<EffectsMap, GameConstants::SPELL_SCHOOL_LEVELS>;
@@ -32,8 +30,6 @@ public:
 
 	virtual ~Effects() = default;
 
-	void add(const std::string & name, const std::shared_ptr<Effect>& effect, const int level);
-
 	bool applicable(Problem & problem, const Mechanics * m) const;
 	bool applicable(Problem & problem, const Mechanics * m, const Target & aimPoint, const Target & spellTarget) const;
 
@@ -41,11 +37,10 @@ public:
 
 	EffectsToApply prepare(const Mechanics * m, const Target & aimPoint, const Target & spellTarget) const;
 
-	void serializeJson(const Registry * registry, JsonSerializeFormat & handler, const int level);
+	/// Builds the effects map for a single spell level from its JSON config.
+	static EffectsMap loadJson(const JsonNode & effectMap, const std::string & spellScope, const std::string & spellIdentifier);
 };
 
 
 }
 }
-
-VCMI_LIB_NAMESPACE_END

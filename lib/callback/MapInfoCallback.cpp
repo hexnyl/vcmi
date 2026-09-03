@@ -16,9 +16,8 @@
 #include "../mapObjects/MiscObjects.h"
 #include "../StartInfo.h"
 #include "../mapping/CMap.h"
-#include "../spells/CSpellHandler.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include <vcmi/spells/Spell.h>
 
 MapInfoCallback::~MapInfoCallback() = default;
 
@@ -125,5 +124,3 @@ const CMapHeader * MapInfoCallback::getMapHeader() const
 {
 	return getMapConstPtr();
 }
-
-VCMI_LIB_NAMESPACE_END

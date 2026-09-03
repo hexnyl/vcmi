@@ -13,7 +13,6 @@
 #include "BattleExchangeVariant.h"
 
 #include "StackWithBonuses.h"
-#include "EnemyInfo.h"
 #include "tbb/parallel_for.h"
 #include "../../lib/CStopWatch.h"
 #include "../../lib/CThreadHelper.h"
@@ -21,7 +20,6 @@
 #include "../../lib/callback/CBattleCallback.h"
 #include "../../lib/callback/IGameInfoCallback.h"
 #include "../../lib/mapObjects/CGTownInstance.h"
-#include "../../lib/spells/CSpellHandler.h"
 #include "../../lib/spells/ISpellMechanics.h"
 #include "../../lib/battle/BattleAction.h"
 #include "../../lib/battle/BattleStateInfoForRetreat.h"
@@ -97,7 +95,12 @@ BattleAction CBattleAI::useHealingTent(const BattleID & battleID, const CStack *
 
 void CBattleAI::yourTacticPhase(const BattleID & battleID, int distance)
 {
-	cb->battleMakeTacticAction(battleID, BattleAction::makeEndOFTacticPhase(cb->getBattle(battleID)->battleGetTacticsSide()));
+	tacticsHandler->onTacticsStarted();
+}
+
+void CBattleAI::actionFinished(const BattleID & battleID, const BattleAction & action)
+{
+	tacticsHandler->onActionFinished(action);
 }
 
 static float getStrengthRatio(std::shared_ptr<CBattleInfoCallback> cb, BattleSide side)
@@ -142,7 +145,7 @@ void CBattleAI::activeStack(const BattleID & battleID, const CStack * stack )
 
 	auto start = std::chrono::high_resolution_clock::now();
 
-	if(stack->creatureId() == CreatureID::CATAPULT)
+	if(stack->isCatapult())
 	{
 		cb->battleMakeUnitAction(battleID, useCatapult(battleID, stack));
 		return;
@@ -246,6 +249,8 @@ void CBattleAI::battleStart(const BattleID & battleID, const CCreatureSet *army1
 {
 	LOG_TRACE(logAi);
 	side = Side;
+	auto tacticsSettings = TacticsHandler::Settings{.enabled = autobattlePreferences.enableTacticsUsage};
+	tacticsHandler = std::make_unique<TacticsHandler>(cb, battleID, tacticsSettings);
 }
 
 void CBattleAI::print(const std::string &text) const

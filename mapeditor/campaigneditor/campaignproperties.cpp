@@ -8,6 +8,7 @@
  *
  */
 #include "StdInc.h"
+#include "../helper.h"
 #include "campaignproperties.h"
 #include "ui_campaignproperties.h"
 
@@ -17,6 +18,7 @@
 #include "../../lib/campaign/CampaignState.h"
 #include "../../lib/constants/StringConstants.h"
 #include "../../lib/json/JsonNode.h"
+#include "../translator.h"
 
 CampaignProperties::CampaignProperties(std::shared_ptr<CampaignState> campaignState):
 	ui(new Ui::CampaignProperties),
@@ -24,17 +26,17 @@ CampaignProperties::CampaignProperties(std::shared_ptr<CampaignState> campaignSt
 	regions(campaignState->campaignRegions)
 {
 	ui->setupUi(this);
-
+	Helper::decorateDialog(this);
 	setWindowTitle(tr("Campaign Properties"));
 	
 	setWindowModality(Qt::ApplicationModal);
 
-	ui->lineEditName->setText(QString::fromStdString(campaignState->name.toString()));
-	ui->textEditDescription->setText(QString::fromStdString(campaignState->description.toString()));
-	ui->lineEditAuthor->setText(QString::fromStdString(campaignState->author.toString()));
-	ui->lineEditAuthorContact->setText(QString::fromStdString(campaignState->authorContact.toString()));
+	ui->lineEditName->setText(QString::fromStdString(campaignState->name.toString(&Translator::instance())));
+	ui->textEditDescription->setText(QString::fromStdString(campaignState->description.toString(&Translator::instance())));
+	ui->lineEditAuthor->setText(QString::fromStdString(campaignState->author.toString(&Translator::instance())));
+	ui->lineEditAuthorContact->setText(QString::fromStdString(campaignState->authorContact.toString(&Translator::instance())));
 	ui->dateTimeEditCreationDateTime->setDateTime(QDateTime::fromSecsSinceEpoch(campaignState->creationDateTime));
-	ui->lineEditCampaignVersion->setText(QString::fromStdString(campaignState->campaignVersion.toString()));
+	ui->lineEditCampaignVersion->setText(QString::fromStdString(campaignState->campaignVersion.toString(&Translator::instance())));
 	ui->lineEditMusic->setText(QString::fromStdString(campaignState->music.getName()));
 	ui->checkBoxScenarioDifficulty->setChecked(campaignState->difficultyChosenByPlayer);
 	ui->lineEditLoadingBackground->setText(QString::fromStdString(campaignState->loadingBackground.getName()));

@@ -14,6 +14,7 @@
 #include "../../lib/mapObjects/CGHeroInstance.h"
 #include "../../lib/entities/artifact/CArtifactFittingSet.h"
 
+
 namespace Ui {
 class HeroArtifactsWidget;
 }

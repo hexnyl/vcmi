@@ -9,11 +9,11 @@
  */
 
 #include "StdInc.h"
-#include "../lib/bonuses/CBonusSystemNode.h"
-#include "../lib/bonuses/BonusEnum.h"
-#include "../lib/bonuses/Limiters.h"
-#include "../lib/bonuses/Propagators.h"
-#include "../lib/bonuses/Updaters.h"
+#include "../../lib/bonuses/CBonusSystemNode.h"
+#include "../../lib/bonuses/BonusEnum.h"
+#include "../../lib/bonuses/Limiters.h"
+#include "../../lib/bonuses/Propagators.h"
+#include "../../lib/bonuses/Updaters.h"
 
 namespace test
 {
@@ -112,6 +112,32 @@ protected:
 		creatureDevil.addNewBonus(luckBonusEnemies);
 	}
 };
+
+TEST(BonusSystemInvalidationTest, AttachingChildKeepsUnchangedBranchVersions)
+{
+	CBonusSystemNode parent{BonusNodeType::PLAYER};
+	CBonusSystemNode firstChild{BonusNodeType::HERO};
+	CBonusSystemNode secondChild{BonusNodeType::HERO};
+
+	firstChild.attachTo(parent);
+	parent.addNewBonus(std::make_shared<Bonus>(
+		BonusDuration::PERMANENT,
+		BonusType::MORALE,
+		BonusSource::OTHER,
+		1,
+		BonusSourceID()));
+
+	EXPECT_EQ(firstChild.valOfBonuses(BonusType::MORALE), 1);
+
+	const auto parentVersion = parent.getTreeVersion();
+	const auto firstChildVersion = firstChild.getTreeVersion();
+
+	secondChild.attachTo(parent);
+
+	EXPECT_EQ(secondChild.valOfBonuses(BonusType::MORALE), 1);
+	EXPECT_EQ(parent.getTreeVersion(), parentVersion);
+	EXPECT_EQ(firstChild.getTreeVersion(), firstChildVersion);
+}
 
 TEST_F(BonusSystemTest, multipleBonusSources)
 {

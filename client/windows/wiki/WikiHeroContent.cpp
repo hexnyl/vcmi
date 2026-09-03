@@ -28,6 +28,7 @@
 #include "../../../lib/spells/CSpellHandler.h"
 #include "../../../lib/entities/hero/CHero.h"
 #include "../../../lib/entities/hero/CHeroClass.h"
+#include "../../../lib/mapObjects/CGHeroInstance.h"
 #include "../../../lib/entities/hero/CHeroHandler.h"
 #include "../../../lib/entities/hero/EHeroGender.h"
 #include "../../../lib/entities/artifact/CArtifact.h"
@@ -36,6 +37,7 @@
 #include "../../../lib/texts/CGeneralTextHandler.h"
 #include "WikiWindow.h"
 #include "../InfoWindows.h"
+#include "../../GameInstance.h"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Layout constants
@@ -55,7 +57,8 @@ std::vector<std::shared_ptr<CIntObject>> buildHeroContent(
 	const CHero * hero,
 	int viewportWidth,
 	bool blueStyle,
-	WikiHeroNavigateCallback navigateCallback)
+	WikiHeroNavigateCallback navigateCallback,
+	const CGHeroInstance * mapHero)
 {
 	std::vector<std::shared_ptr<CIntObject>> widgets;
 	if(!hero) return widgets;
@@ -73,7 +76,7 @@ std::vector<std::shared_ptr<CIntObject>> buildHeroContent(
 	widgets.push_back(std::make_shared<CLabel>(
 		W / 2, curY,
 		FONT_BIG, ETextAlignment::CENTER, Colors::YELLOW,
-		hero->getNameTranslated()));
+		(mapHero && !mapHero->nameCustomTextId.empty()) ? GAME->translator().translate(mapHero->getNameTextID()) : hero->getNameTranslated()));
 	curY += 26;
 
 	{
@@ -113,19 +116,32 @@ std::vector<std::shared_ptr<CIntObject>> buildHeroContent(
 		const int bioX = MARGIN + portraitW + GAP;
 		const int bioW = W - bioX - MARGIN;
 
+		const bool hasCustomData = mapHero && (
+			!mapHero->nameCustomTextId.empty() ||
+			!mapHero->biographyCustomTextId.empty() ||
+			mapHero->customPortraitSource.isValid());
+
+		const int portraitFrame = (mapHero && mapHero->customPortraitSource.isValid())
+				? (int)mapHero->getPortraitSource().toHeroType()->getIconIndex()
+			: hero->imageIndex;
 		widgets.push_back(std::make_shared<CAnimImage>(
 			AnimationPath::builtin("PortraitsLarge"),
-			hero->imageIndex, 0,
+			portraitFrame, 0,
 			MARGIN, curY));
 
-		const HeroTypeID hId = hero->getId();
-		widgets.push_back(std::make_shared<WikiClickable>(
-			Rect(MARGIN, curY, portraitW, portraitH),
-			nullptr,
-			[hId](){ ENGINE->windows().createAndPushWindow<CHeroOverview>(hId); },
-			blueStyle));
+		if(!hasCustomData)
+		{
+			const HeroTypeID hId = hero->getId();
+			widgets.push_back(std::make_shared<WikiClickable>(
+				Rect(MARGIN, curY, portraitW, portraitH),
+				nullptr,
+				[hId](){ ENGINE->windows().createAndPushWindow<CHeroOverview>(hId); },
+				blueStyle));
+		}
 
-		const std::string bio = hero->getBiographyTranslated();
+		const std::string bio = (mapHero && !mapHero->biographyCustomTextId.empty())
+			? GAME->translator().translate(mapHero->getBiographyTextID())
+			: hero->getBiographyTranslated();
 		if(!bio.empty())
 		{
 			auto bioLabel = std::make_shared<CMultiLineLabel>(
@@ -147,10 +163,10 @@ std::vector<std::shared_ptr<CIntObject>> buildHeroContent(
 	{
 		curY += 16;
 		const std::vector<std::string> psNames = {
-			LIBRARY->generaltexth->jktexts[1],
-			LIBRARY->generaltexth->jktexts[2],
-			LIBRARY->generaltexth->jktexts[3],
-			LIBRARY->generaltexth->jktexts[4],
+			LIBRARY->generaltexth->translate("core.jktext.1"),
+			LIBRARY->generaltexth->translate("core.jktext.2"),
+			LIBRARY->generaltexth->translate("core.jktext.3"),
+			LIBRARY->generaltexth->translate("core.jktext.4"),
 		};
 		const int nStats = static_cast<int>(psNames.size());
 		const int tableW = W - MARGIN * 2;
@@ -421,7 +437,7 @@ std::vector<std::shared_ptr<CIntObject>> buildHeroContent(
 				FONT_SMALL, ETextAlignment::TOPLEFT, Colors::WHITE,
 				sk->getNameTranslated()));
 			const std::string lvlStr = (level >= 1 && level <= 3)
-				? LIBRARY->generaltexth->levels[level - 1]
+				? GAME->translator().translate("core.skilllev", level - 1)
 				: std::to_string(level);
 			widgets.push_back(std::make_shared<CLabel>(
 				MARGIN + iconW + nameW + CELL_L, curY + rowH / 2 - 5,

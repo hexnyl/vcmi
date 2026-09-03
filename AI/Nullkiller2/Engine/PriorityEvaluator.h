@@ -8,20 +8,14 @@
 *
 */
 #pragma once
-#if __has_include(<fuzzylite/Headers.h>)
-#  include <fuzzylite/Headers.h>
-#else
-#  include <fl/Headers.h>
-#endif
 #include "../Goals/CGoal.h"
 #include "../Pathfinding/AIPathfinder.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
-VCMI_LIB_NAMESPACE_END
-
 namespace NK2AI
 {
+
+float evaluateEnemyTownConquestValue(float baseValue, int visibleEnemyTownCount);
+float evaluateMaxArmyLossForConquest(float baseMaxArmyLoss, float conquestValue, bool isEnemyTownConquest);
 
 class BuildingInfo;
 class Nullkiller;
@@ -55,7 +49,7 @@ public:
 struct DLL_EXPORT EvaluationContext
 {
 	float movementCost;
-	std::map<HeroRole, float> movementCostByRole;
+	std::array<float, 2> movementCostByRole;
 	int manaCost;
 	uint64_t danger;
 	float closestWayRatio;
@@ -89,6 +83,7 @@ struct DLL_EXPORT EvaluationContext
 	EvaluationContext(const Nullkiller * aiNk);
 
 	void addNonCriticalStrategicalValue(float value);
+	float getMovementCost(HeroRole role) const;
 };
 
 class IEvaluationContextBuilder
@@ -105,9 +100,10 @@ class PriorityEvaluator
 public:
 	PriorityEvaluator(const Nullkiller * aiNk);
 	~PriorityEvaluator();
-	void initVisitTile();
 
 	float evaluate(Goals::TSubgoal task, int priorityTier = BUILDINGS);
+	float evaluate(Goals::TSubgoal task, int priorityTier, const EvaluationContext & evaluationContext);
+	EvaluationContext buildEvaluationContext(const Goals::TSubgoal & goal) const;
 
 	enum PriorityTier : int32_t
 	{
@@ -115,8 +111,8 @@ public:
 		INSTAKILL,
 		INSTADEFEND,
 		KILL,
-		EXPLORE_AND_GATHER, // Includes guarded resources/artifacts/portals
 		ESCAPE,
+		EXPLORE_AND_GATHER, // Includes guarded resources/artifacts/portals
 		DEFEND,
 		MAX_PRIORITY_TIER = DEFEND
 	};
@@ -124,27 +120,8 @@ public:
 private:
 	const Nullkiller * aiNk;
 
-	fl::Engine * engine;
-	fl::InputVariable * armyLossRatioVariable;
-	fl::InputVariable * heroRoleVariable;
-	fl::InputVariable * mainTurnDistanceVariable;
-	fl::InputVariable * scoutTurnDistanceVariable;
-	fl::InputVariable * turnVariable;
-	fl::InputVariable * goldRewardVsMovementVariable;
-	fl::InputVariable * armyRewardVariable;
-	fl::InputVariable * armyGrowthVariable;
-	fl::InputVariable * dangerVariable;
-	fl::InputVariable * skillRewardVariable;
-	fl::InputVariable * strategicalValueVariable;
-	fl::InputVariable * rewardTypeVariable;
-	fl::InputVariable * closestHeroRatioVariable;
-	fl::InputVariable * goldPressureVariable;
-	fl::InputVariable * goldCostVariable;
-	fl::InputVariable * fearVariable;
-	fl::OutputVariable * value;
 	std::vector<std::shared_ptr<IEvaluationContextBuilder>> evaluationContextBuilders;
 
-	EvaluationContext buildEvaluationContext(const Goals::TSubgoal & goal) const;
 	static float evaluateMovement(float score, float movementCost);
 	static float evaluateArmyLossRatio(float score, float armyLossRatio, HeroRole heroRole);
 	static float evaluateSkillReward(float score, float skillReward, float armyInvolvement, float armyLossRatio);

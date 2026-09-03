@@ -12,8 +12,6 @@
 
 #include <vcmi/spells/Caster.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace spells
 {
 
@@ -33,7 +31,7 @@ public:
 	int64_t getEffectValue(const Spell * spell) const override;
 	int64_t getEffectRange(const Spell * spell) const override;
 	PlayerColor getCasterOwner() const override;
-	void getCasterName(MetaString & text) const override;
+	std::string getCasterNameTextID() const override;
 	void getCastDescription(const Spell * spell, const battle::Units & attacked, MetaString & text) const override;
 	void spendMana(ServerCallback * server, const int32_t spellCost) const override;
 	const CGHeroInstance * getHeroCaster() const override;
@@ -44,5 +42,3 @@ protected:
 };
 
 } // namespace spells
-
-VCMI_LIB_NAMESPACE_END

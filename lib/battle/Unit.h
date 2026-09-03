@@ -11,6 +11,7 @@
 #pragma once
 
 #include <vcmi/Creature.h>
+#include <vcmi/scripting/ApiTags.h>
 #include <vcmi/spells/Caster.h>
 
 #include "../bonuses/Bonus.h"
@@ -19,12 +20,12 @@
 #include "IUnitInfo.h"
 #include "BattleHexArray.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 enum class EMetaText : uint8_t;
 class MetaString;
 class JsonNode;
 class JsonSerializeFormat;
+
+class ITranslator;
 
 namespace battle
 {
@@ -62,7 +63,7 @@ struct HealInfo
 
 class CUnitState;
 
-class DLL_LINKAGE Unit : public IUnitInfo, public spells::Caster, public virtual IBonusBearer, public ACreature
+class DLL_LINKAGE Unit : public IUnitInfo, public spells::Caster, public virtual IBonusBearer, public ACreature, public	scripting::ApiRawPointer<Unit>
 {
 	static BattleHexArray::ArrayOfBattleHexArrays precomputeUnitHexes(BattleSide side, bool twoHex);
 
@@ -74,6 +75,9 @@ public:
 	virtual int32_t creatureIndex() const = 0;
 	virtual CreatureID creatureId() const = 0;
 	virtual int32_t creatureLevel() const = 0;
+	/// Level of this unit rather than the tier of its creature - the two differ for a commander,
+	/// which levels up on its own. Same as creatureLevel unless overridden.
+	virtual int32_t unitLevel() const;
 	virtual int32_t creatureCost() const = 0;
 	virtual int32_t creatureIconIndex() const = 0;
 
@@ -84,6 +88,10 @@ public:
 
 	bool isDead() const;
 	bool isTurret() const;
+	bool isCatapult() const;
+	bool isBallista() const;
+	bool isFirstAidTent() const;
+	bool isAmmoCart() const;
 	virtual bool isValidTarget(bool allowDead = false) const = 0; //non-turret non-ghost stacks (can be attacked or be object of magic effect)
 
 	virtual bool isHypnotized() const = 0;
@@ -98,6 +106,9 @@ public:
 	virtual bool canShoot() const = 0;
 	virtual bool isShooter() const = 0;
 	bool isMeleeAttacker() const;
+	bool isSummoned() const;
+	bool hasImmunity(SpellID spell) const;
+	bool hasAbsoluteImmunity(SpellID spell) const;
 
 	/// returns initial size of this unit
 	virtual int32_t getCount() const = 0;
@@ -152,9 +163,10 @@ public:
 	static BattleHex occupiedHex(const BattleHex & assumedPos, bool twoHex, BattleSide side);
 
 	///MetaStrings
-	void addText(MetaString & text, EMetaText type, int32_t serial, const boost::logic::tribool & plural = boost::logic::indeterminate) const;
-	void addNameReplacement(MetaString & text, const boost::logic::tribool & plural = boost::logic::indeterminate) const;
-	std::string formatGeneralMessage(const int32_t baseTextId) const;
+	void addText(MetaString & text, EMetaText type, int32_t serial) const;
+	void addNameReplacement(MetaString & text) const;
+	void addNameReplacement(MetaString & text, TQuantity count) const;
+	std::string formatGeneralMessage(const int32_t baseTextId, const ITranslator * translator) const;
 
 	int getRawSurrenderCost() const;
 
@@ -163,14 +175,14 @@ public:
 
 	//NOTE: save could possibly be const, but this requires heavy changes to Json serialization,
 	//also this method should be called only after modifying object
-	virtual void save(JsonNode & data) = 0;
+	virtual JsonNode save() = 0;
 	virtual void load(const JsonNode & data) = 0;
 
 	virtual void damage(int64_t & amount) = 0;
 	virtual HealInfo heal(int64_t & amount, EHealLevel level, EHealPower power) = 0;
 };
 
-class DLL_LINKAGE UnitInfo
+class DLL_LINKAGE UnitInfo final : public scripting::ApiSerializable<UnitInfo>
 {
 public:
     uint32_t id = 0;
@@ -184,8 +196,16 @@ public:
 
 	void save(JsonNode & data);
 	void load(uint32_t id_, const JsonNode & data);
+
+	template<typename Serializer>
+	void serializeScript(Serializer & s)
+	{
+		s("count",    count,    "Number of creatures in the stack.");
+		s("type",     type,     "Creature type of this stack.");
+		s("side",     side,     "Battle side the stack belongs to (attacker or defender).");
+		s("position", position, "Position of the stack on the battlefield. For double-wide units this is their front hex");
+		s("summoned", summoned, "True if the stack was summoned mid-battle and was not part of the initial army.");
+	}
 };
 
 }
-
-VCMI_LIB_NAMESPACE_END

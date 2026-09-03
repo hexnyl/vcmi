@@ -48,7 +48,17 @@
 	"villageHall": {
 		"id" : 10,
 		"mode" : "auto",
-		"produce": { "gold": 500 }
+		"produce": { "gold": 500 },
+		"bonuses": [
+			{
+				"type": "BATTLE_CAN_FLEE",
+				"val": -10
+			},
+			{
+				"type": "BATTLE_CAN_SURRENDER",
+				"val": -10
+			}
+		]
 	},
 
 	"townHall": {
@@ -175,7 +185,7 @@
 	"manaVortex": {
 		"configuration" : {
 			"resetParameters" : {
-				"period" : 7,
+				"weeks" : 1,
 				"visitors" : true
 			},
 			"visitMode" : "hero", // Should be 'once' to match (somewhat buggy) H3 logic

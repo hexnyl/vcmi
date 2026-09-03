@@ -12,7 +12,7 @@
 #include "../gui/CIntObject.h"
 #include "AdventureMapShortcuts.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../../lib/int3.h"
 
 class CGObjectInstance;
 class CGHeroInstance;
@@ -24,8 +24,6 @@ struct ObjectPosInfo;
 struct Component;
 class int3;
 using FowTilesType = std::set<int3>;
-
-VCMI_LIB_NAMESPACE_END
 
 class CButton;
 class IImage;
@@ -65,12 +63,16 @@ private:
 	/// spell for which player is selecting target, or nullptr if none
 	const CSpell *spellBeingCasted;
 
+	/// tile the map view is centered on, kept up to date by onMapViewMoved
+	int3 mapViewCenter;
+
 	std::shared_ptr<MapAudioPlayer> mapAudio;
 	std::shared_ptr<AdventureMapWidget> widget;
 	std::shared_ptr<AdventureMapShortcuts> shortcuts;
 	std::shared_ptr<TurnTimerWidget> watches;
 
 private:
+	EAdventureState getState() const;
 	void setState(EAdventureState state);
 
 	/// updates active state of game window whenever game state changes
@@ -95,6 +97,14 @@ private:
 	/// dim interface if some windows opened
 	void dim(Canvas & to);
 
+	/// exits disembark mode
+	void exitDisembarkMode();
+
+	/// performs disembark to specified location
+	void performDisembark(const int3 & destTarget);
+
+	/// checks if tile is a valid disembark target
+	bool isValidDisembarkTarget(int3 targetPosition) const;
 protected:
 	/// CIntObject interface implementation
 
@@ -135,7 +145,7 @@ public:
 	void onCurrentPlayerChanged(PlayerColor playerID);
 
 	/// Called by PlayerInterface when specific map tile changed and must be updated on minimap
-	void onMapTilesChanged(boost::optional<FowTilesType> positions);
+	void onMapTilesChanged(std::optional<FowTilesType> positions);
 
 	/// Called by PlayerInterface when hero starts movement
 	void onHeroMovementStarted(const CGHeroInstance * hero);
@@ -168,6 +178,9 @@ public:
 	void centerOnTile(int3 on);
 	void centerOnObject(const CGObjectInstance *obj);
 
+	/// tile the map view is currently centered on
+	int3 getMapViewCenter() const;
+
 	/// called by MapView whenever currently visible area changes
 	/// visibleArea describes now visible map section measured in tiles
 	void onMapViewMoved(const Rect & visibleArea, int mapLevel);
@@ -198,6 +211,9 @@ public:
 
 	/// update state of buttons
 	void updateActiveState();
+
+	/// called by shortcut handler to enter disembark mode
+	void enterDisembarkMode();
 };
 
 extern std::shared_ptr<AdventureMapInterface> adventureInt;

@@ -24,8 +24,8 @@
 #include "../widgets/Images.h"
 #include "../widgets/TextControls.h"
 #include "../widgets/ObjectLists.h"
-#include "../windows/GUIClasses.h"
-#include "../windows/InfoWindows.h"
+#include "GUIClasses.h"
+#include "InfoWindows.h"
 #include "../gui/WindowHandler.h"
 #include "../GameEngine.h"
 #include "../GameInstance.h"
@@ -43,6 +43,7 @@
 #include "../../lib/gameState/CGameState.h"
 #include "../../lib/gameState/UpgradeInfo.h"
 #include "../../lib/networkPacks/ArtifactLocation.h"
+#include "../../lib/spells/CSpell.h"
 #include "../../lib/texts/CGeneralTextHandler.h"
 #include "../../lib/texts/TextOperations.h"
 #include "../../lib/texts/Languages.h"
@@ -133,6 +134,11 @@ void CCommanderSkillIcon::setObject(std::shared_ptr<CIntObject> newObject)
 void CCommanderSkillIcon::clickPressed(const Point & cursorPosition)
 {
 	callback();
+	select();
+}
+
+void CCommanderSkillIcon::select()
+{
 	isSelected = true;
 	redraw();
 }
@@ -247,7 +253,7 @@ CStackWindow::ActiveSpellsSection::ActiveSpellsSection(CStackWindow * owner, int
 			spellText.appendRawString("\n");
 			spellText.appendTextID(Languages::getPluralFormTextID( preferredLanguage, duration, "vcmi.battleResultsWindow.spellDurationRemaining"));
 			spellText.replaceNumber(duration);
-			std::string spellDescription = spellText.toString();
+			std::string spellDescription = spellText.toString(&GAME->translator());
 
 			spellIcons.push_back(std::make_shared<CAnimImage>(AnimationPath::builtin("SpellInt"), effect + 1, 0, firstPos.x + offset.x * printed, firstPos.y + offset.y * printed));
 			labels.push_back(std::make_shared<CLabel>(firstPos.x + offset.x * printed + 46, firstPos.y + offset.y * printed + 36, EFonts::FONT_TINY, ETextAlignment::BOTTOMRIGHT, Colors::WHITE, std::to_string(duration)));
@@ -436,7 +442,7 @@ CStackWindow::ButtonsSection::ButtonsSection(CStackWindow * owner, int yOffset)
 		parent->switchButtons[parent->activeTab]->disable();
 	}
 
-	exit = std::make_shared<CButton>(Point(382, 5), AnimationPath::builtin("hsbtns.def"), LIBRARY->generaltexth->zelp[447], [this](){ parent->close(); }, EShortcut::GLOBAL_RETURN);
+	exit = std::make_shared<CButton>(Point(382, 5), AnimationPath::builtin("hsbtns.def"), LIBRARY->generaltexth->zelp[447], [this](){ parent->submitSelection(); }, EShortcut::GLOBAL_RETURN);
 }
 
 CStackWindow::CommanderMainSection::CommanderMainSection(CStackWindow * owner, int yOffset)
@@ -543,6 +549,9 @@ CStackWindow::CommanderMainSection::CommanderMainSection(CStackWindow * owner, i
 			icon->hoverText = abilityDescription;
 			icon->text = abilityDescription;
 
+			if(parent->selectedSkill == static_cast<si32>(skillID))
+				parent->setSelection(skillID, icon);
+
 			return icon;
 		};
 
@@ -569,8 +578,8 @@ CStackWindow::MainSection::MainSection(CStackWindow * owner, int yOffset, bool s
 
 	statNames =
 	{
-		LIBRARY->generaltexth->primarySkillNames[0], //ATTACK
-		LIBRARY->generaltexth->primarySkillNames[1],//DEFENCE
+		LIBRARY->generaltexth->translate("core.priskill.0"), //ATTACK
+		LIBRARY->generaltexth->translate("core.priskill.1"),//DEFENCE
 		LIBRARY->generaltexth->allTexts[198],//SHOTS
 		LIBRARY->generaltexth->allTexts[199],//DAMAGE
 
@@ -594,6 +603,12 @@ CStackWindow::MainSection::MainSection(CStackWindow * owner, int yOffset, bool s
 	};
 
 	animation = std::make_shared<CCreaturePic>(5, 41, parent->info->creature);
+	if(parent->info->commander && !parent->info->commander->alive)
+	{
+		deadCommanderOverlay = std::make_shared<CPicture>(ImagePath::builtin("stackWindow/dead-commander-overlay.png"));
+		deadCommanderOverlay->needRefresh = true;
+		deadCommanderOverlay->moveTo(Point(animation->pos.x + (animation->pos.w - deadCommanderOverlay->pos.w) / 2, animation->pos.y + (animation->pos.h - deadCommanderOverlay->pos.h) / 2));
+	}
 	{
 		const CCreature * cre = parent->info->creature;
 		animationArea = std::make_shared<LRClickableArea>(Rect(5, 41, 100, 130), [cre]()
@@ -631,7 +646,7 @@ CStackWindow::MainSection::MainSection(CStackWindow * owner, int yOffset, bool s
 
 		dmgMultiply += battleStack->valOfBonuses(bonusSelector);
 	}
-		
+
 	static const std::array<std::string, 8> iconNames = {
 		"stackWindow/iconAttack", "stackWindow/iconDefense", "stackWindow/iconShots", "stackWindow/iconDamage",
 		"stackWindow/iconHealth", "stackWindow/iconHealthLeft", "stackWindow/iconSpeed", "stackWindow/iconMana"
@@ -693,11 +708,14 @@ CStackWindow::MainSection::MainSection(CStackWindow * owner, int yOffset, bool s
 
 			auto area = std::make_shared<LRClickableAreaWTextComp>(Rect(pos.x, pos.y, 44, 44), ComponentType::EXPERIENCE);
 			expArea = area;
-			area->text = LIBRARY->generaltexth->allTexts[2];
+			MetaString expText;
+			expText.appendTextID("core.genrltxt.2");
+			expText.replaceNumber(commander->getExpRank());
+			expText.replaceNumber(LIBRARY->heroh->reqExp(commander->getExpRank() + 1));
+			expText.replaceNumber(commander->getAverageExperience());
+
+			area->text = expText.toString(&GAME->translator());
 			area->component.value = commander->getExpRank();
-			boost::replace_first(area->text, "%d", std::to_string(commander->getExpRank()));
-			boost::replace_first(area->text, "%d", std::to_string(LIBRARY->heroh->reqExp(commander->getExpRank() + 1)));
-			boost::replace_first(area->text, "%d", std::to_string(commander->getAverageExperience()));
 		}
 		else
 		{
@@ -761,14 +779,13 @@ void CStackWindow::MainSection::addStatLabel(EStat index, int64_t value1, int64_
 	stats.push_back(std::make_shared<CLabel>(145, 32 + (int)index*19, FONT_SMALL, ETextAlignment::TOPLEFT, Colors::WHITE, title));
 
 	const bool useRange = value1 != value2;
-	std::string formatStr = useRange ? statFormats.at(static_cast<size_t>(index)) : "%d";
 
-	boost::format fmt(formatStr);
-	fmt % value1;
+	MetaString value = MetaString::createFromRawString(useRange ? statFormats.at(static_cast<size_t>(index)) : "%d");
+	value.replaceNumber(value1);
 	if(useRange)
-		fmt % value2;
+		value.replaceNumber(value2);
 
-	stats.push_back(std::make_shared<CLabel>(307, 48 + (int)index*19, FONT_SMALL, ETextAlignment::BOTTOMRIGHT, Colors::WHITE, fmt.str()));
+	stats.push_back(std::make_shared<CLabel>(307, 48 + (int)index*19, FONT_SMALL, ETextAlignment::BOTTOMRIGHT, Colors::WHITE, value.toString(&GAME->translator())));
 }
 
 void CStackWindow::MainSection::addStatLabel(EStat index, int64_t value)
@@ -823,7 +840,7 @@ CStackWindow::CStackWindow(const CStackInstance * stack, std::function<void()> d
 		info->upgradeInfo = std::make_optional(UnitView::StackUpgradeInfo(upgradeInfo));
 		info->upgradeInfo->callback = callback;
 	}
-	
+
 	info->dismissInfo = std::make_optional(UnitView::StackDismissInfo());
 	info->dismissInfo->callback = dismiss;
 	info->owner = dynamic_cast<const CGHeroInstance *> (stack->getArmy());
@@ -847,6 +864,17 @@ CStackWindow::CStackWindow(const CCommanderInstance * commander, std::vector<ui3
 	: CWindowObject(BORDERED),
 	info(std::make_unique<UnitView>())
 {
+	initCommanderLevelUpData(commander, skills, callback);
+	init();
+}
+
+CStackWindow::~CStackWindow() = default;
+
+void CStackWindow::initCommanderLevelUpData(const CCommanderInstance * commander, const std::vector<ui32> & skills, const std::function<void(ui32)> & callback)
+{
+	GAME->interface()->showingDialog->setBusy();
+	selectionSubmitted = false;
+
 	info->stackNode = commander;
 	info->creature = commander->getCreature();
 	info->commander = commander;
@@ -855,15 +883,74 @@ CStackWindow::CStackWindow(const CCommanderInstance * commander, std::vector<ui3
 	info->levelupInfo->skills = skills;
 	info->levelupInfo->callback = callback;
 	info->owner = dynamic_cast<const CGHeroInstance *> (commander->getArmy());
-	init();
 }
 
-CStackWindow::~CStackWindow() = default;
+void CStackWindow::updateCommanderLevelUpData(const CCommanderInstance * commander, std::vector<ui32> & skills, const std::function<void(ui32)> & callback)
+{
+	OBJECT_CONSTRUCTION;
+
+	initCommanderLevelUpData(commander, skills, callback);
+
+	if(!background)
+	{
+		init();
+		return;
+	}
+
+	fakeNode.reset();
+	activeBonuses.clear();
+
+	switchButtons.clear();
+	mainSection.reset();
+	activeSpellsSection.reset();
+	commanderMainSection.reset();
+	commanderBonusesSection.reset();
+	bonusesSection.reset();
+	buttonsSection.reset();
+	commanderTab.reset();
+
+	selectedIcon = nullptr;
+	selectedSkill = skills.empty() ? -1 : skills.front();
+	activeTab = 0;
+
+	pos = Rect();
+	initBonusesList();
+	initSections();
+	background->pos = pos;
+
+	setRedrawParent(true);
+	redraw();
+}
+
+bool CStackWindow::isCommanderLevelUpDialog() const
+{
+	return info && info->commander && info->levelupInfo.has_value();
+}
+
+void CStackWindow::submitSelection()
+{
+	if(!selectionSubmitted)
+	{
+		if(info->levelupInfo)
+		{
+			if(info->levelupInfo->skills.empty())
+				info->levelupInfo->callback(0);
+			else
+				info->levelupInfo->callback(vstd::find_pos(info->levelupInfo->skills, selectedSkill));
+		}
+
+		selectionSubmitted = true;
+		GAME->interface()->showingDialog->setFree();
+	}
+
+	if(closeOnSelection)
+		close();
+}
 
 void CStackWindow::close()
 {
-	if(info->levelupInfo && !info->levelupInfo->skills.empty())
-		info->levelupInfo->callback(vstd::find_pos(info->levelupInfo->skills, selectedSkill));
+	if(!selectionSubmitted && info->levelupInfo && !info->levelupInfo->skills.empty())
+		return;
 
 	CWindowObject::close();
 }
@@ -912,7 +999,7 @@ void CStackWindow::initBonusesList()
 	auto bonusToString = [bonusSource](const std::shared_ptr<Bonus> & bonus) -> std::string
 	{
 		if(!bonus->description.empty())
-			return bonus->description.toString();
+			return bonus->description.toString(&GAME->translator());
 		else
 			return LIBRARY->getBth()->bonusToString(bonus, bonusSource);
 	};
@@ -1139,6 +1226,7 @@ void CStackWindow::setSelection(si32 newSkill, std::shared_ptr<CCommanderSkillIc
 			newIcon->text = getSkillDescription(newSkill, true); //update currently selected icon's message to show upgrade description
 		}
 	}
+	newIcon->select();
 }
 
 std::shared_ptr<CIntObject> CStackWindow::switchTab(size_t index)
@@ -1183,4 +1271,8 @@ void CStackWindow::removeStackArtifact(ArtifactPosition pos)
 		stackArtifact.reset();
 		redraw();
 	}
+}
+void CStackWindow::setCloseOnSelection(bool value)
+{
+	closeOnSelection = value;
 }

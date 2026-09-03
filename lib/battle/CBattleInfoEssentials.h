@@ -10,8 +10,7 @@
 #pragma once
 #include "IBattleInfoCallback.h"
 #include "BattleSide.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../bonuses/BonusEnum.h"
 
 class CGTownInstance;
 class CGHeroInstance;
@@ -28,6 +27,7 @@ class DLL_LINKAGE CBattleInfoEssentials : public IBattleInfoCallback
 {
 protected:
 	bool battleDoWeKnowAbout(BattleSide side) const;
+	int battleGetRetreatPermission(BattleSide side, BonusType permission) const;
 
 public:
 	enum EStackOwnership
@@ -43,8 +43,8 @@ public:
 	BattleField battleGetBattlefieldType() const override;
 	int32_t battleGetEnchanterCounter(BattleSide side) const;
 
-	int32_t nextObstacleId() const; //returns next available obstacle ID
-	std::vector<std::shared_ptr<const CObstacleInstance>> battleGetAllObstacles(std::optional<BattleSide> perspective = std::nullopt) const; //returns all obstacles on the battlefield
+	int32_t nextObstacleId() const override; //returns next available obstacle ID
+	std::vector<std::shared_ptr<const CObstacleInstance>> battleGetAllObstacles(std::optional<BattleSide> perspective = std::nullopt) const override;
 
 	std::shared_ptr<const CObstacleInstance> battleGetObstacleByID(uint32_t ID) const;
 
@@ -62,8 +62,11 @@ public:
 
 	uint32_t battleNextUnitId() const override;
 
-	bool battleHasNativeStack(BattleSide side) const;
+	bool battleHasNativeStack(BattleSide side) const override;
 	const CGTownInstance * battleGetDefendedTown() const; //returns defended town if current battle is a siege, nullptr instead
+	bool hasFortifications() const override;
+	bool hasMoat() const override;
+	BattleHex getTowerShooterHex(EWallPart part) const override;
 
 	si8 battleTacticDist() const override; //returns tactic distance in current tactics phase; 0 if not in tactics phase
 	BattleSide battleGetTacticsSide() const override; //returns which side is in tactics phase, undefined if none (?)
@@ -87,7 +90,7 @@ public:
 
 	// for determining state of a part of the wall; format: parameter [0] - keep, [1] - bottom tower, [2] - bottom wall,
 	// [3] - below gate, [4] - over gate, [5] - upper wall, [6] - uppert tower, [7] - gate; returned value: 1 - intact, 2 - damaged, 3 - destroyed; 0 - no battle
-	EWallState battleGetWallState(EWallPart partOfWall) const;
+	EWallState battleGetWallState(EWallPart partOfWall) const override;
 	EGateState battleGetGateState() const;
 	bool battleIsGatePassable() const;
 
@@ -105,10 +108,8 @@ public:
 	///returns hero that controls given stack; nullptr if none; mind control included
 	const CGHeroInstance * battleGetOwnerHero(const battle::Unit * unit) const;
 
-	///check that stacks are controlled by same|other player(s) depending on positiveness
+	///check that stacks are controlled by the same (sameOwner) or opposing (!sameOwner) player(s)
 	///mind control included
-	bool battleMatchOwner(const battle::Unit * attacker, const battle::Unit * defender, const boost::logic::tribool positivness = false) const;
-	bool battleMatchOwner(const PlayerColor & attacker, const battle::Unit * defender, const boost::logic::tribool positivness = false) const;
+	bool battleMatchOwner(const battle::Unit * attacker, const battle::Unit * defender, bool sameOwner = false) const;
+	bool battleMatchOwner(const PlayerColor & attacker, const battle::Unit * defender, bool sameOwner = false) const;
 };
-
-VCMI_LIB_NAMESPACE_END

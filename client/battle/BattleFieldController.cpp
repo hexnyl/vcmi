@@ -16,6 +16,7 @@
 #include "BattleHero.h"
 #include "BattleObstacleController.h"
 #include "BattleProjectileController.h"
+#include "CreatureAnimation.h"
 #include "BattleRenderer.h"
 #include "BattleSiegeController.h"
 #include "BattleStacksController.h"
@@ -25,7 +26,7 @@
 #include "../GameEngine.h"
 #include "../GameInstance.h"
 #include "../adventureMap/CInGameConsole.h"
-#include "../client/render/CAnimation.h"
+#include "../render/CAnimation.h"
 #include "../gui/CursorHandler.h"
 #include "../render/CAnimation.h"
 #include "../render/Canvas.h"
@@ -38,6 +39,7 @@
 #include "../../lib/battle/CPlayerBattleCallback.h"
 #include "../../lib/spells/ISpellMechanics.h"
 #include "../../lib/spells/Problem.h"
+#include "../../lib/spells/CSpell.h"
 
 namespace HexMasks
 {
@@ -81,6 +83,27 @@ namespace HexMasks
 		topLeftCorner         = 0b100011
 	};
 }
+
+/// predefined offsets for earthquake screen shake, matching H3 behavior
+static const std::array<Point, 17> earthquakeShakeOffsets = {{
+	{ 0,  0},
+	{ 2,  2},
+	{ 4,  1},
+	{ 3, -2},
+	{ 0, -6},
+	{ 2, -2},
+	{-1,  3},
+	{-5,  4},
+	{-8,  6},
+	{-5,  4},
+	{-8,  6},
+	{-4,  2},
+	{-1,  1},
+	{-3, -3},
+	{-5, -7},
+	{-7, -5},
+	{-2, -3},
+}};
 
 static const std::map<int, int> hexEdgeMaskToFrameIndex =
 {
@@ -145,6 +168,28 @@ BattleFieldController::BattleFieldController(BattleInterface & owner):
 	addUsedEvents(LCLICK | SHOW_POPUP | MOVE | TIME | GESTURE);
 }
 
+void BattleFieldController::startShakeAnimation()
+{
+	shakeFrameTotal = 17 * std::clamp(static_cast<int>(4.0f - AnimationControls::getAnimationSpeedFactor()), 1, 3);
+	shakeFrameCounter = 0;
+	shakeOffset = earthquakeShakeOffsets[0];
+}
+
+void BattleFieldController::updateShake()
+{
+	if (shakeFrameCounter >= shakeFrameTotal)
+	{
+		shakeOffset = Point(0, 0);
+		return;
+	}
+
+	shakeFrameCounter++;
+	if (shakeFrameCounter < shakeFrameTotal)
+		shakeOffset = earthquakeShakeOffsets[shakeFrameCounter % earthquakeShakeOffsets.size()];
+	else
+		shakeOffset = Point(0, 0);
+}
+
 void BattleFieldController::activate()
 {
 	GAME->interface()->cingconsole->pos = this->pos;
@@ -186,17 +231,39 @@ void BattleFieldController::gesturePanning(const Point & initialPosition, const 
 
 void BattleFieldController::mouseMoved(const Point & cursorPosition, const Point & lastUpdateDistance)
 {
-	hoveredHex = getHexAtPosition(cursorPosition);
 	currentAttackOriginPoint = cursorPosition;
 
+	// hex rects of the bottom rows extend under the command panel, so only treat the cursor as hovering a hex
+	// when it is actually over the battlefield - otherwise hovering the panel leaks a unit range highlight.
+	// This handler is also invoked when the cursor is over the battle queue: in that case keep the cursor and
+	// status bar in sync with the queue-hovered stack, so that pointing at the queue is equivalent to pointing
+	// at the stack on the battlefield.
 	if (pos.isInside(cursorPosition))
+	{
+		hoveredHex = getHexAtPosition(cursorPosition);
 		owner.actionsController->onHexHovered(getHoveredHex());
+	}
+	else if (const CStack * queueStack = getQueueHoveredStack())
+	{
+		hoveredHex = BattleHex::INVALID;
+		owner.actionsController->onHexHovered(queueStack->getPosition());
+	}
 	else
+	{
+		hoveredHex = BattleHex::INVALID;
 		owner.actionsController->onHoverEnded();
+	}
 }
 
 void BattleFieldController::clickPressed(const Point & cursorPosition)
 {
+	// a click on the battlefield cancels ongoing auto-combat (H3 behavior)
+	if(owner.curInt->isAutoFightOn)
+	{
+		owner.curInt->isAutoFightOn = false;
+		return;
+	}
+
 	BattleHex selectedHex = getHoveredHex();
 
 	if (selectedHex != BattleHex::INVALID)
@@ -213,7 +280,10 @@ void BattleFieldController::showPopupWindow(const Point & cursorPosition)
 
 void BattleFieldController::renderBattlefield(Canvas & canvas)
 {
-	Canvas clippedCanvas(canvas, pos);
+	Rect renderPos = pos;
+	renderPos.x += shakeOffset.x;
+	renderPos.y += shakeOffset.y;
+	Canvas clippedCanvas(canvas, renderPos);
 
 	showBackground(clippedCanvas);
 
@@ -639,21 +709,36 @@ bool BattleFieldController::isPixelInHex(Point const & position)
 
 BattleHex BattleFieldController::getHoveredHex()
 {
+	// if mouse is not over the battlefield itself but over a stack in the battle queue,
+	// treat the position of that stack as the hovered hex so that pointing at the queue
+	// is equivalent to pointing at the stack on the battlefield
+	if(hoveredHex == BattleHex::INVALID)
+	{
+		if(const CStack * queueStack = getQueueHoveredStack())
+			return queueStack->getPosition();
+	}
+
 	return hoveredHex;
+}
+
+const CStack* BattleFieldController::getQueueHoveredStack() const
+{
+	if(!owner.windowObject->getQueueHoveredUnitId().has_value())
+		return nullptr;
+
+	for(const CStack * stack : owner.getBattle()->battleGetAllStacks())
+		if(stack->unitId() == *owner.windowObject->getQueueHoveredUnitId())
+			return stack;
+
+	return nullptr;
 }
 
 const CStack* BattleFieldController::getHoveredStack()
 {
-	auto hoveredHex = getHoveredHex();
 	const CStack* hoveredStack = owner.getBattle()->battleGetStackByPos(hoveredHex, true);
 
-	if(owner.windowObject->getQueueHoveredUnitId().has_value())
-	{
-		auto stacks = owner.getBattle()->battleGetAllStacks();
-		for(const CStack * stack : stacks)
-			if(stack->unitId() == *owner.windowObject->getQueueHoveredUnitId())
-				hoveredStack = stack;
-	}
+	if(const CStack * queueStack = getQueueHoveredStack())
+		hoveredStack = queueStack;
 
 	return hoveredStack;
 }
@@ -668,7 +753,7 @@ BattleHex BattleFieldController::getHexAtPosition(Point hoverPos)
 
 	if (owner.defendingHero)
 	{
-		if (owner.attackingHero->pos.isInside(hoverPos))
+		if (owner.defendingHero->pos.isInside(hoverPos))
 			return BattleHex::HERO_DEFENDER;
 	}
 
@@ -690,6 +775,17 @@ BattleHex::EDir BattleFieldController::selectAttackDirection(const BattleHex & m
 {
 	auto attacker = owner.stacksController->getActiveStack();
 	assert(attacker);
+
+	// When the target is pointed at through the battle queue there is no meaningful mouse
+	// position on the battlefield to derive an approach direction from, so the raw cursor
+	// position would always yield the same corner. Instead, pretend the cursor sits on the
+	// attacker: the nearest-test-point logic below then selects the attack-from hex closest
+	// to the attacker, which is what a player usually wants when simply saying "attack that
+	// stack".
+	Point originPoint = currentAttackOriginPoint;
+	if(!pos.isInside(originPoint) && getQueueHoveredStack() != nullptr)
+		originPoint = hexPositionAbsolute(attacker->getPosition()).center();
+
 	const BattleHexArray & neighbours = myNumber.getAllNeighbouringTiles();
 	// For each valid direction, select position to test against
 	std::array<Point, 8> testPoint;
@@ -714,7 +810,7 @@ BattleHex::EDir BattleFieldController::selectAttackDirection(const BattleHex & m
 	{
 		if (testPoint[i].isValid())
 		{
-			int distance = (testPoint[i].y - currentAttackOriginPoint.y)*(testPoint[i].y - currentAttackOriginPoint.y) + (testPoint[i].x - currentAttackOriginPoint.x)*(testPoint[i].x - currentAttackOriginPoint.x);
+			int distance = (testPoint[i].y - originPoint.y)*(testPoint[i].y - originPoint.y) + (testPoint[i].x - originPoint.x)*(testPoint[i].x - originPoint.x);
 			if (nearest == -1 || distance < nearestDistance)
 			{
 				nearestDistance = distance;
@@ -749,6 +845,7 @@ void BattleFieldController::showAll(Canvas & to)
 
 void BattleFieldController::tick(uint32_t msPassed)
 {
+	updateShake();
 	updateAccessibleHexes();
 	owner.stacksController->tick(msPassed);
 	owner.obstacleController->tick(msPassed);

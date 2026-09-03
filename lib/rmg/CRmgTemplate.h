@@ -18,11 +18,12 @@
 #include "ObjectConfig.h"
 #include "../mapObjectConstructors/CObjectClassesHandler.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#ifdef ENABLE_TEMPLATE_EDITOR
+class TemplateEditor;
+#endif
 
 class JsonSerializeFormat;
 struct CompoundMapObjectID;
-class TemplateEditor;
 
 enum class ETemplateZoneType
 {
@@ -118,6 +119,8 @@ public:
 	int getGuardStrength() const;
 	rmg::EConnectionType getConnectionType() const;
 	rmg::ERoadOption getRoadOption() const;
+	/// True if this connection has to be realized as an actual passage between two distinct zones.
+	bool needsPassage() const;
 	void setRoadOption(rmg::ERoadOption roadOption);
 
 	void serializeJson(JsonSerializeFormat & handler);
@@ -410,5 +413,3 @@ private:
 						  uint32_t iteration = 0);
 
 };
-
-VCMI_LIB_NAMESPACE_END

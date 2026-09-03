@@ -17,8 +17,6 @@
 #include "../CConfigHandler.h"
 #include "../GameLibrary.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 void CRewardableConstructor::initTypeData(const JsonNode & config)
 {
 	objectInfo.init(config, getBaseTextID());
@@ -97,9 +95,7 @@ void CRewardableConstructor::configureObject(CGObjectInstance * object, IGameRan
 	}
 }
 
-std::unique_ptr<IObjectInfo> CRewardableConstructor::getObjectInfo(std::shared_ptr<const ObjectTemplate> tmpl) const
+std::unique_ptr<IObjectInfo> CRewardableConstructor::getObjectInfo() const
 {
 	return std::unique_ptr<IObjectInfo>(new Rewardable::Info(objectInfo));
 }
-
-VCMI_LIB_NAMESPACE_END

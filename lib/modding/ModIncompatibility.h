@@ -9,10 +9,8 @@
  */
 #pragma once
 
-#include "../lib/texts/CGeneralTextHandler.h"
+#include "../texts/CGeneralTextHandler.h"
 #include "GameLibrary.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 class DLL_LINKAGE ModIncompatibility: public std::exception
 {
@@ -73,5 +71,3 @@ private:
 	std::string messageMissingMods;
 	std::string messageExcessiveMods;
 };
-
-VCMI_LIB_NAMESPACE_END

@@ -12,12 +12,14 @@
 
 #include "../mapObjects/CompoundMapObjectID.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#ifdef ENABLE_TEMPLATE_EDITOR
+class ObjectSelector;
+#endif
 
 class DLL_LINKAGE ObjectConfig
 {
 #ifdef ENABLE_TEMPLATE_EDITOR
-	friend class ObjectSelector;
+	friend class ::ObjectSelector;
 #endif
 
 public:
@@ -64,5 +66,3 @@ private:
 	std::map<CompoundMapObjectID, std::pair<ui16, std::optional<ui32>>> requiredObjects; // obligatory, potentially guarded objects to spawn in this zone
 
 };
-
-VCMI_LIB_NAMESPACE_END

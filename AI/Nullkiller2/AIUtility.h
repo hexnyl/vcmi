@@ -41,7 +41,6 @@
 
 #include "../../lib/GameLibrary.h"
 #include "../../lib/CCreatureHandler.h"
-#include "../../lib/spells/CSpellHandler.h"
 #include "../../lib/CStopWatch.h"
 #include "../../lib/mapObjects/CGHeroInstance.h"
 #include "../../lib/callback/CCallback.h"
@@ -197,6 +196,12 @@ bool isObjectPassable(const CGObjectInstance * obj, PlayerColor playerColor, Pla
 bool isWeeklyRevisitable(const PlayerColor & playerID, const CGObjectInstance * obj);
 
 bool isObjectRemovable(const CGObjectInstance * obj); //FIXME FIXME: move logic to object property!
+double normalizeHeroStrength(double heroStrength);
+double getNormalizedHeroStrength(const CGHeroInstance * hero);
+
+/// True for quest objects that block a hero's passage until their quest/key is satisfied
+/// (quest guards, border guards, border gates); plain seer huts and keymasters do not.
+bool isQuestBlocker(const CGObjectInstance * obj);
 bool isSafeToVisit(const CGHeroInstance * h, uint64_t dangerStrength, float safeAttackRatio);
 bool isSafeToVisit(const CGHeroInstance * h, const CCreatureSet *, uint64_t dangerStrength, float safeAttackRatio);
 
@@ -248,13 +253,13 @@ public:
 
 	void add(std::unique_ptr<T> t)
 	{
-		std::lock_guard<std::mutex> lock(sync);
+		std::lock_guard lock(sync);
 		pool.push_back(std::move(t));
 	}
 
 	ptr_type acquire()
 	{
-		std::lock_guard<std::mutex> lock(sync);
+		std::lock_guard lock(sync);
 		bool poolIsEmpty = pool.empty();
 		T * element = poolIsEmpty
 			? elementFactory().release()

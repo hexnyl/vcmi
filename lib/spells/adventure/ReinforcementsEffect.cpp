@@ -11,7 +11,7 @@
 #include "StdInc.h"
 #include "ReinforcementsEffect.h"
 
-#include "../CSpellHandler.h"
+#include "../CSpell.h"
 
 #include "../../CPlayerState.h"
 #include "../../callback/IGameInfoCallback.h"
@@ -19,8 +19,6 @@
 #include "../../mapObjects/CGTownInstance.h"
 #include "../../mapping/CMap.h"
 #include "../../networkPacks/PacksForClient.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 ReinforcementsEffect::ReinforcementsEffect(const CSpell * s, const JsonNode & config)
 	: TownRelatedAdventureSpellEffect(s, config["allowTownSelection"].Bool(), false)
@@ -95,5 +93,3 @@ ESpellCastResult ReinforcementsEffect::applyAdventureEffects(SpellCastEnvironmen
 
 	return ESpellCastResult::OK;
 }
-
-VCMI_LIB_NAMESPACE_END

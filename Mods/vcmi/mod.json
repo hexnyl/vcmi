@@ -38,6 +38,13 @@
 		]
 	},
 
+	"tchinese" : {
+		"skipValidation" : true,
+		"translations" : [
+			"config/translations/chinese.json"
+		]
+	},
+
 	"dutch" : {
 		"skipValidation" : true,
 		"translations" : [
@@ -112,6 +119,13 @@
 		"skipValidation" : true,
 		"translations" : [
 			"config/translations/latvian.json"
+		]
+	},
+
+	"lithuanian" : {
+		"skipValidation" : true,
+		"translations" : [
+			"config/translations/lithuanian.json"
 		]
 	},
 

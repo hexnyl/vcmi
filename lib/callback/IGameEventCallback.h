@@ -12,10 +12,12 @@
 #include "../GameConstants.h"
 #include "../networkPacks/ObjProperty.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include <vcmi/scripting/ApiTags.h>
 
 class int3;
+class JsonNode;
 struct GiveBonus;
+struct QuestInfo;
 struct CPackForClient;
 struct SetMovePoints;
 struct BattleLayout;
@@ -53,9 +55,12 @@ namespace vstd
 class RNG;
 }
 
-class DLL_LINKAGE IGameEventCallback
+class DLL_LINKAGE IGameEventCallback : public scripting::ApiRawPointer<IGameEventCallback>
 {
 public:
+	/// Sets value of a map script variable.
+	virtual void setScriptVariable(const std::string & scope, const std::string & name, const JsonNode & value) = 0;
+
 	virtual void setObjPropertyValue(ObjectInstanceID objid, ObjProperty prop, int32_t value = 0) = 0;
 	virtual void setRewardableObjectConfiguration(ObjectInstanceID mapObjectID, const Rewardable::Configuration & configuration) = 0;
 	virtual void setRewardableObjectConfiguration(ObjectInstanceID townInstanceID, BuildingID buildingID, const Rewardable::Configuration & configuration) = 0;
@@ -65,13 +70,18 @@ public:
 
 	virtual void changeSpells(const CGHeroInstance * hero, bool give, const std::set<SpellID> &spells)=0;
 	virtual void setResearchedSpells(const CGTownInstance * town, int level, const std::vector<SpellID> & spells, bool accepted)=0;
+	virtual void buildStructureForced(ObjectInstanceID townID, BuildingID building)=0; //erects a building ignoring cost and prerequisites
 	virtual bool removeObject(const CGObjectInstance * obj, const PlayerColor & initiator) = 0;
+	virtual void addQuest(const PlayerColor & player, const QuestInfo & quest) = 0;
+	/// Sets the quest-log / hover hint text of an active quest.
+	virtual void setQuestHintText(ObjectInstanceID obj, const MetaString & hint) = 0;
 	virtual void createBoat(const int3 & visitablePosition, BoatId type, PlayerColor initiator) = 0;
 	virtual void setOwner(const CGObjectInstance * objid, PlayerColor owner)=0;
 	virtual void giveExperience(const CGHeroInstance * hero, TExpType val) =0;
 	virtual void changePrimSkill(const CGHeroInstance * hero, PrimarySkill which, si64 val, ChangeValueMode mode)=0;
 	virtual void changeSecSkill(const CGHeroInstance * hero, SecondarySkill which, int val, ChangeValueMode mode)=0;
 	virtual void showBlockingDialog(const IObjectInterface * caller, BlockingDialog *iw) =0;
+	virtual void showScriptDialog(BlockingDialog *iw) =0; //dialog spawned by a map script; its reply resumes the paused script coroutine
 	virtual void showGarrisonDialog(ObjectInstanceID upobj, ObjectInstanceID hid, bool removableUnits, const MetaString & customTitle) =0; //cb will be called when player closes garrison window
 	virtual void showTeleportDialog(TeleportDialog *iw) =0;
 	virtual void showObjectWindow(const CGObjectInstance * object, EOpenWindowMode window, const CGHeroInstance * visitor, bool addQuery) = 0;
@@ -103,7 +113,7 @@ public:
 	virtual void stopHeroVisitCastle(const CGTownInstance * obj, const CGHeroInstance * hero)=0;
 	virtual void startBattle(const CArmedInstance *army1, const CArmedInstance *army2, int3 tile, const CGHeroInstance *hero1, const CGHeroInstance *hero2, const BattleLayout & layout, const CGTownInstance *town)=0; //use hero=nullptr for no hero
 	virtual void startBattle(const CArmedInstance *army1, const CArmedInstance *army2)=0; //if any of armies is hero, hero will be used, visitable tile of second obj is place of battle
-	virtual bool moveHero(ObjectInstanceID hid, int3 dst, EMovementMode moveMove, bool transit = false, PlayerColor asker = PlayerColor::NEUTRAL)=0;
+	virtual bool moveHero(ObjectInstanceID hid, int3 dst, EMovementMode moveMove, bool transit = false, PlayerColor asker = PlayerColor::NEUTRAL, const EPathfindingLayer & layer = EPathfindingLayer::AUTO)=0;
 	virtual void giveHeroBonus(GiveBonus * bonus)=0;
 	virtual void setMovePoints(SetMovePoints * smp)=0;
 	virtual void setMovePoints(ObjectInstanceID hid, int val)=0;
@@ -122,5 +132,3 @@ public:
 	/// Returns global random generator. TODO: remove, replace with IGameRanndomizer as separate parameter to such methods
 	virtual vstd::RNG & getRandomGenerator() = 0;
 };
-
-VCMI_LIB_NAMESPACE_END

@@ -13,6 +13,7 @@
 #include "baseinspectoritemdelegate.h"
 #include "../../lib/mapObjects/CGHeroInstance.h"
 
+
 namespace Ui {
 	class HeroSpellWidget;
 }

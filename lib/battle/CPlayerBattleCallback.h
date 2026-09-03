@@ -10,8 +10,6 @@
 #pragma once
 #include "CBattleInfoCallback.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CGHeroInstance;
 
 class DLL_LINKAGE CPlayerBattleCallback : public CBattleInfoCallback
@@ -21,10 +19,6 @@ class DLL_LINKAGE CPlayerBattleCallback : public CBattleInfoCallback
 
 public:
 	CPlayerBattleCallback(const IBattleInfo * battle, PlayerColor player);
-
-#if SCRIPTING_ENABLED
-	scripting::Pool * getContextPool() const override;
-#endif
 
 	const IBattleInfo * getBattle() const override;
 	std::optional<PlayerColor> getPlayerID() const override;
@@ -38,5 +32,3 @@ public:
 	InfoAboutHero battleGetEnemyHero() const;
 };
 
-
-VCMI_LIB_NAMESPACE_END

@@ -10,9 +10,6 @@
 
 #include "StdInc.h"
 
-#ifndef VCMI_NO_EXTRA_VERSION
-#include "../Version.h"
-#endif
 #include <vcmi/Artifact.h>
 #include <vcmi/ArtifactService.h>
 #include <vcmi/Faction.h>
@@ -27,21 +24,23 @@
 
 #include <vcmi/spells/Spell.h>
 #include <vcmi/spells/Service.h>
+#include <vcmi/spells/SchoolService.h>
 
+#include "scripting/ScriptService.h"
 #include "modding/IdentifierStorage.h"
 #include "modding/ModScope.h"
 #include "GameLibrary.h"
 #include "CCreatureHandler.h"
-#include "spells/CSpellHandler.h"
-#include "spells/SpellSchoolHandler.h"
 #include "CSkillHandler.h"
+#include "constants/StringConstants.h"
 #include "entities/artifact/CArtifact.h"
 #include "entities/faction/CFaction.h"
 #include "entities/hero/CHero.h"
 #include "entities/hero/CHeroClass.h"
 #include "entities/ResourceTypeHandler.h"
 #include "mapObjectConstructors/AObjectTypeHandler.h"
-#include "constants/StringConstants.h"
+#include "spells/CSpell.h"
+#include "spells/SpellSchoolHandler.h"
 #include "texts/CGeneralTextHandler.h"
 #include "TerrainHandler.h"
 #include "RiverHandler.h"
@@ -50,8 +49,6 @@
 #include "ObstacleHandler.h"
 #include "MapLayerHandler.h"
 #include "mapObjectConstructors/CObjectClassesHandler.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 const CampaignScenarioID CampaignScenarioID::NONE(-1);
 const BattleID BattleID::NONE(-1);
@@ -82,6 +79,8 @@ const SpellSchool SpellSchool::AIR(0);
 const SpellSchool SpellSchool::FIRE(1);
 const SpellSchool SpellSchool::EARTH(2);
 const SpellSchool SpellSchool::WATER(3);
+
+const ScriptID ScriptID::NONE(-1);
 
 const FactionID FactionID::NONE(-2);
 const FactionID FactionID::DEFAULT(-1);
@@ -124,15 +123,6 @@ const MapLayerId MapLayerId::NONE(-1);
 const MapLayerId MapLayerId::SURFACE(0);
 const MapLayerId MapLayerId::UNDERGROUND(1);
 const MapLayerId MapLayerId::UNKNOWN(2);
-
-namespace GameConstants
-{
-#ifdef VCMI_NO_EXTRA_VERSION
-	const std::string VCMI_VERSION = "VCMI " VCMI_VERSION_STRING;
-#else
-	const std::string VCMI_VERSION = "VCMI " VCMI_VERSION_STRING "." + std::string{GIT_SHA1};
-#endif
-}
 
 BuildingTypeUniqueID::BuildingTypeUniqueID(FactionID factionID, BuildingID buildingID ):
 	BuildingTypeUniqueID(factionID.getNum() * 0x10000 + buildingID.getNum())
@@ -477,6 +467,9 @@ std::string PlayerColor::encode(const si32 index)
 	if (index == -1)
 		return "neutral";
 
+	if (index == PlayerColor::SPECTATOR.num)
+		return "spectator";
+
 	if (index < 0 || index >= std::size(GameConstants::PLAYER_COLOR_NAMES))
 	{
 		assert(0);
@@ -647,6 +640,23 @@ const ObstacleInfo * Obstacle::getInfo() const
 	return LIBRARY->obstacles()->getById(*this);
 }
 
+si32 ScriptID::decode(const std::string & identifier)
+{
+	return resolveIdentifier(entityType(), identifier);
+}
+
+std::string ScriptID::encode(const si32 index)
+{
+	if (index == -1)
+		return "";
+	return LIBRARY->scriptTypes()->getById(ScriptID(index)).scriptId;
+}
+
+std::string ScriptID::entityType()
+{
+	return "script";
+}
+
 si32 SpellSchool::decode(const std::string & identifier)
 {
 	return resolveIdentifier(entityType(), identifier);
@@ -657,12 +667,17 @@ std::string SpellSchool::encode(const si32 index)
 	if (index == ANY.getNum())
 		return "any";
 
-	return LIBRARY->spellSchoolHandler->getById(SpellSchool(index))->getJsonKey();
+	return SpellSchool(index).toEntity(LIBRARY)->getJsonKey();
 }
 
 std::string SpellSchool::entityType()
 {
 	return "spellSchool";
+}
+
+const spells::SpellSchoolType * SpellSchool::toEntity(const Services * services) const
+{
+	return services->spellSchools()->getByIndex(getNum());
 }
 
 si32 GameResID::decode(const std::string & identifier)
@@ -739,5 +754,3 @@ bool MapObjectID::isRandomArtifact(MapObjectBaseID id)
 {
 	return id == RANDOM_ART || id == RANDOM_TREASURE_ART || id == RANDOM_MINOR_ART || id == RANDOM_MAJOR_ART || id == RANDOM_RELIC_ART;
 }
-
-VCMI_LIB_NAMESPACE_END

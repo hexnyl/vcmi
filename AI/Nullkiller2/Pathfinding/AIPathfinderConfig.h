@@ -23,11 +23,11 @@ namespace AIPathfinding
 	class AIPathfinderConfig : public PathfinderConfig
 	{
 	private:
-		std::map<const CGHeroInstance *, std::unique_ptr<CPathfinderHelper>> pathfindingHelpers;
+		HeroMap<std::unique_ptr<CPathfinderHelper>> pathfindingHelpers;
 		std::shared_ptr<AINodeStorage> aiNodeStorage;
 
 	public:
-		AIPathfinderConfig(Nullkiller * aiNk, std::shared_ptr<AINodeStorage> nodeStorage, bool allowBypassObjects);
+		AIPathfinderConfig(Nullkiller * aiNk, std::shared_ptr<AINodeStorage> nodeStorage, bool allowBypassObjects, bool useDimensionDoor);
 		~AIPathfinderConfig();
 
 		CPathfinderHelper * getOrCreatePathfinderHelper(const PathNodeInfo & source, const IGameInfoCallback & gameInfo) override;

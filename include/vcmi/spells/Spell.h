@@ -11,8 +11,7 @@
 #pragma once
 
 #include "../Entity.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../scripting/ApiTags.h"
 
 class SpellID;
 class SpellSchool;
@@ -21,7 +20,7 @@ namespace spells
 {
 class Caster;
 
-class DLL_LINKAGE Spell: public EntityT<SpellID>
+class DLL_LINKAGE Spell: public EntityT<SpellID>, public scripting::ApiRawPointer<Spell>
 {
 public:
 	using SchoolCallback = std::function<void(const SpellSchool &, bool &)>;
@@ -30,7 +29,6 @@ public:
 	virtual int64_t calculateDamage(const Caster * caster) const = 0;
 
 	virtual int32_t getLevel() const = 0;
-	virtual boost::logic::tribool getPositiveness() const = 0;
 	virtual bool isAdventure() const = 0;
 	virtual bool isCombat() const = 0;
 	virtual bool isCreatureAbility() const = 0;
@@ -42,6 +40,7 @@ public:
 	virtual bool isDamage() const = 0;
 	virtual bool isOffensive() const = 0;
 	virtual bool isSpecial() const = 0;
+	virtual bool isCommonHeroSpell() const = 0;
 	virtual bool isMagical() const = 0; //Should this spell considered as magical effect or as ability (like dendroid's bind)
 
 	virtual bool hasSchool(SpellSchool school) const = 0;
@@ -62,5 +61,3 @@ public:
 };
 
 }
-
-VCMI_LIB_NAMESPACE_END

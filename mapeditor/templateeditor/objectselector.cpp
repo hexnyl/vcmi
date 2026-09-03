@@ -9,6 +9,7 @@
  */
 
 #include "StdInc.h"
+#include "../helper.h"
 
 #include "objectselector.h"
 #include "ui_objectselector.h"
@@ -22,6 +23,7 @@
 #include "../../lib/mapObjects/CGObjectInstance.h"
 #include "../../lib/mapObjectConstructors/AObjectTypeHandler.h"
 #include "../../lib/mapObjectConstructors/CObjectClassesHandler.h"
+#include "../translator.h"
 
 ObjectSelector::ObjectSelector(ObjectConfig & obj) :
 	ui(new Ui::ObjectSelector),
@@ -29,7 +31,7 @@ ObjectSelector::ObjectSelector(ObjectConfig & obj) :
 	advObjects(getAdventureMapItems())
 {
 	ui->setupUi(this);
-
+	Helper::decorateDialog(this);
 	setWindowTitle(tr("Object Selector"));
 	
 	setWindowModality(Qt::ApplicationModal);
@@ -53,7 +55,7 @@ QMainWindow* getMainWindow()
 std::map<CompoundMapObjectID, QString> ObjectSelector::getAdventureMapItems()
 {
 	std::map<CompoundMapObjectID, QString> objects;
-	auto& controller = qobject_cast<MainWindow *>(getMainWindow())->controller;
+	auto& controller = qobject_cast<EditorMainWindow *>(getMainWindow())->controller;
 
 	auto knownObjects = LIBRARY->objtypeh->knownObjects();
 	for(auto & id : knownObjects)
@@ -70,15 +72,16 @@ std::map<CompoundMapObjectID, QString> ObjectSelector::getAdventureMapItems()
 			{
 				auto templ = templates.at(0);
 				auto temporaryObj(factory->create(controller.getCallback(), templ));
-				QString translated = QString::fromStdString(temporaryObj->getObjectName().c_str());
+				QString translated = QString::fromStdString(temporaryObj->getObjectName().toString(&Translator::instance()));
 				name = translated;
 			}
 			catch(...) {}
 
 			if(name.isEmpty())
 			{
-				auto subGroupName = QString::fromStdString(LIBRARY->objtypeh->getObjectName(id, subId));
-				name = subGroupName;
+				// no object could be created, so fall back to the name of the type itself
+				auto subGroupTextID = factory->hasNameTextID() ? factory->getNameTextID() : LIBRARY->objtypeh->getObjectGroupNameTextID(id);
+				name = QString::fromStdString(Translator::instance().translate(subGroupTextID));
 			}
 
 			if(!name.isEmpty())

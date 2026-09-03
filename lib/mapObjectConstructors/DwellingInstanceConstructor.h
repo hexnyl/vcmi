@@ -14,11 +14,9 @@
 #include "../json/JsonNode.h"
 #include "../mapObjects/CGDwelling.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CGDwelling;
 
-class DwellingInstanceConstructor : public CDefaultObjectTypeHandler<CGDwelling>
+class DLL_LINKAGE DwellingInstanceConstructor : public CDefaultObjectTypeHandler<CGDwelling>
 {
 	std::vector<std::vector<const CCreature *>> availableCreatures;
 
@@ -42,5 +40,3 @@ public:
 	std::vector<const CCreature *> getProducedCreatures() const;
 	AnimationPath getKingdomOverviewImage() const;
 };
-
-VCMI_LIB_NAMESPACE_END

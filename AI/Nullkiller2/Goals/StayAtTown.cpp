@@ -23,7 +23,7 @@ StayAtTown::StayAtTown(const CGTownInstance * town, AIPath & path)
 {
 	sethero(path.targetHero);
 	settown(town);
-	movementWasted = static_cast<float>(hero->movementPointsRemaining()) / hero->movementPointsLimit(!hero->inBoat()) - path.movementCost();
+	movementWasted = static_cast<float>(hero->movementPointsRemaining()) / hero->movementPointsLimit() - path.movementCost();
 	vstd::amax(movementWasted, 0);
 }
 
@@ -34,8 +34,8 @@ bool StayAtTown::operator==(const StayAtTown & other) const
 
 std::string StayAtTown::toString() const
 {
-	return "Stay at town " + town->getNameTranslated()
-		+ " hero " + hero->getNameTranslated()
+	return "Stay at town " + town->getNameTextID()
+		+ " hero " + hero->getNameTextID()
 		+ ", mana: " + std::to_string(hero->mana)
 		+ " / " + std::to_string(hero->manaLimit());
 }

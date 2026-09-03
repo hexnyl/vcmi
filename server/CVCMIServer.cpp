@@ -24,7 +24,10 @@
 #include "../lib/entities/ResourceTypeHandler.h"
 #include "../lib/gameState/CGameState.h"
 #include "../lib/mapping/CMapInfo.h"
+#include "../lib/texts/CompositeTranslator.h"
 #include "../lib/mapping/CMapHeader.h"
+#include "../lib/modding/CModHandler.h"
+#include "../lib/modding/ModDescription.h"
 #include "../lib/modding/ModIncompatibility.h"
 #include "../lib/rmg/CMapGenOptions.h"
 #include "../lib/serializer/CMemorySerializer.h"
@@ -37,7 +40,7 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/program_options.hpp>
 
-class CVCMIServerPackVisitor : public VCMI_LIB_WRAP_NAMESPACE(ICPackVisitor)
+class CVCMIServerPackVisitor : public ::ICPackVisitor
 {
 private:
 	CVCMIServer & handler;
@@ -294,7 +297,10 @@ bool CVCMIServer::prepareToStartGame()
 		{
 		case EStartMode::CAMPAIGN:
 			logNetwork->info("Preparing to start new campaign");
-			si->startTime = std::time(nullptr);
+			if(si->campState->getStartTime() == 0)
+				si->campState->setStartTime(std::time(nullptr));
+			si->startTime = si->campState->getStartTime();
+			si->saveDirectory = si->campState->getSaveDirectory();
 			si->fileURI = mi->fileURI;
 			si->campState->setCurrentMap(campaignMap);
 			si->campState->setCurrentMapBonus(campaignBonus);
@@ -304,6 +310,7 @@ bool CVCMIServer::prepareToStartGame()
 		case EStartMode::NEW_GAME:
 			logNetwork->info("Preparing to start new game");
 			si->startTime = std::time(nullptr);
+			si->saveDirectory.clear();
 			si->fileURI = mi->fileURI;
 			newGH->init(si.get(), progressTracking);	// may throw
 			started = true;
@@ -336,9 +343,9 @@ bool CVCMIServer::prepareToStartGame()
 	catch(const std::exception & e)
 	{
 		logGlobal->error("Failed to launch game: %s", e.what());
-		auto str = MetaString::createFromTextID("vcmi.broadcast.failedLoadGame");
+		auto str = MetaString::createFromTextID("vcmi.client.errors.invalidMap");
 		str.appendRawString(":\n");
-		str.appendRawString(e.what());
+		str.replaceRawString(e.what());
 		announceMessage(str);
 	}
 	current.finish();
@@ -443,7 +450,7 @@ void CVCMIServer::announcePack(CPackForLobby & pack)
 
 void CVCMIServer::announceMessage(const MetaString & txt)
 {
-	logNetwork->info("Show message: %s", txt.toString());
+	logNetwork->info("Show message: %s", txt.toString(LIBRARY->staticTexts()));
 	LobbyShowMessage cm;
 	cm.message = txt;
 	announcePack(cm);
@@ -458,7 +465,7 @@ void CVCMIServer::announceMessage(const std::string & txt)
 
 void CVCMIServer::announceTxt(const MetaString & txt, const std::string & playerName)
 {
-	logNetwork->info("%s says: %s", playerName, txt.toString());
+	logNetwork->info("%s says: %s", playerName, txt.toString(LIBRARY->staticTexts()));
 	LobbyChatMessage cm;
 	cm.playerName = playerName;
 	cm.message = txt;
@@ -488,7 +495,7 @@ bool CVCMIServer::passHost(GameConnectionID toConnectionId)
 	return false;
 }
 
-void CVCMIServer::clientConnected(std::shared_ptr<GameConnection> c, std::vector<std::string> & names, const std::string & uuid, EStartMode mode)
+void CVCMIServer::clientConnected(std::shared_ptr<GameConnection> c, const std::vector<std::string> & names, const std::string & uuid, EStartMode mode)
 {
 	assert(getState() == EServerState::LOBBY);
 
@@ -674,7 +681,12 @@ void CVCMIServer::updateStartInfoOnMapChange(std::shared_ptr<CMapInfo> mapInfo, 
 			// TODO: handle this somehow?
 		}
 		else
-			roomDescription = mi->getNameTranslated();
+		{
+			// lobby metadata is built server-side, so it resolves the map's own texts
+			CompositeTranslator translator;
+			translator.install(mi->mapHeader->texts);
+			roomDescription = mi->getNameTranslated(&translator);
+		}
 
 		lobbyProcessor->sendChangeRoomDescription(roomDescription);
 	}

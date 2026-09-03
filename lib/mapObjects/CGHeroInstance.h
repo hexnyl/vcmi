@@ -19,8 +19,6 @@
 #include "../bonuses/BonusCache.h"
 #include "../entities/hero/EHeroGender.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CHero;
 class CGBoat;
 class CGTownInstance;
@@ -54,8 +52,13 @@ protected:
 };
 
 
-class DLL_LINKAGE CGHeroInstance : public CArmedInstance, public IBoatGenerator, public CArtifactSet, public spells::Caster, public AFactionMember, public ICreatureUpgrader, public IOwnableObject
+class DLL_LINKAGE CGHeroInstance : public CArmedInstance, public IBoatGenerator, public CArtifactSet, public spells::Caster, public AFactionMember, public ICreatureUpgrader, public IOwnableObject, public scripting::ApiRawPointer<CGHeroInstance>
 {
+public:
+	// Disambiguate the scripting tag: CGHeroInstance is ApiRawPointer both directly and via CGObjectInstance
+	using ScriptingApiName = CGHeroInstance;
+
+private:
 	// We serialize heroes into JSON for crossover
 	friend class CampaignState;
 	friend class CMapLoaderH3M;
@@ -128,21 +131,21 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 
 	BoatId getBoatType() const override; //0 - evil (if a ship can be evil...?), 1 - good, 2 - neutral
+	EPathfindingLayer getBoatLayer() const override;
 	void getOutOffsets(std::vector<int3> &offsets) const override; //offsets to obj pos when we boat can be placed
 	const IObjectInterface * getObject() const override;
 
 	//////////////////////////////////////////////////////////////////////////
 
-	std::string getBiographyTranslated() const;
+	// no *Translated() accessors: a map may rename this hero, so its name lives in a
+	// map overlay that only the rendering side can resolve
 	std::string getBiographyTextID() const;
 
 	std::string getNameTextID() const;
-	std::string getNameTranslated() const;
 
 	HeroTypeID getPortraitSource() const;
 	int32_t getIconIndex() const;
 
-	std::string getClassNameTranslated() const;
 	std::string getClassNameTextID() const;
 
 	bool inBoat() const;
@@ -171,7 +174,7 @@ public:
 
 	//INativeTerrainProvider
 	FactionID getFactionID() const override;
-	TerrainId getNativeTerrain() const override;
+	bool isNativeTerrain(TerrainId terrain) const override;
 	int getLowestCreatureSpeed() const;
 	si32 manaRegain() const; //how many points of mana can hero regain "naturally" in one day
 	si32 getManaNewTurn() const; //calculate how much mana this hero is going to have the next day
@@ -205,9 +208,8 @@ public:
 	void setMovementPoints(int points);
 	int movementPointsRemaining() const;
 	int movementPointsLimit() const;
-	int movementPointsLimit(bool onLand) const;
 	//cached version is much faster, TurnInfo construction is costly
-	int movementPointsLimitCached(bool onLand, const TurnInfo * ti) const;
+	int movementPointsLimitCached(const EPathfindingLayer & layer, const TurnInfo * ti) const;
 
 	int movementPointsAfterEmbark(int MPsBefore, int basicCost, bool disembark, const TurnInfo * ti) const;
 
@@ -220,7 +222,9 @@ public:
 	/// Returns true if 'left' hero is stronger than 'right' when considering campaign transfer priority
 	static bool compareCampaignValue(const CGHeroInstance * left, const CGHeroInstance * right);
 	uint64_t getValueForDiplomacy() const;
-	
+	/// Army strength as seen by neutral creatures and Thieves Guild - may be scaled by artifacts such as Diplomat's Cloak
+	uint64_t getArmyStrengthPerceivedByOthers() const;
+
 	ui64 getTotalStrength() const; // includes fighting strength and army strength
 	TExpType calculateXp(TExpType exp) const; //apply learning skill
 	int getBasePrimarySkillValue(PrimarySkill which) const; //the value of a base-skill without items or temporary bonuses
@@ -296,7 +300,7 @@ public:
 	PlayerColor getCasterOwner() const override;
 	const CGHeroInstance * getHeroCaster() const override;
 
-	void getCasterName(MetaString & text) const override;
+	std::string getCasterNameTextID() const override;
 	void getCastDescription(const spells::Spell * spell, const battle::Units & attacked, MetaString & text) const override;
 	void spendMana(ServerCallback * server, const int spellCost) const override;
 
@@ -304,9 +308,9 @@ public:
 
 	void pickRandomObject(IGameRandomizer & gameRandomizer) override;
 	void onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstance * h) const override;
-	std::string getObjectName() const override;
-	std::string getHoverText(PlayerColor player) const override;
-	std::string getMovementPointsTextIfOwner(PlayerColor player) const;
+	MetaString getObjectName() const override;
+	MetaString getHoverText(PlayerColor player) const override;
+	MetaString getMovementPointsTextIfOwner(PlayerColor player) const;
 
 	TObjectTypeHandler getObjectHandler() const override;
 
@@ -359,30 +363,9 @@ public:
 		h & moveDir;
 		if (h.hasFeature(Handler::Version::DISABLE_TACTICS))
 			h & tacticFormationEnabled;
-		if (!h.hasFeature(Handler::Version::RANDOMIZATION_REWORK))
-		{
-			ui8 magicSchoolCounter = 0;
-			ui8 wisdomCounter = 0;
 
-			h & magicSchoolCounter;
-			h & wisdomCounter;
-		}
-
-		if (h.hasFeature(Handler::Version::NO_RAW_POINTERS_IN_SERIALIZER))
-		{
-			h & visitedTown;
-			h & boardedBoat;
-		}
-		else
-		{
-			std::shared_ptr<CGObjectInstance> ptrTown;
-			std::shared_ptr<CGObjectInstance> ptrBoat;
-			h & ptrTown;
-			h & ptrBoat;
-
-			visitedTown = ptrTown ? ptrTown->id : ObjectInstanceID();
-			boardedBoat = ptrBoat ? ptrBoat->id : ObjectInstanceID();
-		}
+		h & visitedTown;
+		h & boardedBoat;
 
 		h & commander;
 		h & visitedObjects;
@@ -391,5 +374,3 @@ public:
 			attachCommanderToArmy();
 	}
 };
-
-VCMI_LIB_NAMESPACE_END

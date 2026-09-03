@@ -11,13 +11,12 @@
 #pragma once
 
 #include "Entity.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "scripting/ApiTags.h"
 
 class ArtifactID;
 class CreatureID;
 
-class DLL_LINKAGE Artifact : public EntityWithBonuses<ArtifactID>
+class DLL_LINKAGE Artifact : public EntityWithBonuses<ArtifactID>, public scripting::ApiRawPointer<Artifact>
 {
 public:
 
@@ -32,5 +31,3 @@ public:
 	virtual std::string getDescriptionTextID() const = 0;
 	virtual std::string getEventTextID() const = 0;
 };
-
-VCMI_LIB_NAMESPACE_END

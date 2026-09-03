@@ -9,16 +9,14 @@
  */
 #pragma once
 
-#include "../lib/GameConstants.h"
-#include "../lib/mapping/MapTilesStorage.h"
-#include "../lib/int3.h"
+#include "../../lib/GameConstants.h"
+#include "../../lib/mapping/MapTilesStorage.h"
+#include "../../lib/int3.h"
 
 #include <boost/container/small_vector.hpp>
 
-VCMI_LIB_NAMESPACE_BEGIN
 struct ObjectPosInfo;
 class CGObjectInstance;
-VCMI_LIB_NAMESPACE_END
 
 class IMapRendererContext;
 

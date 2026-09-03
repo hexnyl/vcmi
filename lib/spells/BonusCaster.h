@@ -12,8 +12,6 @@
 
 #include "ProxyCaster.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 struct Bonus;
 
 namespace spells
@@ -25,7 +23,7 @@ public:
 	BonusCaster(const Caster * actualCaster_, std::shared_ptr<Bonus> bonus_);
 	virtual ~BonusCaster();
 
-	void getCasterName(MetaString & text) const override;
+	std::string getCasterNameTextID() const override;
 	void getCastDescription(const Spell * spell, const battle::Units & attacked, MetaString & text) const override;
 	void spendMana(ServerCallback * server, const int spellCost) const override;
 
@@ -35,5 +33,3 @@ private:
 
 } // namespace spells
 
-
-VCMI_LIB_NAMESPACE_END

@@ -13,8 +13,6 @@
 #include "../networkPacks/TradeItem.h"
 #include "../int3.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 struct ArtifactLocation;
 
 class JsonNode;
@@ -32,8 +30,8 @@ class IGameActionCallback
 {
 public:
 	//hero
-	virtual void moveHero(const CGHeroInstance *h, const std::vector<int3> & path, bool transit) =0; //moves hero alongside provided path
-	virtual void moveHero(const CGHeroInstance *h, const int3 & destination, bool transit) =0; //moves hero alongside provided path
+	virtual void moveHero(const CGHeroInstance *h, const std::vector<int3> & path, bool transit, const EPathfindingLayer & layer) =0; //moves hero alongside provided path
+	virtual void moveHero(const CGHeroInstance *h, const int3 & destination, bool transit, const EPathfindingLayer & layer = EPathfindingLayer::AUTO) =0;
 	virtual bool dismissHero(const CGHeroInstance * hero)=0; //dismisses given hero; true - successfully, false - not successfully
 	virtual void dig(const CGObjectInstance *hero)=0;
 	virtual void castSpell(const CGHeroInstance *hero, SpellID spellID, const int3 &pos = int3(-1, -1, -1))=0; //cast adventure map spell
@@ -89,5 +87,3 @@ public:
 	// Moves all artifacts from one hero to another
 	virtual void bulkMoveArtifacts(ObjectInstanceID srcHero, ObjectInstanceID dstHero, bool swap, bool equipped, bool backpack) = 0;
 };
-
-VCMI_LIB_NAMESPACE_END

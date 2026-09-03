@@ -14,14 +14,10 @@
 #include "../widgets/MiscWidgets.h"
 #include "CWindowObject.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CCommanderInstance;
 class CStackInstance;
 class CStack;
 class UpgradeInfo;
-
-VCMI_LIB_NAMESPACE_END
 
 class UnitView;
 class CTabbedInt;
@@ -29,6 +25,7 @@ class CButton;
 class CMultiLineLabel;
 class CListBox;
 class CCreaturePic;
+class CPicture;
 class CArtPlace;
 class CCommanderArtPlace;
 class LRClickableArea;
@@ -50,6 +47,7 @@ public:
 	void clickPressed(const Point & cursorPosition) override;
 
 	void setObject(std::shared_ptr<CIntObject> object);
+	void select();
 	void deselect(); //TODO: consider using observer pattern instead?
 	bool getIsMasterAbility();
 
@@ -140,6 +138,7 @@ class CStackWindow : public CWindowObject
 		};
 
 		std::shared_ptr<CCreaturePic> animation;
+		std::shared_ptr<CPicture> deadCommanderOverlay;
 		std::shared_ptr<LRClickableArea> animationArea;
 		std::shared_ptr<CLabel> name;
 		std::array<std::shared_ptr<CPicture>, 8> statIcons;
@@ -198,9 +197,10 @@ class CStackWindow : public CWindowObject
 
 	void initSections();
 	void initBonusesList();
+	void submitSelection();
 
 	void init();
-	void close() override;
+	void initCommanderLevelUpData(const CCommanderInstance * commander, const std::vector<ui32> & skills, const std::function<void(ui32)> & callback);
 	void showStackExperienceDetailsWindow();
 
 	std::string getCommanderSkillDescription(int skillIndex, int skillLevel);
@@ -219,7 +219,15 @@ public:
 	// for commanders & commander level-up dialog
 	CStackWindow(const CCommanderInstance * commander, bool popup);
 	CStackWindow(const CCommanderInstance * commander, std::vector<ui32> &skills, std::function<void(ui32)> callback);
+	void updateCommanderLevelUpData(const CCommanderInstance * commander, std::vector<ui32> & skills, const std::function<void(ui32)> & callback);
+	void setCloseOnSelection(bool value);
+	bool isCommanderLevelUpDialog() const;
+	void close() override;
 
 	void keyPressed(EShortcut key) override;
 	~CStackWindow();
+
+private:
+	bool closeOnSelection = true;
+	bool selectionSubmitted = false;
 };

@@ -24,7 +24,6 @@
 #include "../RoadHandler.h"
 #include "../IGameSettings.h"
 #include "../CSoundBase.h"
-#include "../spells/CSpellHandler.h"
 #include "../CSkillHandler.h"
 #include "../gameState/CGameState.h"
 #include "../gameState/UpgradeInfo.h"
@@ -45,17 +44,16 @@
 #include "../json/JsonBonus.h"
 #include "../pathfinder/TurnInfo.h"
 #include "../serializer/JsonSerializeFormat.h"
+#include "../spells/CSpell.h"
 #include "../mapObjectConstructors/AObjectTypeHandler.h"
 #include "../mapObjectConstructors/CObjectClassesHandler.h"
-#include "../mapObjects/MiscObjects.h"
+#include "MiscObjects.h"
 #include "../modding/ModScope.h"
 #include "../networkPacks/PacksForClient.h"
 #include "../networkPacks/PacksForClientBattle.h"
 #include "../constants/StringConstants.h"
 #include "../battle/Unit.h"
 #include "CConfigHandler.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 const ui32 CGHeroInstance::NO_PATROLLING = std::numeric_limits<ui32>::max();
 
@@ -90,20 +88,12 @@ const IBonusBearer* CGHeroInstance::getBonusBearer() const
 	return this;
 }
 
-TerrainId CGHeroInstance::getNativeTerrain() const
+bool CGHeroInstance::isNativeTerrain(TerrainId terrain) const
 {
-	TerrainId nativeTerrain = ETerrainId::ANY_TERRAIN;
-
 	for(const auto & stack : stacks)
-	{
-		TerrainId stackNativeTerrain = stack.second->getNativeTerrain(); //consider terrain bonuses e.g. Lodestar.
-
-		if(nativeTerrain == ETerrainId::ANY_TERRAIN)
-			nativeTerrain = stackNativeTerrain;
-		else if(nativeTerrain != stackNativeTerrain)
-			return ETerrainId::NONE;
-	}
-	return nativeTerrain;
+		if(!stack.second->isNativeTerrain(terrain))
+			return false;
+	return true;
 }
 
 bool CGHeroInstance::isCoastVisitable() const
@@ -144,6 +134,11 @@ void CGHeroInstance::setSecSkillLevel(const SecondarySkill & which, int val, Cha
 	}
 	else if(currentLevel == 0) // gained new skill
 	{
+		// Explicitly set skills are mutually exclusive with the (NONE, -1) "use hero type
+		// default skills" marker. Leaving the marker in place makes the hero serialize as
+		// having default skills, silently discarding every skill set here - see
+		// serializeJsonOptions().
+		vstd::erase_if(secSkills, [](const std::pair<SecondarySkill, ui8> & pair) { return pair.first == SecondarySkill::NONE; });
 		secSkills.emplace_back(which, newLevelClamped);
 	}
 	else
@@ -208,13 +203,8 @@ void CGHeroInstance::setMovementPoints(int points)
 
 int CGHeroInstance::movementPointsLimit() const
 {
-	return movementPointsLimit(!inBoat());
-}
-
-int CGHeroInstance::movementPointsLimit(bool onLand) const
-{
-	auto ti = getTurnInfo(0);
-	return onLand ? ti->getMovePointsLimitLand() : ti->getMovePointsLimitWater();
+	auto layer = inBoat() ? getBoat()->layer : EPathfindingLayer::LAND;
+	return getTurnInfo(0)->getMaxMovePoints(layer);
 }
 
 int CGHeroInstance::getLowestCreatureSpeed() const
@@ -242,12 +232,19 @@ std::unique_ptr<TurnInfo> CGHeroInstance::getTurnInfo(int days) const
 	return std::make_unique<TurnInfo>(turnInfoCache.get(), this, days);
 }
 
-int CGHeroInstance::movementPointsLimitCached(bool onLand, const TurnInfo * ti) const
+int CGHeroInstance::movementPointsLimitCached(const EPathfindingLayer & layer, const TurnInfo * ti) const
 {
-	if (onLand)
+	if (layer == EPathfindingLayer::LAND)
 		return ti->getMovePointsLimitLand();
-	else
+	else if (layer == EPathfindingLayer::SAIL)
 		return ti->getMovePointsLimitWater();
+	else if (layer == EPathfindingLayer::AVIATE)
+		return ti->getMovePointsLimitAir();
+	else
+	{
+		logGlobal->error("CGHeroInstance::movementPointsLimitCached: invalid layer %d", static_cast<int>(layer));
+		return ti->getMovePointsLimitLand();
+	}
 }
 
 CGHeroInstance::CGHeroInstance(IGameInfoCallback * cb)
@@ -474,7 +471,7 @@ void CGHeroInstance::initHero(IGameRandomizer & gameRandomizer, bool isFake)
 	//initialize bonuses
 	recreateSecondarySkillsBonuses();
 
-	movement = movementPointsLimit(true);
+	movement = movementPointsLimit();
 	mana = manaLimit(); //after all bonuses are taken into account, make sure this line is the last one
 }
 
@@ -501,7 +498,7 @@ void CGHeroInstance::initArmy(vstd::RNG & rand, IArmyDescriptor * dst)
 
 		if(stack.creature == CreatureID::NONE)
 		{
-			logGlobal->error("Hero %s has invalid creature in initial army", getNameTranslated());
+			logGlobal->error("Hero %s has invalid creature in initial army", getNameTextID());
 			continue;
 		}
 
@@ -527,11 +524,11 @@ void CGHeroInstance::initArmy(vstd::RNG & rand, IArmyDescriptor * dst)
 					putArtifact(slot, artifact);
 				}
 				else
-					logGlobal->warn("Hero %s already has artifact at %d, omitting giving artifact %d", getNameTranslated(), slot.toEnum(), aid.toEnum());
+					logGlobal->warn("Hero %s already has artifact at %d, omitting giving artifact %d", getNameTextID(), slot.toEnum(), aid.toEnum());
 			}
 			else
 			{
-				logGlobal->error("Hero %s has invalid war machine in initial army", getNameTranslated());
+				logGlobal->error("Hero %s has invalid war machine in initial army", getNameTextID());
 			}
 		}
 		else
@@ -581,7 +578,6 @@ void CGHeroInstance::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroIn
 			const auto boatPos = visitablePos();
 			if (cb->getTile(boatPos)->isWater())
 			{
-				smp.val = movementPointsLimit(false);
 				if (!inBoat())
 				{
 					//Create a new boat for hero
@@ -589,10 +585,7 @@ void CGHeroInstance::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroIn
 					boatId = cb->getTopObj(boatPos)->id;
 				}
 			}
-			else
-			{
-				smp.val = movementPointsLimit(true);
-			}
+			smp.val = movementPointsLimit();
 			gameEvents.giveHero(id, h->tempOwner, boatId); //recreates def and adds hero to player
 			gameEvents.setObjPropertyID(id, ObjProperty::ID, Obj(Obj::HERO)); //set ID to 34 AFTER hero gets correct flag color
 			gameEvents.setMovePoints (&smp);
@@ -606,33 +599,34 @@ void CGHeroInstance::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroIn
 	}
 }
 
-std::string CGHeroInstance::getObjectName() const
+MetaString CGHeroInstance::getObjectName() const
 {
-	if(ID != Obj::PRISON)
-	{
-		std::string hoverName = LIBRARY->generaltexth->allTexts[15];
-		boost::algorithm::replace_first(hoverName,"%s",getNameTranslated());
-		boost::algorithm::replace_first(hoverName,"%s", getClassNameTranslated());
-		return hoverName;
-	}
-	else
-		return LIBRARY->objtypeh->getObjectName(ID, 0);
+	if(ID == Obj::PRISON)
+		return MetaString::createFromTextID(getObjectNameTextID());
+
+	MetaString hoverName;
+	hoverName.appendTextID("core.genrltxt.15");
+	hoverName.replaceTextID(getNameTextID());
+	hoverName.replaceTextID(getClassNameTextID());
+	return hoverName;
 }
 
-std::string CGHeroInstance::getHoverText(PlayerColor player) const
+MetaString CGHeroInstance::getHoverText(PlayerColor player) const
 {
-	std::string hoverText = CArmedInstance::getHoverText(player) + getMovementPointsTextIfOwner(player);
+	MetaString hoverText = CArmedInstance::getHoverText(player);
+	hoverText.append(getMovementPointsTextIfOwner(player));
 	return hoverText;
 }
 
-std::string CGHeroInstance::getMovementPointsTextIfOwner(PlayerColor player) const
+MetaString CGHeroInstance::getMovementPointsTextIfOwner(PlayerColor player) const
 {
-	std::string output = "";
+	MetaString output;
 	if(player == getOwner())
 	{
-		output += " " + LIBRARY->generaltexth->translate("vcmi.adventureMap.movementPointsHeroInfo");
-		boost::replace_first(output, "%POINTS", std::to_string(movementPointsLimit(!inBoat())));
-		boost::replace_first(output, "%REMAINING", std::to_string(movementPointsRemaining()));
+		output.appendRawString(" ");
+		output.appendTextID("vcmi.adventureMap.movementPointsHeroInfo");
+		output.replaceTokenNumber("%POINTS", movementPointsLimit());
+		output.replaceTokenNumber("%REMAINING", movementPointsRemaining());
 	}
 
 	return output;
@@ -738,13 +732,24 @@ double CGHeroInstance::getHeroStrength() const
 uint64_t CGHeroInstance::getValueForDiplomacy() const
 {
 	// H3 formula for hero strength when considering diplomacy skill
-	uint64_t armyStrength = getArmyStrength();
+	uint64_t armyStrength = getArmyStrengthPerceivedByOthers();
 	double heroStrength = sqrt(
 		(1.0 + 0.05 * getPrimSkillLevel(PrimarySkill::ATTACK)) *
 		(1.0 + 0.05 * getPrimSkillLevel(PrimarySkill::DEFENSE))
 		);
 
 	return heroStrength * armyStrength;
+}
+
+uint64_t CGHeroInstance::getArmyStrengthPerceivedByOthers() const
+{
+	uint64_t armyStrength = getArmyStrength();
+
+	// artifacts such as Diplomat's Cloak make hero army look stronger or weaker than it is
+	for(const auto & bonus : *getBonusesOfType(BonusType::DIPLOMACY_ARMY_STRENGTH_MULTIPLIER))
+		armyStrength = armyStrength * bonus->val / 100;
+
+	return armyStrength;
 }
 
 bool CGHeroInstance::compareCampaignValue(const CGHeroInstance * left, const CGHeroInstance * right)
@@ -830,8 +835,20 @@ int64_t CGHeroInstance::getSpellBonus(const spells::Spell * spell, int64_t base,
 
 	base = static_cast<int64_t>(base * (100 + maxSchoolBonus) / 100.0);
 
-	if(affectedStack && affectedStack->creatureLevel() > 0) //Hero specials like Solmyr, Deemer
-		base = static_cast<int64_t>(base * static_cast<double>(100 + valOfBonuses(BonusType::SPECIAL_SPELL_LEV, BonusSubtypeID(spell->getId())) / affectedStack->creatureLevel()) / 100.0);
+	if(affectedStack) //Hero specials like Solmyr, Deemer
+	{
+		const int targetLevel = affectedStack->creatureLevel();
+		const int assumedLevel = std::max(targetLevel, 1);
+		int spellLevPercent = 0;
+
+		// legacy: value is pre-multiplied by hero level (TIMES_HERO_LEVEL), so rounding is multiply-first; kept unchanged for compatibility
+		spellLevPercent += valOfBonuses(BonusType::SPECIAL_SPELL_LEV, BonusSubtypeID(spell->getId())) / assumedLevel;
+
+		// scaling specialty: raw percent per step with H3-correct divide-first rounding; treat level-0 units (war machines) as level 1
+		spellLevPercent += valOfBonuses(BonusType::SPECIAL_SPELL_SCALING, BonusSubtypeID(spell->getId())) * (level / assumedLevel);
+
+		base = static_cast<int64_t>(base * static_cast<double>(100 + spellLevPercent) / 100.0);
+	}
 
 	return base;
 }
@@ -876,10 +893,9 @@ PlayerColor CGHeroInstance::getCasterOwner() const
 	return tempOwner;
 }
 
-void CGHeroInstance::getCasterName(MetaString & text) const
+std::string CGHeroInstance::getCasterNameTextID() const
 {
-	//FIXME: use local name, MetaString need access to gamestate as hero name is part of map object
-	text.replaceRawString(getNameTranslated());
+	return getNameTextID();
 }
 
 void CGHeroInstance::getCastDescription(const spells::Spell * spell, const battle::Units & attacked, MetaString & text) const
@@ -888,10 +904,10 @@ void CGHeroInstance::getCastDescription(const spells::Spell * spell, const battl
 	const int textIndex = singleTarget ? 195 : 196;
 
 	text.appendLocalString(EMetaText::GENERAL_TXT, textIndex);
-	getCasterName(text);
+	text.replaceTextID(getCasterNameTextID());
 	text.replaceName(spell->getId());
 	if(singleTarget)
-		attacked.at(0)->addNameReplacement(text, true);
+		attacked.at(0)->addNameReplacement(text, 2);
 }
 
 const CGHeroInstance * CGHeroInstance::getHeroCaster() const
@@ -920,7 +936,7 @@ bool CGHeroInstance::canCastThisSpell(const spells::Spell * spell) const
 	{
 		if(inSpellBook)
 		{//hero has this spell in spellbook
-			logGlobal->error("Special spell %s in spellbook.", spell->getNameTranslated());
+			logGlobal->error("Special spell %s in spellbook.", spell->getNameTextID());
 		}
 		return hasBonusOfType(BonusType::SPELL, BonusSubtypeID(spell->getId()));
 	}
@@ -930,7 +946,7 @@ bool CGHeroInstance::canCastThisSpell(const spells::Spell * spell) const
 		{
 			//hero has this spell in spellbook
 			//it is normal if set in map editor, but trace it to possible debug of magic guild
-			logGlobal->trace("Banned spell %s in spellbook.", spell->getNameTranslated());
+			logGlobal->trace("Banned spell %s in spellbook.", spell->getNameTextID());
 		}
 	}
 	return !getSourcesForSpell(spell->getId()).empty();
@@ -949,19 +965,19 @@ bool CGHeroInstance::canLearnSpell(const spells::Spell * spell, bool allowBanned
 
 	if(spell->isSpecial())
 	{
-		logGlobal->warn("Hero %s try to learn special spell %s", nodeName(), spell->getNameTranslated());
+		logGlobal->warn("Hero %s try to learn special spell %s", nodeName(), spell->getNameTextID());
 		return false;//special spells can not be learned
 	}
 
 	if(spell->isCreatureAbility())
 	{
-		logGlobal->warn("Hero %s try to learn creature spell %s", nodeName(), spell->getNameTranslated());
+		logGlobal->warn("Hero %s try to learn creature spell %s", nodeName(), spell->getNameTextID());
 		return false;//creature abilities can not be learned
 	}
 
 	if(!allowBanned && !cb->isAllowed(spell->getId()))
 	{
-		logGlobal->warn("Hero %s try to learn banned spell %s", nodeName(), spell->getNameTranslated());
+		logGlobal->warn("Hero %s try to learn banned spell %s", nodeName(), spell->getNameTextID());
 		return false;//banned spells should not be learned
 	}
 
@@ -1116,6 +1132,11 @@ BoatId CGHeroInstance::getBoatType() const
 	return BoatId(LIBRARY->townh->getById(getHeroClass()->faction)->getBoatType());
 }
 
+EPathfindingLayer CGHeroInstance::getBoatLayer() const
+{
+	return EPathfindingLayer::SAIL;
+}
+
 void CGHeroInstance::getOutOffsets(std::vector<int3> &offsets) const
 {
 	offsets = {
@@ -1182,16 +1203,6 @@ int32_t CGHeroInstance::getIconIndex() const
 	return getPortraitSource().toEntity(LIBRARY)->getIconIndex();
 }
 
-std::string CGHeroInstance::getNameTranslated() const
-{
-	return LIBRARY->generaltexth->translate(getNameTextID());
-}
-
-std::string CGHeroInstance::getClassNameTranslated() const
-{
-	return LIBRARY->generaltexth->translate(getClassNameTextID());
-}
-
 std::string CGHeroInstance::getClassNameTextID() const
 {
 	if (isCampaignGem())
@@ -1209,11 +1220,6 @@ std::string CGHeroInstance::getNameTextID() const
 	// FIXME: called by logging from some specialties (mods?) before type is set on deserialization
 	// assert(0);
 	return "";
-}
-
-std::string CGHeroInstance::getBiographyTranslated() const
-{
-	return LIBRARY->generaltexth->translate(getBiographyTextID());
 }
 
 std::string CGHeroInstance::getBiographyTextID() const
@@ -1386,6 +1392,9 @@ int CGHeroInstance::movementPointsAfterEmbark(int MPsBefore, int basicCost, bool
 	
 	auto boatLayer = inBoat() ? getBoat()->layer : EPathfindingLayer::SAIL;
 
+	if(boatLayer == EPathfindingLayer::AVIATE)
+		return 0; // boarding an airship takes all MPs, can be extended to support airship boarding bonuses (similar to hasFreeShipBoarding)
+
 	int mp1 = ti->getMaxMovePoints(disembark ? EPathfindingLayer::LAND : boatLayer);
 	int mp2 = ti->getMaxMovePoints(disembark ? boatLayer : EPathfindingLayer::LAND);
 	int ret = static_cast<int>((MPsBefore - basicCost) * static_cast<double>(mp1) / mp2);
@@ -1394,7 +1403,7 @@ int CGHeroInstance::movementPointsAfterEmbark(int MPsBefore, int basicCost, bool
 
 EDiggingStatus CGHeroInstance::diggingStatus() const
 {
-	if(static_cast<int>(movement) < movementPointsLimit(true))
+	if(static_cast<int>(movement) < movementPointsLimit())
 		return EDiggingStatus::LACK_OF_MOVEMENT;
 	if(!ArtifactID(ArtifactID::GRAIL).toArtifact()->canBePutAt(this))
 		return EDiggingStatus::BACKPACK_IS_FULL;
@@ -1730,8 +1739,8 @@ bool CGHeroInstance::isMissionCritical() const
 
 		auto const & testFunctor = [&](const EventCondition & condition)
 		{
-			if ((condition.condition == EventCondition::CONTROL) && condition.objectID != ObjectInstanceID::NONE)
-				return (id != condition.objectID);
+				if ((condition.condition == EventCondition::CONTROL || condition.condition == EventCondition::CONTROL_CURRENT) && condition.objectID != ObjectInstanceID::NONE)
+					return (id != condition.objectID);
 
 			if (condition.condition == EventCondition::HAVE_ARTIFACT)
 			{
@@ -1824,5 +1833,3 @@ ArtifactID CGHeroInstance::getReplacedWarMachine(ArtifactID artifactID) const
 	return replacedArtifact;
 }
 
-
-VCMI_LIB_NAMESPACE_END

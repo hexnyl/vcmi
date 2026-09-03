@@ -8,26 +8,30 @@
  *
  */
 #include "StdInc.h"
+#include "../helper.h"
 #include "questwidget.h"
 #include "ui_questwidget.h"
 #include "../mapcontroller.h"
-#include "../lib/GameLibrary.h"
-#include "../lib/CSkillHandler.h"
-#include "../lib/spells/CSpellHandler.h"
-#include "../lib/CCreatureHandler.h"
-#include "../lib/constants/StringConstants.h"
-#include "../lib/entities/artifact/CArtHandler.h"
-#include "../lib/entities/ResourceTypeHandler.h"
-#include "../lib/mapping/CMap.h"
-#include "../lib/mapObjects/CGHeroInstance.h"
-#include "../lib/mapObjects/CGCreature.h"
+#include "../../lib/GameLibrary.h"
+#include "../../lib/CSkillHandler.h"
+#include "../../lib/CCreatureHandler.h"
+#include "../../lib/constants/StringConstants.h"
+#include "../../lib/entities/artifact/CArtHandler.h"
+#include "../../lib/entities/ResourceTypeHandler.h"
+#include "../../lib/mapping/CMap.h"
+#include "../../lib/mapObjects/CGHeroInstance.h"
+#include "../../lib/mapObjects/CGCreature.h"
+#include "../../lib/spells/CSpellHandler.h"
 
 #include <vcmi/HeroTypeService.h>
 #include <vcmi/HeroType.h>
 #include <vcmi/HeroClassService.h>
 #include <vcmi/HeroClass.h>
+#include <vcmi/spells/Service.h>
+#include <vcmi/spells/Spell.h>
+#include "../translator.h"
 
-QuestWidget::QuestWidget(MapController & _controller, CQuest & _sh, QWidget *parent) :
+QuestWidget::QuestWidget(MapController & _controller, Quest & _sh, QWidget *parent) :
 	QDialog(parent),
 	controller(_controller),
 	quest(_sh),
@@ -35,7 +39,7 @@ QuestWidget::QuestWidget(MapController & _controller, CQuest & _sh, QWidget *par
 {
 	setAttribute(Qt::WA_DeleteOnClose, true);
 	ui->setupUi(this);
-
+	Helper::decorateDialog(this);
 	ui->lDayOfWeek->addItem(tr("None"));
 	for(int i = 1; i <= 7; ++i)
 		ui->lDayOfWeek->addItem(tr("Day %1").arg(i));
@@ -46,7 +50,7 @@ QuestWidget::QuestWidget(MapController & _controller, CQuest & _sh, QWidget *par
 	{
 		MetaString str;
 		str.appendName(GameResID(i));
-		auto * item = new QTableWidgetItem(QString::fromStdString(str.toString()));
+		auto * item = new QTableWidgetItem(QString::fromStdString(str.toString(&Translator::instance())));
 		item->setData(Qt::UserRole, QVariant::fromValue(i.getNum()));
 		ui->lResources->setItem(i, 0, item);
 		auto * spinBox = new QSpinBox;
@@ -131,7 +135,7 @@ QuestWidget::QuestWidget(MapController & _controller, CQuest & _sh, QWidget *par
 	{
 		MetaString str;
 		str.appendName(color);
-		auto * item = new QListWidgetItem(QString::fromStdString(str.toString()));
+		auto * item = new QListWidgetItem(QString::fromStdString(str.toString(&Translator::instance())));
 		item->setData(Qt::UserRole, QVariant::fromValue(color.getNum()));
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 		item->setCheckState(Qt::Unchecked);
@@ -213,10 +217,11 @@ void QuestWidget::obtainData()
 		}
 	}
 	
-	if(quest.killTarget != ObjectInstanceID::NONE && quest.killTarget < controller.map()->objects.size())
-		ui->lKillTarget->setText(QString::fromStdString(controller.map()->objects[quest.killTarget]->instanceName));
+	ObjectInstanceID killTarget = quest.mission.destroyedObjects.empty() ? ObjectInstanceID::NONE : quest.mission.destroyedObjects.front();
+	if(killTarget != ObjectInstanceID::NONE && killTarget < controller.map()->objects.size())
+		ui->lKillTarget->setText(QString::fromStdString(controller.map()->objects[killTarget]->instanceName));
 	else
-		quest.killTarget = ObjectInstanceID::NONE;
+		quest.mission.destroyedObjects.clear();
 }
 
 bool QuestWidget::commitChanges()
@@ -290,7 +295,7 @@ bool QuestWidget::commitChanges()
 			quest.mission.players.emplace_back(ui->lPlayers->item(i)->data(Qt::UserRole).toInt());
 	}
 	
-	//quest.killTarget is set directly in object picking
+	//quest.mission.destroyedObjects is set directly in object picking
 	
 	return true;
 }
@@ -367,13 +372,13 @@ void QuestWidget::onTargetPicked(const CGObjectInstance * obj)
 	
 	if(!obj) //discarded
 	{
-		quest.killTarget = ObjectInstanceID::NONE;
+		quest.mission.destroyedObjects.clear();
 		ui->lKillTarget->setText("");
 		return;
 	}
-	
+
 	ui->lKillTarget->setText(QString::fromStdString(obj->instanceName));
-	quest.killTarget = obj->id;
+	quest.mission.destroyedObjects = { obj->id };
 }
 
 void QuestWidget::on_lCreatureAdd_clicked()
@@ -392,7 +397,7 @@ void QuestWidget::on_lCreatureRemove_clicked()
 		ui->lCreatures->removeRow(i);
 }
 
-QuestDelegate::QuestDelegate(MapController & c, CQuest & t): controller(c), quest(t), BaseInspectorItemDelegate()
+QuestDelegate::QuestDelegate(MapController & c, Quest & t): BaseInspectorItemDelegate(), controller(c), quest(t)
 {
 }
 
@@ -460,7 +465,7 @@ void QuestDelegate::updateModelData(QAbstractItemModel * model, const QModelInde
 			continue;
 		MetaString str;
 		str.appendName(resource);
-		resourcesList += QString("%1: %2").arg(QString::fromStdString(str.toString())).arg(quest.mission.resources[resource]);
+		resourcesList += QString("%1: %2").arg(QString::fromStdString(str.toString(&Translator::instance()))).arg(quest.mission.resources[resource]);
 	}
 	textList += QObject::tr("Resources: %1").arg(resourcesList.join(", "));
 
@@ -511,7 +516,7 @@ void QuestDelegate::updateModelData(QAbstractItemModel * model, const QModelInde
 	{
 		MetaString str;
 		str.appendName(player);
-		playersList += QString::fromStdString(str.toString());
+		playersList += QString::fromStdString(str.toString(&Translator::instance()));
 	}
 	textList += QObject::tr("Players: %1").arg(playersList.join(", "));
 

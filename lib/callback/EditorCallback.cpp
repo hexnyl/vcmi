@@ -9,12 +9,10 @@
  */
 #include "StdInc.h"
 #include "EditorCallback.h"
-#include "../lib/mapping/CMap.h"
+#include "../mapping/CMap.h"
 
 #define THROW_EDITOR_UNSUPPORTED \
 	throw std::runtime_error(std::string("EditorCallback: ") + __func__ + " is not available in map editor")
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 const CMap * EditorCallback::getMapConstPtr() const
 {
@@ -32,6 +30,11 @@ void EditorCallback::setMap(const CMap * newMap)
 	map = newMap;
 }
 
+const scripting::Pool & EditorCallback::getScriptContextPool() const
+{
+	THROW_EDITOR_UNSUPPORTED;
+}
+
 CGameState & EditorCallback::gameState()
 {
 	THROW_EDITOR_UNSUPPORTED;
@@ -47,7 +50,7 @@ const StartInfo * EditorCallback::getStartInfo() const
 	THROW_EDITOR_UNSUPPORTED;
 }
 
-int EditorCallback::getDate(Date mode) const
+Calendar EditorCallback::getCalendar() const
 {
 	THROW_EDITOR_UNSUPPORTED;
 }
@@ -152,13 +155,6 @@ bool EditorCallback::isVisibleFor(const CGObjectInstance *obj, PlayerColor playe
 	THROW_EDITOR_UNSUPPORTED;
 }
 
-#if SCRIPTING_ENABLED
-scripting::Pool * EditorCallback::getGlobalContextPool() const
-{
-	THROW_EDITOR_UNSUPPORTED;
-}
-#endif
-
 const TeamState * EditorCallback::getTeam(TeamID) const
 {
 	THROW_EDITOR_UNSUPPORTED;
@@ -198,5 +194,3 @@ int EditorCallback::getResource(PlayerColor, GameResID) const
 {
 	THROW_EDITOR_UNSUPPORTED;
 }
-
-VCMI_LIB_NAMESPACE_END

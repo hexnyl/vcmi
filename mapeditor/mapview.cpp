@@ -55,9 +55,16 @@ void MinimapView::mousePressEvent(QMouseEvent* event)
 	mouseMoveEvent(event);
 }
 
+#ifdef ENABLE_SINGLE_APP_BUILD
+namespace MapEditor {
+#endif
+
 MapView::MapView(QWidget * parent):
 	QGraphicsView(parent),
-	selectionTool(MapView::SelectionTool::None)
+	selectionTool(MapView::SelectionTool::None),
+	tileStart(int3{}),
+	tilePrev(int3{}),
+	pressedOnSelected(false)
 {
 	connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &MapView::setViewports);
 	connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &MapView::setViewports);
@@ -71,6 +78,17 @@ void MapView::cameraChanged(const QPointF & pos)
 void MapView::setController(MapController * ctrl)
 {
 	controller = ctrl;
+}
+
+void MapView::resetInteractionState()
+{
+	if(rubberBand)
+		rubberBand->hide();
+
+	tileStart = int3{};
+	tilePrev = int3{};
+	pressedOnSelected = false;
+	temporaryTiles.clear();
 }
 
 void MapView::resizeEvent(QResizeEvent * event)
@@ -163,7 +181,16 @@ void MapView::mouseMoveEvent(QMouseEvent *mouseEvent)
 	case MapView::SelectionTool::Line:
 	{
 		{
-			assert(tile.z == tileStart.z);
+			if(!(mouseEvent->buttons() & (Qt::LeftButton | Qt::RightButton)))
+				break;
+
+			if(tile.z != tileStart.z)
+			{
+				temporaryTiles.clear();
+				tileStart = tilePrev = tile;
+				break;
+			}
+
 			const auto diff = tile - tileStart;
 			if(diff == int3{})
 				break;
@@ -624,6 +651,13 @@ void MapView::dropEvent(QDropEvent * event)
 	
 	if(sc->selectionObjectsView.newObject)
 	{
+		//the drop position is authoritative: the last dragMoveEvent may lag far behind it
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		moveNewObjectTo(event->position().toPoint());
+#else
+		moveNewObjectTo(event->pos());
+#endif
+
 		QString errorMsg;
 		if(controller->canPlaceObject(sc->selectionObjectsView.newObject.get(), errorMsg))
 		{
@@ -641,23 +675,27 @@ void MapView::dropEvent(QDropEvent * event)
 	event->acceptProposedAction();
 }
 
-void MapView::dragMoveEvent(QDragMoveEvent * event)
+void MapView::moveNewObjectTo(const QPoint & viewportPos)
 {
 	auto * sc = static_cast<MapScene*>(scene());
-	if(!sc)
+	if(!sc || !sc->selectionObjectsView.newObject)
 		return;
-	
-	auto rect = event->answerRect();
-	auto pos = mapToScene(rect.bottomRight()); //TODO: do we need to check size?
+
+	auto pos = mapToScene(viewportPos);
 	int3 tile(pos.x() / 32 + 1, pos.y() / 32 + 1, sc->level);
-	
-	if(sc->selectionObjectsView.newObject)
-	{
-		sc->selectionObjectsView.selectionMode = SelectionObjectsLayer::MOVEMENT;
-		sc->selectionObjectsView.selectObject(sc->selectionObjectsView.newObject.get());
-		sc->selectionObjectsView.setShift(tile.x, tile.y);
-	}
-	
+
+	sc->selectionObjectsView.selectionMode = SelectionObjectsLayer::MOVEMENT;
+	sc->selectionObjectsView.selectObject(sc->selectionObjectsView.newObject.get());
+	sc->selectionObjectsView.setShift(tile.x, tile.y);
+}
+
+void MapView::dragMoveEvent(QDragMoveEvent * event)
+{
+	if(!scene())
+		return;
+
+	moveNewObjectTo(event->answerRect().bottomRight()); //TODO: do we need to check size?
+
 	event->acceptProposedAction();
 }
 
@@ -685,6 +723,10 @@ void MapView::setViewports()
 		}
 	}
 }
+
+#ifdef ENABLE_SINGLE_APP_BUILD
+} // namespace MapEditor
+#endif
 
 MapSceneBase::MapSceneBase(int lvl):
 	QGraphicsScene(nullptr),

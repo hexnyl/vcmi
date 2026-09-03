@@ -11,15 +11,11 @@
 
 #include "../windows/CWindowObject.h"
 
-#include "../lib/campaign/CampaignConstants.h"
-#include "../lib/filesystem/ResourcePath.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../../lib/campaign/CampaignConstants.h"
+#include "../../lib/filesystem/ResourcePath.h"
 
 class CampaignState;
 class CampaignRegions;
-
-VCMI_LIB_NAMESPACE_END
 
 class CButton;
 class CTextBox;

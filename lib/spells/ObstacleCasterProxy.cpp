@@ -11,8 +11,6 @@
 #include "StdInc.h"
 #include "ObstacleCasterProxy.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace spells
 {
 
@@ -77,10 +75,10 @@ SilentCaster::SilentCaster(PlayerColor owner_, const Caster * hero_):
 {
 }
 
-void SilentCaster::getCasterName(MetaString & text) const
+std::string SilentCaster::getCasterNameTextID() const
 {
-	// NOTE: can be triggered (for example) if creature steps into Tower mines/moat while hero has Recanter's Cloak
-	logGlobal->debug("Unexpected call to SilentCaster::getCasterName");
+	logGlobal->debug("Unexpected call to SilentCaster::getCasterNameTextID");
+	return "UNKNOWN";
 }
 
 void SilentCaster::getCastDescription(const Spell * spell, const battle::Units & attacked, MetaString & text) const
@@ -102,4 +100,3 @@ PlayerColor SilentCaster::getCasterOwner() const
 }
 
 }
-VCMI_LIB_NAMESPACE_END

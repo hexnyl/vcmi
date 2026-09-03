@@ -52,6 +52,9 @@ bool ArtifactsUIController::askToAssemble(const CGHeroInstance * hero, const Art
 	const auto art = hero->getArt(slot);
 	assert(art);
 
+	if(ENGINE->isRoeData())
+		return false;
+
 	if(hero->tempOwner != GAME->interface()->playerID)
 		return false;
 
@@ -77,11 +80,11 @@ bool ArtifactsUIController::askToAssemble(const CGHeroInstance * hero, const Art
 					message.appendEOL();
 					message.appendEOL();
 					if(combinedArt->isFused())
-						message.appendRawString(LIBRARY->generaltexth->translate("vcmi.heroWindow.fusingArtifact.fusing"));
+						message.appendTextID("vcmi.heroWindow.fusingArtifact.fusing");
 					else
-						message.appendRawString(LIBRARY->generaltexth->allTexts[732]); // You possess all of the components needed to assemble the
+						message.appendTextID("core.genrltxt.732"); // You possess all of the components needed to assemble the
 					message.replaceName(ArtifactID(combinedArt->getId()));
-					GAME->interface()->showYesNoDialog(message.toString(), [&assembleConfirmed, hero, slot, combinedArt]()
+					GAME->interface()->showYesNoDialog(message.toString(&GAME->translator()), [&assembleConfirmed, hero, slot, combinedArt]()
 						{
 							assembleConfirmed = true;
 							GAME->interface()->cb->assembleArtifacts(hero->id, slot, true, combinedArt->getId());
@@ -104,6 +107,9 @@ bool ArtifactsUIController::askToDisassemble(const CGHeroInstance * hero, const 
 	const auto art = hero->getArt(slot);
 	assert(art);
 
+	if(ENGINE->isRoeData())
+		return false;
+
 	if(hero->tempOwner != GAME->interface()->playerID)
 		return false;
 
@@ -115,8 +121,8 @@ bool ArtifactsUIController::askToDisassemble(const CGHeroInstance * hero, const 
 		MetaString message = MetaString::createFromTextID(art->getType()->getDescriptionTextID());
 		message.appendEOL();
 		message.appendEOL();
-		message.appendRawString(LIBRARY->generaltexth->allTexts[733]); // Do you wish to disassemble this artifact?
-		GAME->interface()->showYesNoDialog(message.toString(), [hero, slot]()
+		message.appendTextID("core.genrltxt.733"); // Do you wish to disassemble this artifact?
+		GAME->interface()->showYesNoDialog(message.toString(&GAME->translator()), [hero, slot]()
 			{
 				GAME->interface()->cb->assembleArtifacts(hero->id, slot, false, ArtifactID());
 			}, nullptr);

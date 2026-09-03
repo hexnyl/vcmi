@@ -18,7 +18,7 @@
 #include "entities/artifact/CArtifactSet.h"
 #include "mapObjects/CGObjectInstance.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include <vcmi/scripting/ApiTags.h>
 
 class JsonNode;
 class CCreature;
@@ -27,7 +27,7 @@ class CArmedInstance;
 class CCreatureArtifactSet;
 class JsonSerializeFormat;
 
-class DLL_LINKAGE CStackInstance : public CBonusSystemNode, public CStackBasicDescriptor, public CArtifactSet, public ACreature, public GameCallbackHolder
+class DLL_LINKAGE CStackInstance : public CBonusSystemNode, public CStackBasicDescriptor, public CArtifactSet, public ACreature, public GameCallbackHolder, public scripting::ApiRawPointer<CStackInstance>
 {
 	BonusValueCache nativeTerrain;
 	BonusValueCache initiative;
@@ -64,26 +64,10 @@ public:
 		h & static_cast<CStackBasicDescriptor &>(*this);
 		h & static_cast<CArtifactSet &>(*this);
 
-		if(h.hasFeature(Handler::Version::STACK_INSTANCE_ARMY_FIX))
-		{
-			// no-op
-		}
-		if(h.hasFeature(Handler::Version::NO_RAW_POINTERS_IN_SERIALIZER))
-		{
-			ObjectInstanceID dummyID;
-			h & dummyID;
-		}
-		else
-		{
-			std::shared_ptr<CGObjectInstance> army;
-			h & army;
-		}
+		ObjectInstanceID dummyID;
+		h & dummyID;
 
 		h & totalExperience;
-		if(!h.hasFeature(Handler::Version::STACK_INSTANCE_EXPERIENCE_FIX))
-		{
-			totalExperience *= getCount();
-		}
 	}
 
 	void serializeJson(JsonSerializeFormat & handler);
@@ -127,8 +111,6 @@ public:
 	PlayerColor getOwner() const override;
 
 	int32_t getInitiative(int turn = 0) const final;
-	TerrainId getNativeTerrain() const final;
+	bool isNativeTerrain(TerrainId terrain) const override;
 	TerrainId getCurrentTerrain() const;
 };
-
-VCMI_LIB_NAMESPACE_END

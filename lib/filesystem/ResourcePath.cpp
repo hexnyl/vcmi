@@ -14,8 +14,6 @@
 #include "../serializer/JsonDeserializer.h"
 #include "../serializer/JsonSerializer.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 static inline void toUpper(std::string & string)
 {
 	boost::to_upper(string);
@@ -23,7 +21,7 @@ static inline void toUpper(std::string & string)
 
 static inline EResType readType(const std::string& name)
 {
-	return EResTypeHelper::getTypeFromExtension(FileInfo::GetExtension(name).to_string());
+	return EResTypeHelper::getTypeFromExtension(std::string(FileInfo::GetExtension(name)));
 }
 
 static inline std::string readName(std::string name, bool uppercase)
@@ -118,6 +116,8 @@ EResType EResTypeHelper::getTypeFromExtension(std::string extension)
 		{".BIK",   EResType::VIDEO},
 		{".OGV",   EResType::VIDEO},
 		{".WEBM",  EResType::VIDEO},
+		{".MPG",   EResType::VIDEO},
+		{".MJPG",  EResType::VIDEO},
 		{".ZIP",   EResType::ARCHIVE_ZIP},
 		{".LOD",   EResType::ARCHIVE_LOD},
 		{".PAC",   EResType::ARCHIVE_LOD},
@@ -126,13 +126,9 @@ EResType EResTypeHelper::getTypeFromExtension(std::string extension)
 		{".PAK",   EResType::ARCHIVE_PAK},
 		{".PAL",   EResType::PALETTE},
 		{".VSGM1", EResType::SAVEGAME},
-		{".ERM",   EResType::ERM},
-		{".ERT",   EResType::ERT},
-		{".ERS",   EResType::ERS},
 		{".VMAP",  EResType::MAP},
 		{".VCMP",  EResType::CAMPAIGN},
-		{".VERM",  EResType::ERM},
-		{".LUA",   EResType::LUA},
+		{".LUA",   EResType::LUA_SCRIPT},
 		{".ONNX",  EResType::AI_MODEL}
 	};
 
@@ -167,9 +163,7 @@ std::string EResTypeHelper::getEResTypeAsString(EResType type)
 		MAP_ENUM(PALETTE)
 		MAP_ENUM(SAVEGAME)
 		MAP_ENUM(DIRECTORY)
-		MAP_ENUM(ERM)
-		MAP_ENUM(ERT)
-		MAP_ENUM(ERS)
+		MAP_ENUM(LUA_SCRIPT)
 		MAP_ENUM(OTHER)
 	};
 
@@ -180,5 +174,3 @@ std::string EResTypeHelper::getEResTypeAsString(EResType type)
 
 	return iter->second;
 }
-
-VCMI_LIB_NAMESPACE_END

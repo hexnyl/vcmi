@@ -8,6 +8,7 @@
  *
  */
 #include "StdInc.h"
+#include "../helper.h"
 #include "heroskillswidget.h"
 #include "ui_heroskillswidget.h"
 #include "inspector.h"
@@ -16,6 +17,7 @@
 #include "../../lib/GameLibrary.h"
 #include "../../lib/constants/StringConstants.h"
 #include "../../lib/entities/hero/CHeroHandler.h"
+#include "../translator.h"
 
 static const QList<std::pair<QString, QVariant>> LevelIdentifiers
 {
@@ -30,7 +32,8 @@ HeroSkillsWidget::HeroSkillsWidget(CGHeroInstance & h, QWidget *parent) :
 	hero(h)
 {
 	ui->setupUi(this);
-	
+	Helper::decorateDialog(this);
+
 	ui->labelAttack->setText(QString::fromStdString(NPrimarySkill::names[0]));
 	ui->labelDefence->setText(QString::fromStdString(NPrimarySkill::names[1]));
 	ui->labelPower->setText(QString::fromStdString(NPrimarySkill::names[2]));
@@ -157,10 +160,10 @@ void HeroSkillsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 void HeroSkillsDelegate::updateModelData(QAbstractItemModel * model, const QModelIndex & index) const
 {
 	QStringList textList;
-	textList += QString("%1: %2").arg(QString::fromStdString(LIBRARY->generaltexth->primarySkillNames[PrimarySkill::ATTACK])).arg(hero.getBasePrimarySkillValue(PrimarySkill::ATTACK));
-	textList += QString("%1: %2").arg(QString::fromStdString(LIBRARY->generaltexth->primarySkillNames[PrimarySkill::DEFENSE])).arg(hero.getBasePrimarySkillValue(PrimarySkill::DEFENSE));
-	textList += QString("%1: %2").arg(QString::fromStdString(LIBRARY->generaltexth->primarySkillNames[PrimarySkill::SPELL_POWER])).arg(hero.getBasePrimarySkillValue(PrimarySkill::SPELL_POWER));
-	textList += QString("%1: %2").arg(QString::fromStdString(LIBRARY->generaltexth->primarySkillNames[PrimarySkill::KNOWLEDGE])).arg(hero.getBasePrimarySkillValue(PrimarySkill::KNOWLEDGE));
+	textList += QString("%1: %2").arg(QString::fromStdString(Translator::instance().translate("core.priskill", PrimarySkill::ATTACK))).arg(hero.getBasePrimarySkillValue(PrimarySkill::ATTACK));
+	textList += QString("%1: %2").arg(QString::fromStdString(Translator::instance().translate("core.priskill", PrimarySkill::DEFENSE))).arg(hero.getBasePrimarySkillValue(PrimarySkill::DEFENSE));
+	textList += QString("%1: %2").arg(QString::fromStdString(Translator::instance().translate("core.priskill", PrimarySkill::SPELL_POWER))).arg(hero.getBasePrimarySkillValue(PrimarySkill::SPELL_POWER));
+	textList += QString("%1: %2").arg(QString::fromStdString(Translator::instance().translate("core.priskill", PrimarySkill::KNOWLEDGE))).arg(hero.getBasePrimarySkillValue(PrimarySkill::KNOWLEDGE));
 
 	auto heroSecondarySkills = hero.secSkills;
 	if(heroSecondarySkills.size() == 1 && heroSecondarySkills[0].first == SecondarySkill::NONE) 

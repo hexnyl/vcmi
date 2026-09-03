@@ -15,11 +15,8 @@
 
 class MapController;
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CGObjectInstance;
 
-VCMI_LIB_NAMESPACE_END
 
 class PickObjectDelegate : public BaseInspectorItemDelegate
 {

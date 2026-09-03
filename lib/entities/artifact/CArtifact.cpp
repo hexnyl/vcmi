@@ -18,8 +18,6 @@
 #include "../../texts/CGeneralTextHandler.h"
 #include "../../GameLibrary.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 bool CCombinedArtifact::isCombined() const
 {
 	return !(constituents.empty());
@@ -365,11 +363,6 @@ const std::map<ArtBearer, std::vector<ArtifactPosition>> & CArtifact::getPossibl
 	return possibleSlots;
 }
 
-void CArtifact::updateFrom(const JsonNode& data)
-{
-	//TODO:CArtifact::updateFrom
-}
-
 void CArtifact::setImage(int32_t newIconIndex, const std::string & newImage, const std::string & newLargeImage)
 {
 	iconIndex = newIconIndex;
@@ -377,5 +370,3 @@ void CArtifact::setImage(int32_t newIconIndex, const std::string & newImage, con
 	scenarioBonus = newLargeImage;
 }
 
-
-VCMI_LIB_NAMESPACE_END

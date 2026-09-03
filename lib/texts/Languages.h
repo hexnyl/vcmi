@@ -21,6 +21,8 @@ enum class EPluralForms
 	UK_3, // Three forms, special cases for numbers ending in 1 and 2, 3, 4, except those ending in 1[1-4] (Ukrainian)
 	CZ_3, // Three forms, special cases for 1 and 2, 3, 4 (Czech)
 	PL_3, // Three forms, special case for one and some numbers ending in 2, 3, or 4 (Polish)
+	LV_3, // Three forms: 0=zero (n==0), 1=singular (n%10==1 except 11), 2=plural (Latvian)
+	LT_3, // Three forms: 0=other, 1=singular (n%10==1 except 11), 2=few (n%10>=2 except teens) (Lithuanian)
 	RO_3, // Three forms, special case for numbers ending in 00 or [2-9][0-9] (Romanian)
 };
 
@@ -29,7 +31,8 @@ enum class ELanguages
 	BELARUSIAN,
 	BULGARIAN,
 	CZECH,
-	CHINESE,
+	CHINESE_SIMPLIFIED,
+	CHINESE_TRADITIONAL,
 	DUTCH,
 	ENGLISH,
 	FILIPINO,
@@ -42,6 +45,7 @@ enum class ELanguages
 	JAPANESE,
 	KOREAN,
 	LATVIAN,
+	LITHUANIAN,
 	NORWEGIAN,
 	POLISH,
 	PORTUGUESE,
@@ -92,12 +96,13 @@ struct Options
 
 inline const auto & getLanguageList()
 {
-	static const std::array<Options, 27> languages
+	static const std::array<Options, 29> languages
 	{ {
 		{ "belarusian",  "Belarusian",  "Беларускі",    "CP1251",      "be_BY", "be", "bel", "%d.%m.%Y %H:%M",    EPluralForms::UK_3, true },
 		{ "bulgarian",   "Bulgarian",   "Български",    "CP1251",      "bg_BG", "bg", "bul", "%d.%m.%Y %H:%M",    EPluralForms::EN_2, true },
 		{ "czech",       "Czech",       "Čeština",      "CP1250",      "cs_CZ", "cs", "cze", "%d.%m.%Y %H:%M",    EPluralForms::CZ_3, true },
-		{ "chinese",     "Chinese",     "简体中文",      "GBK",         "zh_CN", "zh", "chi", "%Y-%m-%d %H:%M",    EPluralForms::VI_1, true }, // Note: actually Simplified Chinese
+		{ "chinese",     "Simplified Chinese", "简体中文",  "GBK",      "zh_CN", "zh-CN", "chi", "%Y-%m-%d %H:%M", EPluralForms::VI_1, true },
+		{ "tchinese",    "Traditional Chinese", "正體字",   "GBK",      "zh_TW", "zh-TW", "chi", "%Y-%m-%d %H:%M", EPluralForms::VI_1, true },
 		{ "dutch",       "Dutch",       "Nederlands",   "CP1252",      "nl_NL", "nl", "nld", "%Y-%m-%d %H:%M",    EPluralForms::EN_2, true },
 		{ "english",     "English",     "English",      "CP1252",      "en_US", "en", "eng", "%Y-%m-%d %H:%M",    EPluralForms::EN_2, true }, // English uses international date/time format here
 		{ "filipino",    "Filipino",    "Pilipino",     "CP1252",      "fil_FIL","fil","fil","%Y-%m-%d %H:%M",    EPluralForms::EN_2, true },
@@ -109,8 +114,9 @@ inline const auto & getLanguageList()
 		{ "italian",     "Italian",     "Italiano",     "CP1250",      "it_IT", "it", "ita", "%d/%m/%Y %H:%M",    EPluralForms::EN_2, true },
 		{ "japanese",    "Japanese",    "日本語",        "CP932",       "ja_JP", "ja", "jpn", "%Y年%m月%d日 %H:%M", EPluralForms::VI_1, true },
 		{ "korean",      "Korean",      "한국어",        "CP949",       "ko_KR", "ko", "kor", "%Y-%m-%d %H:%M",    EPluralForms::VI_1, true },
-		{ "latvian",     "Latvian",     "Latviešu",     "CP1257",      "lv_LV", "lv", "lva", "%d.%m.%Y %H:%M",    EPluralForms::PL_3, true },
-		{ "norwegian",   "Norwegian",   "Norsk Bokmål", "UTF-8",       "nb_NO", "nb", "nor", "%d/%m/%Y %H:%M",    EPluralForms::EN_2, false },
+		{ "latvian",     "Latvian",     "Latviešu",     "CP1257",      "lv_LV", "lv", "lva", "%d.%m.%Y %H:%M",    EPluralForms::LV_3, true },
+		{ "lithuanian",  "Lithuanian",  "Lietuvių",     "CP1257",      "lt_LT", "lt", "lit", "%Y-%m-%d %H:%M",    EPluralForms::LT_3, true },
+		{ "norwegian",   "Norwegian",   "Norsk Bokmål", "UTF-8",       "nb_NO", "nb", "nor", "%d/%m/%Y %H:%M",    EPluralForms::EN_2, true },
 		{ "polish",      "Polish",      "Polski",       "CP1250",      "pl_PL", "pl", "pol", "%d.%m.%Y %H:%M",    EPluralForms::PL_3, true },
 		{ "portuguese",  "Portuguese",  "Português",    "CP1252",      "pt_BR", "pt", "por", "%d/%m/%Y %H:%M",    EPluralForms::EN_2, true }, // Note: actually Brazilian Portuguese
 		{ "romanian",    "Romanian",    "Română",       "CP1252",      "ro_RO", "ro", "rum", "%Y-%m-%d %H:%M",    EPluralForms::RO_3, true }, // Note: codepage is ISO-8859-16, but doesn't work with MSVC -> using CP1252 because there is also no known official/fan translation for OH3
@@ -174,6 +180,18 @@ inline constexpr int getPluralFormIndex(EPluralForms form, Numeric value)
 			if (value == 1)
 				return 1;
 			if (value%10>=2 && value%10<=4 && (value%100<10 || value%100>=20))
+				return 2;
+			return 0;
+		case EPluralForms::LV_3:
+			if (value == 0)
+				return 0;
+			if (value%10 == 1 && value%100 != 11)
+				return 1;
+			return 2;
+		case EPluralForms::LT_3:
+			if (value%10 == 1 && value%100 != 11)
+				return 1;
+			if (value%10 >= 2 && (value%100 < 10 || value%100 >= 20))
 				return 2;
 			return 0;
 		case EPluralForms::RO_3:

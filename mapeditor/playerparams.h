@@ -14,6 +14,7 @@
 #include "../lib/mapping/CMapHeader.h"
 #include "mapcontroller.h"
 
+
 namespace Ui {
 class PlayerParams;
 }

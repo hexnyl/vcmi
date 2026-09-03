@@ -92,42 +92,91 @@
         <translation type="unfinished">Eksportēt žurnālus</translation>
     </message>
     <message>
-        <location filename="../aboutProject/aboutproject_moc.cpp" line="170"/>
-        <source>Save logs</source>
-        <translation type="unfinished">Saglabāt žurnālus</translation>
+        <location filename="../aboutProject/aboutproject_moc.ui" line="329"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="442"/>
+        <source>Export saves</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../aboutProject/aboutproject_moc.cpp" line="170"/>
+        <source>Save logs</source>
+        <translation type="obsolete">Saglabāt žurnālus</translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="442"/>
         <source>Zip archives (*.zip)</source>
         <translation type="unfinished">ZIP arhīvi (*.zip)</translation>
     </message>
     <message>
-        <location filename="../aboutProject/aboutproject_moc.cpp" line="272"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="415"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="532"/>
         <source>Error</source>
         <translation type="unfinished">Kļūda</translation>
     </message>
     <message>
-        <location filename="../aboutProject/aboutproject_moc.cpp" line="272"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="411"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="448"/>
+        <source>Saves exported to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="415"/>
+        <source>Failed to save archive to selected destination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="433"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="435"/>
+        <source>Select destination file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="433"/>
+        <source>Please select destination file and save the archive as vcmi-saves.zip.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="435"/>
+        <source>Zip archives (*.zip);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="464"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="465"/>
+        <source>Exporting logs...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="464"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="465"/>
+        <source>Log export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="532"/>
         <source>Failed to create archive: %1</source>
         <translation type="unfinished">Neizdevās izveidot arhīvu: %1</translation>
     </message>
     <message>
-        <location filename="../aboutProject/aboutproject_moc.cpp" line="277"/>
         <source>Send logs</source>
-        <translation type="unfinished">Sūtīt žurnālus</translation>
+        <translation type="obsolete">Sūtīt žurnālus</translation>
     </message>
     <message>
-        <location filename="../aboutProject/aboutproject_moc.cpp" line="277"/>
         <source>The archive will be sent via another application. Share your logs e.g. over discord to developers.</source>
-        <translation type="unfinished">Arhīvs tiks nosūtīts, izmantojot citu lietojumprogrammu. Kopīgojiet savus žurnālus, piemēram, ar izstrādātājiem, izmantojot Discord.</translation>
+        <translation type="obsolete">Arhīvs tiks nosūtīts, izmantojot citu lietojumprogrammu. Kopīgojiet savus žurnālus, piemēram, ar izstrādātājiem, izmantojot Discord.</translation>
     </message>
     <message>
-        <location filename="../aboutProject/aboutproject_moc.cpp" line="281"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="411"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="448"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="541"/>
         <source>Success</source>
         <translation type="unfinished">Panākumi</translation>
     </message>
     <message>
-        <location filename="../aboutProject/aboutproject_moc.cpp" line="281"/>
+        <location filename="../aboutProject/aboutproject_moc.cpp" line="541"/>
         <source>Logs saved to %1, please send them to the developers</source>
         <translation type="unfinished">Žurnāli saglabāti mapē %1, lūdzu, nosūtiet tos izstrādātājiem</translation>
     </message>
@@ -186,31 +235,31 @@
     </message>
     <message>
         <location filename="../modManager/cmodlistview_moc.ui" line="428"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="556"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="574"/>
         <source>Uninstall</source>
         <translation type="unfinished">Atinstalēt</translation>
     </message>
     <message>
         <location filename="../modManager/cmodlistview_moc.ui" line="459"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="546"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="564"/>
         <source>Enable</source>
         <translation type="unfinished">Iespējot</translation>
     </message>
     <message>
         <location filename="../modManager/cmodlistview_moc.ui" line="490"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="541"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="559"/>
         <source>Disable</source>
         <translation type="unfinished">Atspējot</translation>
     </message>
     <message>
         <location filename="../modManager/cmodlistview_moc.ui" line="397"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="561"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="579"/>
         <source>Update</source>
         <translation type="unfinished">Atjauninājums</translation>
     </message>
     <message>
         <location filename="../modManager/cmodlistview_moc.ui" line="521"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="551"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="569"/>
         <source>Install</source>
         <translation type="unfinished">Instalēt</translation>
     </message>
@@ -230,162 +279,162 @@
         <translation type="unfinished">Pārtraukt</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="337"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="343"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="355"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="361"/>
         <source>Installed version</source>
         <translation type="unfinished">Instalētā versija</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="338"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="345"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="356"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="363"/>
         <source>Latest version</source>
         <translation type="unfinished">Jaunākā versija</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="349"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="367"/>
         <source>Size</source>
         <translation type="unfinished">Izmērs</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="352"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="370"/>
         <source>Download size</source>
         <translation type="unfinished">Lejupielādes lielums</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="354"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="372"/>
         <source>Authors</source>
         <translation type="unfinished">Autori</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="357"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="375"/>
         <source>License</source>
         <translation type="unfinished">Licence</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="360"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="378"/>
         <source>Contact</source>
         <translation type="unfinished">Kontaktinformācija</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="375"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="393"/>
         <source>Compatibility</source>
         <translation type="unfinished">Saderība</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="377"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="385"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="395"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="403"/>
         <source>Required VCMI version</source>
         <translation type="unfinished">Nepieciešamā VCMI versija</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="383"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="401"/>
         <source>Supported VCMI version</source>
         <translation type="unfinished">Atbalstītā VCMI versija</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="383"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="401"/>
         <source>please upgrade mod</source>
         <translation type="unfinished">lūdzu, uzlabojiet mod</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="199"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="999"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1004"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="217"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1124"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1129"/>
         <source>mods repository index</source>
         <translation type="unfinished">modifikāciju repozitorija indekss</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="363"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="381"/>
         <source>Git-Repository</source>
         <translation type="unfinished">Git-repozitorijs</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="366"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="384"/>
         <source>GitHub-Stars</source>
         <translation type="unfinished">GitHub zvaigznes</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="385"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="403"/>
         <source>or newer</source>
         <translation type="unfinished">vai jaunāks</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="388"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="406"/>
         <source>Supported VCMI versions</source>
         <translation type="unfinished">Atbalstītās VCMI versijas</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="404"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="422"/>
         <source>Languages</source>
         <translation type="unfinished">Valodas</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="416"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="434"/>
         <source>Required mods</source>
         <translation type="unfinished">Nepieciešamie modifikācijas</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="417"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="435"/>
         <source>Conflicting mods</source>
         <translation type="unfinished">Konfliktējoši modi</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="419"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="437"/>
         <source>This mod cannot be enabled because it translates into a different language.</source>
         <translation type="unfinished">Šo modu nevar iespējot, jo tas tulko citā valodā.</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="420"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="438"/>
         <source>This mod can not be enabled because the following dependencies are not present</source>
         <translation type="unfinished">Šo modu nevar iespējot, jo nav šādu atkarību</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="421"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="439"/>
         <source>This mod can not be installed because the following dependencies are not present</source>
         <translation type="unfinished">Šo modu nevar instalēt, jo nav šādu atkarību</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="422"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="440"/>
         <source>This is a submod and it cannot be installed or uninstalled separately from its parent mod</source>
         <translation type="unfinished">Šis ir apakšmods, un to nevar instalēt vai atinstalēt atsevišķi no tā vecākmodas.</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="441"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="459"/>
         <source>Notes</source>
         <translation type="unfinished">Piezīmes</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="523"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="541"/>
         <source>Context menu</source>
         <translation type="unfinished">Konteksta izvēlne</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="566"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="584"/>
         <source>Open directory</source>
         <translation type="unfinished">Atvērt direktoriju</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="571"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="589"/>
         <source>Open repository</source>
         <translation type="unfinished">Atvērt repozitoriju</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="841"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="877"/>
         <source>Downloading %1. %p% (%v MB out of %m MB) finished</source>
         <translation type="unfinished">Notiek %1 lejupielāde. %p% (%v MB no %m MB) pabeigta</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="870"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="906"/>
         <source>Extracting content.zip (%1/%2) for %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="877"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="913"/>
         <source>Download failed</source>
         <translation type="unfinished">Lejupielāde neizdevās</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="878"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="914"/>
         <source>Unable to download all files.
 
 Encountered errors:
@@ -394,71 +443,98 @@ Encountered errors:
         <translation type="unfinished">Nevarēja lejupielādēt visus failus.\n\nRadās kļūdas:</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="879"/>
         <source>
 
 Install successfully downloaded?</source>
-        <translation type="unfinished">Vai instalācija veiksmīgi lejupielādēta?</translation>
+        <translation type="obsolete">Vai instalācija veiksmīgi lejupielādēta?</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="974"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1097"/>
         <source>Failed to install file %1.
 Reason: %2.
 Please report this issue to developers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1068"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1200"/>
         <source>Installing Heroes Chronicles</source>
         <translation type="unfinished">Varoņu hroniku instalēšana</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1100"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1232"/>
         <source>Extracting error!</source>
         <translation type="unfinished">Izvilkšanas kļūda!</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1102"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1234"/>
         <source>Invalid file selected</source>
         <translation type="unfinished">Atlasīts nederīgs fails</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1102"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1234"/>
         <source>You have to select a Heroes Chronicles installer file!</source>
         <translation type="unfinished">Jums jāizvēlas Heroes Chronicles instalēšanas fails!</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1163"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1366"/>
+        <source>Save exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1367"/>
+        <source>Save &apos;%1&apos; already exists. Do you want to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1387"/>
+        <source>Failed to import saves from %1.
+Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1400"/>
+        <source>Success</source>
+        <translation type="unfinished">Panākumi</translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1400"/>
+        <source>Imported %1 save files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1457"/>
         <source>Installing mod %1</source>
         <translation type="unfinished">Instalējas mod %1</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1251"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1558"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1586"/>
         <source>Map exists</source>
         <translation type="unfinished">Karte pastāv</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1252"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1558"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1586"/>
         <source>Map &apos;%1&apos; already exists. Do you want to overwrite it?</source>
         <translation type="unfinished">Karte &apos;%1&apos; jau pastāv. Vai vēlaties to pārrakstīt?</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1261"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1003"/>
         <source>Yes to All</source>
         <translation type="unfinished">Jā visiem</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1262"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1004"/>
         <source>No to All</source>
         <translation type="unfinished">Nē visiem</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1351"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1605"/>
         <source>Import complete</source>
         <translation type="unfinished">Importēšana pabeigta</translation>
     </message>
     <message numerus="yes">
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1351"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1605"/>
         <source>%n map(s) successfully imported.</source>
         <translation type="unfinished">
             <numerusform>%n kartes veiksmīgi importētas.</numerusform>
@@ -467,50 +543,58 @@ Please report this issue to developers</source>
         </translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1483"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1741"/>
         <source>Uninstall mod</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1483"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1741"/>
         <source>Are you sure you want to uninstall %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="974"/>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1354"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1097"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1387"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1608"/>
         <source>Import failed</source>
         <translation type="unfinished">Importēšana neizdevās</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1354"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="915"/>
+        <source>
+
+Process successfully downloaded files?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1608"/>
         <source>Failed to import the following maps:
 %1</source>
         <translation type="unfinished">Neizdevās importēt šādas kartes:\n%1</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1380"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1638"/>
         <source>Operation failed</source>
         <translation type="unfinished">Darbība neizdevās</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1381"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1639"/>
         <source>Encountered errors:
 </source>
         <translation type="unfinished">Radušās kļūdas:</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1433"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1691"/>
         <source>screenshots</source>
         <translation type="unfinished">ekrānuzņēmumi</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="1439"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1697"/>
         <source>Screenshot %1</source>
         <translation type="unfinished">Ekrānuzņēmums %1</translation>
     </message>
     <message>
-        <location filename="../modManager/cmodlistview_moc.cpp" line="320"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="338"/>
         <source>Mod is incompatible</source>
         <translation type="unfinished">Modifikācija nav saderīga</translation>
     </message>
@@ -519,7 +603,7 @@ Please report this issue to developers</source>
     <name>CSettingsView</name>
     <message>
         <location filename="../settingsView/csettingsview_moc.ui" line="166"/>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="115"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="121"/>
         <source>Off</source>
         <translation type="unfinished">Izslēgts</translation>
     </message>
@@ -872,7 +956,7 @@ Fullscreen Exclusive Mode - the game will cover the entirety of your screen and 
         <translation type="unfinished">Renderētājs</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="113"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="119"/>
         <source>On</source>
         <translation type="unfinished">Ieslēgts</translation>
     </message>
@@ -942,57 +1026,56 @@ Fullscreen Exclusive Mode - the game will cover the entirety of your screen and 
         <translation type="unfinished">Rādīt ievadu</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="124"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="130"/>
         <source>StupidAI (deprecated)</source>
         <translation type="unfinished">StupidAI (novecojis)</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="128"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="134"/>
         <source>BattleAI (default, recommended)</source>
         <translation type="unfinished">BattleAI (pēc noklusējuma, ieteicams)</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="132"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="138"/>
         <source>MMAI (experimental)</source>
         <translation type="unfinished">MMAI (eksperimentāls)</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="145"/>
         <source>Nullkiller (superseded by Nullkiller2)</source>
-        <translation type="unfinished">Nullkiller (aizstāts ar Nullkiller2)</translation>
+        <translation type="obsolete">Nullkiller (aizstāts ar Nullkiller2)</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="149"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="151"/>
         <source>Nullkiller2 (default, recommended)</source>
         <translation type="unfinished">Nullkiller2 (pēc noklusējuma, ieteicams)</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="159"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="161"/>
         <source>EmptyAI - No valid AI libraries found!</source>
         <translation type="unfinished">EmptyAI&#xa0;— nav atrastas derīgas AI bibliotēkas!</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="680"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="716"/>
         <source>Active</source>
         <translation type="unfinished">Aktīvs</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="685"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="721"/>
         <source>Disabled</source>
         <translation type="unfinished">Invalīdi</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="686"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="722"/>
         <source>Enable</source>
         <translation type="unfinished">Iespējot</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="691"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="727"/>
         <source>Not Installed</source>
         <translation type="unfinished">Nav instalēts</translation>
     </message>
     <message>
-        <location filename="../settingsView/csettingsview_moc.cpp" line="692"/>
+        <location filename="../settingsView/csettingsview_moc.cpp" line="728"/>
         <source>Install</source>
         <translation type="unfinished">Instalēt</translation>
     </message>
@@ -1076,137 +1159,134 @@ Fullscreen Exclusive Mode - the game will cover the entirety of your screen and 
         <translation type="unfinished">Modifikāciju iepriekšiestatījums</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="126"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="127"/>
         <source>Select your language</source>
         <translation type="unfinished">Izvēlieties savu valodu</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="172"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="173"/>
         <source>Have a question? Found a bug? Want to help? Join us!</source>
         <translation type="unfinished">Vai jums ir jautājums? Atradāt kļūdu? Vai vēlaties palīdzēt? Pievienojieties mums!</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="251"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="253"/>
         <source>Locate Heroes III data files</source>
         <translation type="unfinished">Atrodiet Heroes III datu failus</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="303"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="305"/>
         <source>Use offline installer from gog.com</source>
         <translation type="unfinished">Izmantojiet bezsaistes instalētāju no gog.com</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="316"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="318"/>
         <source>You can manually copy Maps, Data, and Mp3 folders from the original game directory to the VCMI data directory shown below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="335"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="337"/>
         <source>Install gog.com files</source>
         <translation type="unfinished">Instalējiet gog.com failus</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="494"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="482"/>
+        <source>No Heroes III data? Download the free demo to try VCMI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="498"/>
+        <source>Download Demo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="527"/>
         <source>Your Heroes III data files have been successfully found.</source>
         <translation type="unfinished">Jūsu Heroes III datu faili ir veiksmīgi atrasti.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="631"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="739"/>
         <source>Install a translation of Heroes III in your preferred language</source>
         <translation type="unfinished">Instalējiet Heroes III tulkojumu vēlamajā valodā</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="394"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="396"/>
         <source>Installing... %p%</source>
         <translation type="unfinished">Notiek instalēšana... %p%</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="423"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="425"/>
         <source>If you already have Heroes III files on your device, you can select this directory and VCMI will copy the existing data automatically.</source>
         <translation type="unfinished">Ja jūsu ierīcē jau ir Heroes III faili, varat atlasīt šo direktoriju, un VCMI automātiski kopēs esošos datus.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="465"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="469"/>
         <source>Copy existing files</source>
         <translation type="unfinished">Kopēt esošos failus</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="600"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="634"/>
         <source>Install recommended VCMI Mods</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="704"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="681"/>
         <source>Optionally, you can install additional mods either now, or at any point later, using the VCMI Launcher</source>
         <translation type="unfinished">Pēc izvēles varat instalēt papildu modifikācijas tagad vai jebkurā laikā vēlāk, izmantojot VCMI palaidēju.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="688"/>
         <source>Install compatible version of &quot;Horn of the Abyss&quot;, a fan-made Heroes III expansion ported by the VCMI team</source>
-        <translation type="unfinished">Instalējiet saderīgu \&quot;Horn of the Abyss\&quot; versiju, kas ir fanu veidots Heroes III paplašinājums, ko portējusi VCMI komanda.</translation>
+        <translation type="obsolete">Instalējiet saderīgu \&quot;Horn of the Abyss\&quot; versiju, kas ir fanu veidots Heroes III paplašinājums, ko portējusi VCMI komanda.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="769"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="776"/>
         <source>VCMI Extras</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="799"/>
         <source>Install compatible version of &quot;In The Wake of Gods&quot;, a fan-made Heroes III expansion</source>
-        <translation type="unfinished">Instalējiet saderīgu \&quot;In The Wake of Gods\&quot; versiju, kas ir fanu veidots Heroes III paplašinājums.</translation>
+        <translation type="obsolete">Instalējiet saderīgu \&quot;In The Wake of Gods\&quot; versiju, kas ir fanu veidots Heroes III paplašinājums.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="815"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="793"/>
         <source>A feature-rich expansion that expands gameplay with one alternative unit for each of the 9 standard towns, plus new neutral creatures, creature banks, skills and spells</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="831"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="798"/>
         <source>Descend into the underground realm and uncover Casemate — a new faction where mushrooms, stone and rune magic thrive in the dark, created for VCMI</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="847"/>
-        <source>Heroes III Demo files detected. This mod is required to use demo assets in VCMI, or the game will crash</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="863"/>
         <source>Install mod that provides various interface improvements, such as a better interface for random maps and selectable actions in battles</source>
-        <translation type="unfinished">Instalējiet modifikāciju, kas nodrošina dažādus saskarnes uzlabojumus, piemēram, labāku saskarni nejaušām kartēm un atlasāmām darbībām kaujās.</translation>
+        <translation type="obsolete">Instalējiet modifikāciju, kas nodrošina dažādus saskarnes uzlabojumus, piemēram, labāku saskarni nejaušām kartēm un atlasāmām darbībām kaujās.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="928"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="792"/>
         <source>Tides of War</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="966"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="797"/>
         <source>Fallen of the Depth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="1004"/>
-        <source>Demo support</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="1065"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="788"/>
         <source>Finish</source>
         <translation type="unfinished">Pabeigt</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="158"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="159"/>
         <source>VCMI on Github</source>
         <translation type="unfinished">VCMI vietnē Github</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="165"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="166"/>
         <source>VCMI on Discord</source>
         <translation type="unfinished">VCMI Discord platformā</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="181"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="182"/>
         <source>Thank you for installing VCMI!
 
 Before you can start playing, there are a few more steps to complete.
@@ -1223,199 +1303,229 @@ Lūdzu, atcerieties, ka, lai izmantotu VCMI, jums ir jābūt oriģinālajiem Her
 Heroes® of Might and Magic® III HD pašlaik netiek atbalstīts!</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="215"/>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="570"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="216"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="603"/>
         <source>Next</source>
         <translation type="unfinished">Nākamais</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="353"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="355"/>
         <source>Manual Installation</source>
         <translation type="unfinished">Manuāla instalēšana</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="366"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="368"/>
         <source>Search again</source>
         <translation type="unfinished">Meklēt vēlreiz</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="447"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="450"/>
         <source>Heroes III data files</source>
         <translation type="unfinished">Heroes III datu faili</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="285"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="287"/>
         <source>Copy existing data</source>
         <translation type="unfinished">Kopēt esošos datus</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="510"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="543"/>
         <source>If you own Heroes III on gog.com, you can download a backup offline installer from gog.com. VCMI will then import Heroes III data using the offline installer. 
 Offline installer consists of two files: &quot;.exe&quot; and &quot;.bin&quot; - you must download both.</source>
         <translation type="unfinished">Ja jums pieder spēle Heroes III vietnē gog.com, varat lejupielādēt bezsaistes instalētāja dublējumu no vietnes gog.com. Pēc tam VCMI importēs Heroes III datus, izmantojot bezsaistes instalētāju.\nBezsaistes instalētājs sastāv no diviem failiem: \&quot;.exe\&quot; un \&quot;.bin\&quot; — jums ir jālejupielādē abi.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="563"/>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="1058"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="596"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="781"/>
         <source>Back</source>
         <translation type="unfinished">Atpakaļ</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="731"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="782"/>
         <source>Horn of the Abyss</source>
         <translation type="unfinished">Bezdibeņa rags</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="658"/>
+        <location filename="../firstLaunch/firstlaunch_moc.ui" line="709"/>
         <source>Heroes III Translation</source>
         <translation type="unfinished">Varoņi III tulkojums</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.ui" line="890"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="787"/>
         <source>In The Wake of Gods</source>
         <translation type="unfinished">Dievu pēdās</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="174"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="220"/>
         <source>Heroes III installation found!</source>
         <translation type="unfinished">Atrasta Heroes III instalācija!</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="174"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="220"/>
         <source>Copy data to VCMI folder?</source>
         <translation type="unfinished">Vai kopēt datus uz VCMI mapi?</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="405"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="456"/>
         <source>GOG file (*.*)</source>
         <translation type="unfinished">GOG fails (*.*)</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="406"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="457"/>
         <source>File selection</source>
         <translation type="unfinished">Faila atlase</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="417"/>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="617"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="468"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="668"/>
         <source>GOG installer</source>
         <translation type="unfinished">GOG instalētājs</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="510"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="561"/>
         <source>Heroes III: HD Edition files are not supported by VCMI.
 Please select the directory with Heroes III: Complete Edition or Heroes III: Shadow of Death.</source>
         <translation type="unfinished">VCMI neatbalsta Heroes III: HD Edition failus.\nLūdzu, atlasiet direktoriju, kurā atrodas Heroes III: Complete Edition vai Heroes III: Shadow of Death.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="512"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="563"/>
         <source>Unknown or unsupported Heroes III version found.
 Please select the directory with Heroes III: Complete Edition or Heroes III: Shadow of Death.</source>
         <translation type="unfinished">Atrasta nezināma vai neatbalstīta Heroes III versija.\nLūdzu, atlasiet direktoriju ar Heroes III: Complete Edition vai Heroes III: Shadow of Death.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="433"/>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="630"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="484"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="681"/>
         <source>GOG data</source>
         <translation type="unfinished">GOG dati</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="349"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="154"/>
+        <source>Downloading Heroes III Demo...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="400"/>
         <source>Failed to open file: %1</source>
         <translation type="unfinished">Neizdevās atvērt failu: %1</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="369"/>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="395"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="420"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="446"/>
         <source>You need to select a %1 file!</source>
         <comment>param is file extension</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="377"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="428"/>
         <source>Unknown installer selected.
 You need to select the offline GOG installer.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="389"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="440"/>
         <source>You selected a GOG Galaxy installer. This file does not contain the game. Please download the offline backup game installer instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="418"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="469"/>
         <source>Select the offline GOG installer (.exe)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="427"/>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="620"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="478"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="671"/>
         <source>Invalid file selected</source>
         <translation type="unfinished">Atlasīts nederīgs fails</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="434"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="485"/>
         <source>Select the offline GOG installer data file: %1</source>
         <comment>param is file name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="454"/>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="633"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="505"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="684"/>
         <source>Invalid data file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="549"/>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="685"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="600"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="736"/>
         <source>Importing Heroes III data...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="582"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="633"/>
         <source>Preparing installer...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="642"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="693"/>
         <source>Extracting installer...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="669"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="720"/>
         <source>Extracting error!</source>
         <translation type="unfinished">Izvilkšanas kļūda!</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="673"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="724"/>
         <source>Hash error!</source>
         <translation type="unfinished">Jaucējkļūme!</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="677"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="728"/>
         <source>No Heroes III data!</source>
         <translation type="unfinished">Nav Heroes III datu!</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="677"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="728"/>
         <source>Selected files do not contain Heroes III data!</source>
         <translation type="unfinished">Atlasītie faili nesatur Heroes III datus!</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="699"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="750"/>
         <source>Scanning selected folder...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="474"/>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="507"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="777"/>
+        <source>Adds interface and gameplay improvements such as a better interface for random maps, revisit and search buttons for the adventure map, quick exchange for heroes, bonus and immunity icons, and actions in battle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="783"/>
+        <source>A polished fan-made expansion that adds Cove, Factory and Bulwark towns, new campaigns, heroes, artifacts, map objects, Interference and Runes skills, balance fixes and new terrains while staying faithful to Heroes III</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="788"/>
+        <source>Deepens Heroes III with Commanders, stack experience, stack artifacts, many new hero and commander artifacts, extra progression systems and interactive adventure map objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="802"/>
+        <source>Tears of Ashan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="803"/>
+        <source>A fan-made expansion inspired by Heroes V that adds alternate creature upgrades, Light and Dark Magic, Gating, a higher secondary skill cap and redesigned Conflux gameplay to Heroes III</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="525"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="558"/>
         <source>Failed to detect valid Heroes III data in chosen directory.
 Please select the directory with installed Heroes III data.</source>
         <translation type="unfinished">Izvēlētajā direktorijā neizdevās atrast derīgus Heroes III datus.\nLūdzu, atlasiet direktoriju ar instalētajiem Heroes III datiem.</translation>
     </message>
     <message>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="474"/>
-        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="518"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="525"/>
+        <location filename="../firstLaunch/firstlaunch_moc.cpp" line="569"/>
         <source>Heroes III data not found!</source>
         <translation type="unfinished">Heroes III dati nav atrasti!</translation>
     </message>
@@ -1570,126 +1680,136 @@ Atkritne (%n baiti):
     </message>
     <message>
         <location filename="../languages.cpp" line="26"/>
-        <source>Chinese</source>
-        <translation type="unfinished">Ķīniešu</translation>
+        <source>Simplified Chinese</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../languages.cpp" line="27"/>
+        <source>Traditional Chinese</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../languages.cpp" line="28"/>
         <source>Dutch</source>
         <translation type="unfinished">Holandiešu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="28"/>
+        <location filename="../languages.cpp" line="29"/>
         <source>English</source>
         <translation type="unfinished">Angļu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="29"/>
+        <location filename="../languages.cpp" line="30"/>
         <source>Filipino</source>
         <translation type="unfinished">Filipīniešu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="30"/>
+        <location filename="../languages.cpp" line="31"/>
         <source>Finnish</source>
         <translation type="unfinished">Somu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="31"/>
+        <location filename="../languages.cpp" line="32"/>
         <source>French</source>
         <translation type="unfinished">Franču</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="32"/>
+        <location filename="../languages.cpp" line="33"/>
         <source>German</source>
         <translation type="unfinished">Vācu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="33"/>
+        <location filename="../languages.cpp" line="34"/>
         <source>Greek</source>
         <translation type="unfinished">Grieķu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="34"/>
+        <location filename="../languages.cpp" line="35"/>
         <source>Hungarian</source>
         <translation type="unfinished">Ungāru</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="35"/>
+        <location filename="../languages.cpp" line="36"/>
         <source>Italian</source>
         <translation type="unfinished">Itāļu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="36"/>
+        <location filename="../languages.cpp" line="37"/>
         <source>Japanese</source>
         <translation type="unfinished">Japāņu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="37"/>
+        <location filename="../languages.cpp" line="38"/>
         <source>Korean</source>
         <translation type="unfinished">Korejiešu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="38"/>
+        <location filename="../languages.cpp" line="39"/>
         <source>Latvian</source>
         <translation type="unfinished">Latviešu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="39"/>
+        <location filename="../languages.cpp" line="40"/>
+        <source>Lithuanian</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../languages.cpp" line="41"/>
         <source>Norwegian</source>
         <translation type="unfinished">Norvēģu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="40"/>
+        <location filename="../languages.cpp" line="42"/>
         <source>Polish</source>
         <translation type="unfinished">Poļu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="41"/>
+        <location filename="../languages.cpp" line="43"/>
         <source>Portuguese</source>
         <translation type="unfinished">Portugāļu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="42"/>
+        <location filename="../languages.cpp" line="44"/>
         <source>Romanian</source>
         <translation type="unfinished">Rumāņu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="43"/>
+        <location filename="../languages.cpp" line="45"/>
         <source>Russian</source>
         <translation type="unfinished">Krievu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="44"/>
+        <location filename="../languages.cpp" line="46"/>
         <source>Serbian</source>
         <translation type="unfinished">Serbu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="45"/>
+        <location filename="../languages.cpp" line="47"/>
         <source>Spanish</source>
         <translation type="unfinished">Spāņu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="46"/>
+        <location filename="../languages.cpp" line="48"/>
         <source>Swedish</source>
         <translation type="unfinished">Zviedru</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="47"/>
+        <location filename="../languages.cpp" line="49"/>
         <source>Turkish</source>
         <translation type="unfinished">Turku</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="48"/>
+        <location filename="../languages.cpp" line="50"/>
         <source>Ukrainian</source>
         <translation type="unfinished">ukraiņu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="49"/>
+        <location filename="../languages.cpp" line="51"/>
         <source>Vietnamese</source>
         <translation type="unfinished">Vjetnamiešu</translation>
     </message>
     <message>
-        <location filename="../languages.cpp" line="71"/>
+        <location filename="../languages.cpp" line="73"/>
         <source>Auto (%1)</source>
         <translation type="unfinished">Automātiski (%1)</translation>
     </message>
@@ -1722,17 +1842,17 @@ Atkritne (%n baiti):
         <translation type="unfinished">Modi</translation>
     </message>
     <message>
-        <location filename="../mainwindow_moc.cpp" line="52"/>
+        <location filename="../mainwindow_moc.cpp" line="50"/>
         <source>Error starting executable</source>
         <translation type="unfinished">Kļūda, startējot izpildāmo failu</translation>
     </message>
     <message>
-        <location filename="../mainwindow_moc.cpp" line="289"/>
+        <location filename="../mainwindow_moc.cpp" line="432"/>
         <source>Replace config file?</source>
         <translation type="unfinished">Vai aizstāt konfigurācijas failu?</translation>
     </message>
     <message>
-        <location filename="../mainwindow_moc.cpp" line="289"/>
+        <location filename="../mainwindow_moc.cpp" line="432"/>
         <source>Do you want to replace %1?</source>
         <translation type="unfinished">Vai vēlaties aizstāt %1?</translation>
     </message>
@@ -1740,12 +1860,12 @@ Atkritne (%n baiti):
 <context>
     <name>ModFields</name>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="194"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="196"/>
         <source>Name</source>
         <translation type="unfinished">Vārds</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="197"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="199"/>
         <source>Type</source>
         <translation type="unfinished">Tips</translation>
     </message>
@@ -1834,155 +1954,176 @@ Atkritne (%n baiti):
 <context>
     <name>ModStateItemModel</name>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="36"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="37"/>
         <source>Translation</source>
         <translation type="unfinished">Tulkojums</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="37"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="38"/>
         <source>Town</source>
         <translation type="unfinished">Pilsēta</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="38"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="39"/>
         <source>Test</source>
         <translation type="unfinished">Tests</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="39"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="40"/>
         <source>Templates</source>
         <translation type="unfinished">Veidnes</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="40"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="41"/>
         <source>Spells</source>
         <translation type="unfinished">Burvestības</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="41"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="42"/>
         <source>Music</source>
         <translation type="unfinished">Mūzika</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="42"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="43"/>
         <source>Maps</source>
         <translation type="unfinished">Kartes</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="43"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="44"/>
         <source>Sounds</source>
         <translation type="unfinished">Skaņas</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="44"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="45"/>
         <source>Skills</source>
         <translation type="unfinished">Prasmes</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="45"/>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="62"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="46"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="64"/>
         <source>Other</source>
         <translation type="unfinished">Citi</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="46"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="47"/>
         <source>Objects</source>
         <translation type="unfinished">Objekti</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="47"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="48"/>
         <source>Mechanics</source>
         <translation type="unfinished">Mehāniķi</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="48"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="49"/>
         <source>Interface</source>
         <translation type="unfinished">Saskarne</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="49"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="50"/>
         <source>Heroes</source>
         <translation type="unfinished">Varoņi</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="50"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="51"/>
         <source>Graphical</source>
         <translation type="unfinished">Grafiskais</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="51"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="52"/>
         <source>Expansion</source>
         <translation type="unfinished">Paplašināšanās</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="52"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="53"/>
         <source>Creatures</source>
         <translation type="unfinished">Radības</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="53"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="54"/>
         <source>Compatibility</source>
         <translation type="unfinished">Saderība</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="54"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="55"/>
         <source>Campaigns</source>
         <translation type="unfinished">Kampaņas</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="55"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="56"/>
         <source>Artifacts</source>
         <translation type="unfinished">Artefakti</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="56"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="57"/>
         <source>AI</source>
         <translation type="unfinished">Mākslīgais intelekts</translation>
     </message>
     <message>
-        <location filename="../modManager/modstateitemmodel_moc.cpp" line="57"/>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="58"/>
         <source>Resources</source>
         <translation type="unfinished">Resursi</translation>
+    </message>
+    <message>
+        <location filename="../modManager/modstateitemmodel_moc.cpp" line="59"/>
+        <source>Demo</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="124"/>
+        <location filename="../main.cpp" line="158"/>
         <source>Error starting executable</source>
         <translation type="unfinished">Kļūda, startējot izpildāmo failu</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="125"/>
+        <location filename="../main.cpp" line="159"/>
         <source>Failed to start %1
 Reason: %2</source>
         <translation type="unfinished">Neizdevās startēt %1\nIemesls: %2</translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1319"/>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1338"/>
+        <source>Import failed</source>
+        <translation type="unfinished">Importēšana neizdevās</translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1319"/>
+        <source>Failed to import save %1 from %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../modManager/cmodlistview_moc.cpp" line="1338"/>
+        <source>Failed to import save file %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StartGameTab</name>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="635"/>
+        <location filename="../startGame/StartGameTab.ui" line="655"/>
         <source>Import from Clipboard</source>
         <translation type="unfinished">Importēt no starpliktuves</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="654"/>
+        <location filename="../startGame/StartGameTab.ui" line="674"/>
         <source>Rename Current Preset</source>
         <translation type="unfinished">Pārdēvēt pašreizējo iestatījumu</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="568"/>
+        <location filename="../startGame/StartGameTab.ui" line="588"/>
         <source>Create New Preset</source>
         <translation type="unfinished">Izveidot jaunu sākotnējo iestatījumu</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="549"/>
+        <location filename="../startGame/StartGameTab.ui" line="569"/>
         <source>Export to Clipboard</source>
         <translation type="unfinished">Eksportēt uz starpliktuvi</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="603"/>
+        <location filename="../startGame/StartGameTab.ui" line="623"/>
         <source>Delete Current Preset</source>
         <translation type="unfinished">Dzēst pašreizējo iestatījumu</translation>
     </message>
@@ -1997,11 +2138,11 @@ Reason: %2</source>
         <location filename="../startGame/StartGameTab.ui" line="201"/>
         <location filename="../startGame/StartGameTab.ui" line="220"/>
         <location filename="../startGame/StartGameTab.ui" line="299"/>
-        <location filename="../startGame/StartGameTab.ui" line="391"/>
-        <location filename="../startGame/StartGameTab.ui" line="410"/>
-        <location filename="../startGame/StartGameTab.ui" line="451"/>
-        <location filename="../startGame/StartGameTab.ui" line="489"/>
-        <location filename="../startGame/StartGameTab.ui" line="508"/>
+        <location filename="../startGame/StartGameTab.ui" line="411"/>
+        <location filename="../startGame/StartGameTab.ui" line="430"/>
+        <location filename="../startGame/StartGameTab.ui" line="471"/>
+        <location filename="../startGame/StartGameTab.ui" line="509"/>
+        <location filename="../startGame/StartGameTab.ui" line="528"/>
         <source>?</source>
         <translation type="unfinished">?</translation>
     </message>
@@ -2011,7 +2152,7 @@ Reason: %2</source>
         <translation type="unfinished">Instalēt tulkojumu</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="429"/>
+        <location filename="../startGame/StartGameTab.ui" line="449"/>
         <source>No soundtrack detected!</source>
         <translation type="unfinished">Nav atrasts skaņu celiņš!</translation>
     </message>
@@ -2021,37 +2162,37 @@ Reason: %2</source>
         <translation type="unfinished">Trūkst Armagedona Blade kampaņu!</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="331"/>
+        <location filename="../startGame/StartGameTab.ui" line="351"/>
         <source>No video files detected!</source>
         <translation type="unfinished">Nav atrasti video faili!</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="470"/>
+        <location filename="../startGame/StartGameTab.ui" line="490"/>
         <source>Activate Translation</source>
         <translation type="unfinished">Aktivizēt tulkošanu</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="353"/>
+        <location filename="../startGame/StartGameTab.ui" line="373"/>
         <source>Import files</source>
         <translation type="unfinished">Importēt failus</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="739"/>
+        <location filename="../startGame/StartGameTab.ui" line="759"/>
         <source>Check For Updates</source>
         <translation type="unfinished">Pārbaudīt atjauninājumus</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="758"/>
+        <location filename="../startGame/StartGameTab.ui" line="778"/>
         <source>Go to Downloads Page</source>
         <translation type="unfinished">Dodieties uz lejupielāžu lapu</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="777"/>
+        <location filename="../startGame/StartGameTab.ui" line="797"/>
         <source>Go to Changelog Page</source>
         <translation type="unfinished">Dodieties uz izmaiņu žurnāla lapu</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="695"/>
+        <location filename="../startGame/StartGameTab.ui" line="715"/>
         <source>You are using the latest version</source>
         <translation type="unfinished">Jūs izmantojat jaunāko versiju</translation>
     </message>
@@ -2071,22 +2212,27 @@ Reason: %2</source>
         <translation type="unfinished">Instalējiet HD versiju (Steam)</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="811"/>
+        <location filename="../startGame/StartGameTab.ui" line="318"/>
+        <source>Install game</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.ui" line="831"/>
         <source>Resume</source>
         <translation type="unfinished">CV</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="872"/>
+        <location filename="../startGame/StartGameTab.ui" line="892"/>
         <source>Play</source>
         <translation type="unfinished">Spēlēt</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.ui" line="839"/>
+        <location filename="../startGame/StartGameTab.ui" line="859"/>
         <source>Editor</source>
         <translation type="unfinished">Redaktors</translation>
     </message>
     <message numerus="yes">
-        <location filename="../startGame/StartGameTab.cpp" line="181"/>
+        <location filename="../startGame/StartGameTab.cpp" line="212"/>
         <source>Update %n mods</source>
         <translation type="unfinished">
             <numerusform>Atjaunināt %n mod</numerusform>
@@ -2095,7 +2241,7 @@ Reason: %2</source>
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../startGame/StartGameTab.cpp" line="185"/>
+        <location filename="../startGame/StartGameTab.cpp" line="216"/>
         <source>Heroes Chronicles:
 %n/%1 installed</source>
         <translation type="unfinished">
@@ -2108,52 +2254,70 @@ Instalētas %n/%1</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="210"/>
+        <location filename="../startGame/StartGameTab.cpp" line="241"/>
         <source>Update to %1 available</source>
         <translation type="unfinished">Atjauninājums uz %1 ir pieejams</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="246"/>
+        <location filename="../startGame/StartGameTab.cpp" line="289"/>
+        <source>Select files (configs, mods, saves, maps, campaigns, gog files) to install...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="298"/>
+        <source>Install Heroes III</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="299"/>
+        <source>This will remove all demo game data (Data, Maps, Mp3, Video folders) and restart the setup wizard. Are you sure?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="276"/>
         <source>All supported files</source>
         <translation type="unfinished">Visi atbalstītie faili</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="247"/>
+        <location filename="../startGame/StartGameTab.cpp" line="277"/>
         <source>Maps</source>
         <translation type="unfinished">Kartes</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="248"/>
+        <location filename="../startGame/StartGameTab.cpp" line="278"/>
         <source>Campaigns</source>
         <translation type="unfinished">Kampaņas</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="249"/>
+        <location filename="../startGame/StartGameTab.cpp" line="279"/>
+        <source>Saves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="280"/>
         <source>Configs</source>
         <translation type="unfinished">Konfigurācijas</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="250"/>
+        <location filename="../startGame/StartGameTab.cpp" line="281"/>
         <source>Mods</source>
         <translation type="unfinished">Modi</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="251"/>
+        <location filename="../startGame/StartGameTab.cpp" line="282"/>
         <source>Gog files</source>
         <translation type="unfinished">Gog faili</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="254"/>
+        <location filename="../startGame/StartGameTab.cpp" line="285"/>
         <source>All files (*.*)</source>
         <translation type="unfinished">Visi faili (*.*)</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="256"/>
         <source>Select files (configs, mods, maps, campaigns, gog files) to install...</source>
-        <translation type="unfinished">Atlasiet instalējamos failus (konfigurācijas, modifikācijas, kartes, kampaņas, GOG failus)...</translation>
+        <translation type="obsolete">Atlasiet instalējamos failus (konfigurācijas, modifikācijas, kartes, kampaņas, GOG failus)...</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="299"/>
         <source>This option allows you to import additional data files into your VCMI installation. At the moment, following options are supported:
 
  - Heroes III Maps (.h3m or .vmap).
@@ -2162,85 +2326,120 @@ Instalētas %n/%1</numerusform>
  - VCMI mods in zip format (.zip)
  - VCMI configuration files (.json)
 </source>
-        <translation type="unfinished">Šī opcija ļauj importēt papildu datu failus jūsu VCMI instalācijā. Pašlaik tiek atbalstītas šādas opcijas:\n\n- Heroes III kartes (.h3m vai .vmap).\n- Heroes III kampaņas (.h3c vai .vcmp).\n- Heroes III hronikas, izmantojot bezsaistes dublējuma instalētāju no GOG.com (.exe).\n- VCMI modifikācijas zip formātā (.zip).\n- VCMI konfigurācijas faili (.json).</translation>
+        <translation type="obsolete">Šī opcija ļauj importēt papildu datu failus jūsu VCMI instalācijā. Pašlaik tiek atbalstītas šādas opcijas:\n\n- Heroes III kartes (.h3m vai .vmap).\n- Heroes III kampaņas (.h3c vai .vcmp).\n- Heroes III hronikas, izmantojot bezsaistes dublējuma instalētāju no GOG.com (.exe).\n- VCMI modifikācijas zip formātā (.zip).\n- VCMI konfigurācijas faili (.json).</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="314"/>
+        <location filename="../startGame/StartGameTab.cpp" line="333"/>
+        <location filename="../startGame/StartGameTab.cpp" line="368"/>
+        <source>Preparing selected files for import...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="338"/>
+        <source>Preparing selected files for import... %1/%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="359"/>
+        <source>Import failed</source>
+        <translation type="unfinished">Importēšana neizdevās</translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="359"/>
+        <source>Failed to prepare file for import: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="427"/>
+        <source>This option allows you to import additional data files into your VCMI installation. At the moment, following options are supported:
+
+ - Heroes III Maps (.h3m or .vmap).
+ - Heroes III Campaigns (.h3c or .vcmp).
+ - Heroes III Chronicles using offline backup installer from GOG.com (.exe).
+ - VCMI mods in zip format (.zip)
+ - VCMI saves archive in zip format (.zip)
+ - VCMI save files (.vsgm1)
+ - VCMI configuration files (.json)
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../startGame/StartGameTab.cpp" line="444"/>
         <source>Your Heroes III version uses different language. VCMI provides translations of the game into various languages that you can use. Use this option to automatically install such translation to your language.</source>
         <translation type="unfinished">Jūsu Heroes III versijā tiek izmantota cita valoda. VCMI nodrošina spēles tulkojumus dažādās valodās, kuras varat izmantot. Izmantojiet šo opciju, lai automātiski instalētu šādu tulkojumu savā valodā.</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="324"/>
+        <location filename="../startGame/StartGameTab.cpp" line="454"/>
         <source>Translation of Heroes III into your language is installed, but has been turned off. Use this option to enable it.</source>
         <translation type="unfinished">Spēles Heroes III tulkojums jūsu valodā ir instalēts, bet ir izslēgts. Izmantojiet šo opciju, lai to iespējotu.</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="334"/>
+        <location filename="../startGame/StartGameTab.cpp" line="464"/>
         <source>A new version of some of the mods that you have installed is now available in mod repository. Use this option to automatically update all your mods to latest version.
 
 WARNING: In some cases, updated versions of mods may not be compatible with your existing saves. You may want to postpone mod update until you finish any of your ongoing games.</source>
         <translation type="unfinished">Modifikāciju krātuvē tagad ir pieejama jauna dažu instalēto modifikāciju versija. Izmantojiet šo opciju, lai automātiski atjauninātu visas modifikācijas uz jaunāko versiju.\n\nBRĪDINĀJUMS. Dažos gadījumos atjauninātās modifikāciju versijas var nebūt saderīgas ar jūsu esošajiem saglabātajiem failiem. Iespējams, vēlēsities atlikt modifikāciju atjaunināšanu, līdz pabeigsit kādu no savām iesāktajām spēlēm.</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="346"/>
+        <location filename="../startGame/StartGameTab.cpp" line="476"/>
         <source>If you own Heroes Chronicles on gog.com, you can use offline backup installers provided by gog to import Heroes Chronicles data into VCMI as custom campaigns.
 To import Heroes Chronicles, download offline backup installer of each chronicle that you wish to install, select &apos;Import files&apos; option and select downloaded file. This will generate and install mod for VCMI that contains imported chronicles.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="359"/>
+        <location filename="../startGame/StartGameTab.cpp" line="489"/>
         <source>VCMI has detected that Heroes III music files are missing from your installation. VCMI will run, but in-game music will not be available.
 
 To resolve this problem, please copy missing mp3 files from Heroes III to VCMI data files directory manually or reinstall VCMI and re-import Heroes III data files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="370"/>
+        <location filename="../startGame/StartGameTab.cpp" line="500"/>
         <source>VCMI has detected that Heroes III video files are missing from your installation. VCMI will run, but in-game cutscenes will not be available.
 
 To resolve this problem, please copy VIDEO.VID file from Heroes III to VCMI data files directory manually or reinstall VCMI and re-import Heroes III data files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="381"/>
+        <location filename="../startGame/StartGameTab.cpp" line="511"/>
         <source>VCMI has detected that some of Heroes III data files are missing from your installation. You may attempt to run VCMI, but game may not work as expected or crash.
 
 To resolve this problem, please reinstall game and reimport data files using supported version of Heroes III. VCMI requires Heroes III: Shadow of Death or Complete Edition to run, which you can get (for example) from gog.com.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="392"/>
+        <location filename="../startGame/StartGameTab.cpp" line="522"/>
         <source>VCMI has detected that some of Heroes III: Armageddon&apos;s Blade data files are missing from your installation. VCMI will work, but Armageddon&apos;s Blade campaigns will not be available.
 
 To resolve this problem, please copy missing data files from Heroes III to VCMI data files directory manually or reinstall VCMI and re-import Heroes III data files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="403"/>
+        <location filename="../startGame/StartGameTab.cpp" line="533"/>
         <source>To improve graphics quality in VCMI, you can install files from the official Heroes III HD version on Steam.Select the Heroes HD folder from Steam.
 
 After installation, you need to set the upscaling filter to x2 or higher in order to actually see the HD graphics.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="442"/>
-        <location filename="../startGame/StartGameTab.cpp" line="451"/>
+        <location filename="../startGame/StartGameTab.cpp" line="572"/>
+        <location filename="../startGame/StartGameTab.cpp" line="581"/>
         <source>Preset import failed</source>
         <translation type="unfinished">Iepriekš iestatītā importēšana neizdevās</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="442"/>
-        <location filename="../startGame/StartGameTab.cpp" line="451"/>
+        <location filename="../startGame/StartGameTab.cpp" line="572"/>
+        <location filename="../startGame/StartGameTab.cpp" line="581"/>
         <source>Failed to import preset - data in clipboard does not looks like mod preset!</source>
         <translation type="unfinished">Neizdevās importēt iestatījumu — dati starpliktuvē neizskatās pēc modifikācijas iestatījuma!</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="467"/>
+        <location filename="../startGame/StartGameTab.cpp" line="597"/>
         <source>Enter preset name:</source>
         <translation type="unfinished">Ievadiet iepriekš iestatītā nosaukuma nosaukumu:</translation>
     </message>
     <message>
-        <location filename="../startGame/StartGameTab.cpp" line="510"/>
+        <location filename="../startGame/StartGameTab.cpp" line="640"/>
         <source>Rename preset &apos;%1&apos; to:</source>
         <translation type="unfinished">Pārdēvēt iestatījumu &apos;%1&apos; par:</translation>
     </message>

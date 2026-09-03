@@ -21,6 +21,7 @@ set(launcher_SRCS
 		startGame/StartGameTab.cpp
 		firstLaunch/firstlaunch_moc.cpp
 		firstLaunch/progressoverlay.cpp
+		demo.cpp
 		main.cpp
 		helper.cpp
 		innoextract.cpp
@@ -64,12 +65,19 @@ set(launcher_HEADERS
 		mainwindow_moc.h
 		languages.h
 		updatedialog_moc.h
+		demo.h
 		main.h
 		helper.h
 		innoextract.h
 		prepare.h
 		prepare_p.h
 )
+
+# gamepad support relies on SDL, which is not linked into launcher on mobile platforms
+if(NOT ANDROID AND NOT IOS)
+	list(APPEND launcher_SRCS gamepadHandler.cpp)
+	list(APPEND launcher_HEADERS gamepadHandler.h)
+endif()
 
 set(launcher_FORMS
 		aboutProject/aboutproject_moc.ui
@@ -112,6 +120,7 @@ set(launcher_TS
 	"${translationsDir}/serbian.ts"
 	"${translationsDir}/spanish.ts"
 	"${translationsDir}/swedish.ts"
+	"${translationsDir}/tchinese.ts"
 	"${translationsDir}/turkish.ts"
 	"${translationsDir}/ukrainian.ts"
 	"${translationsDir}/vietnamese.ts"
@@ -166,7 +175,10 @@ if(ENABLE_SINGLE_APP_BUILD OR ANDROID)
 	add_library(vcmilauncher OBJECT ${launcher_QM})
 else()
 	add_executable(vcmilauncher WIN32 ${launcher_QM} ${launcher_ICON})
-	vcmi_create_exe_shim(vcmilauncher)
+	if(USING_CONAN)
+		vcmi_copy_conan_runtime_deps(vcmilauncher)
+		vcmi_deploy_qt_runtime(vcmilauncher)
+	endif()
 endif()
 
 if(ENABLE_TRANSLATIONS)
@@ -204,6 +216,8 @@ if(ANDROID)
 	list(APPEND launcher_RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/config.qrc")
 	generate_binary_resource("Mods" "${CMAKE_SOURCE_DIR}/Mods")
 	list(APPEND launcher_RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/Mods.qrc")
+	generate_binary_resource("scripts" "${CMAKE_SOURCE_DIR}/scripts")
+	list(APPEND launcher_RESOURCES "${CMAKE_CURRENT_BINARY_DIR}/scripts.qrc")
 endif()
 
 target_sources(vcmilauncher PRIVATE

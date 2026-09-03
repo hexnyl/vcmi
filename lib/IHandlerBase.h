@@ -9,8 +9,6 @@
  */
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class JsonNode;
 class Entity;
 
@@ -24,14 +22,15 @@ protected:
 	void registerObject(const std::string & scope, const std::string & typeName, const std::string & name, const JsonNode & data, si32 index);
 	void registerObject(const std::string & scope, const std::vector<std::string> & typeNames, const std::string & name, const JsonNode & data, si32 index);
 
+	std::optional<int32_t> resolveIdentifier(const std::string & scope, const std::string & typeName, const std::string & name) const;
 public:
 	/// loads all original game data in vector of json nodes
 	/// dataSize - is number of items that must be loaded (normally - constant from GameConstants)
 	virtual std::vector<JsonNode> loadLegacyData() = 0;
 
 	/// loads single object into game. Scope is namespace of this object, same as name of source mod
-	virtual void loadObject(std::string scope, std::string name, const JsonNode & data) = 0;
-	virtual void loadObject(std::string scope, std::string name, const JsonNode & data, size_t index) = 0;
+	virtual void loadObject(const std::string & scope, const std::string & name, const JsonNode & data) = 0;
+	virtual void loadObject(const std::string & scope, const std::string & name, const JsonNode & data, size_t index) = 0;
 
 	/// allows handlers to alter object configuration before validation and actual load
 	virtual void beforeValidate(JsonNode & object){};
@@ -79,6 +78,16 @@ public:
 		return getObjectImpl(index);
 	}
 
+	const _ObjectBase * getByName(const std::string & name) const override
+	{
+		// TODO: provide actual scope? Perhaps pass it as json node?
+		auto index = resolveIdentifier("game", getTypeNames().front(), name);
+		if (index)
+			return getByIndex(*index);
+		else
+			return nullptr;
+	}
+
 	void forEachBase(const std::function<void(const Entity * entity, bool & stop)> & cb) const override
 	{
 		forEachT(cb);
@@ -89,15 +98,16 @@ public:
 		forEachT(cb);
 	}
 
-	void loadObject(std::string scope, std::string name, const JsonNode & data) override
+	void loadObject(const std::string & scope, const std::string & name, const JsonNode & data) override
 	{
 		objects.push_back(loadFromJson(scope, data, name, objects.size()));
 		registerObject(scope, getTypeNames(), name, data, objects.back()->getIndex());
 	}
 
-	void loadObject(std::string scope, std::string name, const JsonNode & data, size_t index) override
+	void loadObject(const std::string & scope, const std::string & name, const JsonNode & data, size_t index) override
 	{
-		assert(objects[index] == nullptr); // ensure that this id was not loaded before
+		if(objects[index] != nullptr)
+			logMod->debug("Replacing existing object at index %d with '%s'", index, name); // required for war machines in demo (uses ids from conflux creatures)
 		objects[index] = loadFromJson(scope, data, name, index);
 		registerObject(scope, getTypeNames(), name, data, index);
 	}
@@ -137,5 +147,3 @@ protected:
 public: //todo: make private
 	std::vector<ObjectPtr> objects;
 };
-
-VCMI_LIB_NAMESPACE_END

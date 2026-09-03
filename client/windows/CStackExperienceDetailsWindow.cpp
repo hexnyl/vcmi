@@ -118,9 +118,8 @@ int CStackWindow::StackExperienceDetailsWindow::calculateDynamicTableRowCount(co
 			uniqueBonuses.insert({bonus->type, bonus->subtype.getNum()});
 	}
 
-	const int minBonusRows = 1;
 	const int maxRowsWithoutHeader = 7; // keep dialog within 800x600
-	const int rowsWithoutHeader = std::clamp(1 + std::max(minBonusRows, static_cast<int>(uniqueBonuses.size())), 1, maxRowsWithoutHeader); // Experience + bonus rows
+	const int rowsWithoutHeader = std::clamp(1 + static_cast<int>(uniqueBonuses.size()), 1, maxRowsWithoutHeader); // Experience + bonus rows
 	return rowsWithoutHeader;
 }
 
@@ -344,7 +343,7 @@ CStackWindow::StackExperienceDetailsWindow::StackExperienceDetailsWindow(const C
 	{
 		std::string rowLabel;
 		if(!bonus->description.empty())
-			rowLabel = bonus->description.toString();
+			rowLabel = bonus->description.toString(&GAME->translator());
 		else
 		{
 			auto mutableBonus = std::const_pointer_cast<Bonus>(bonus);
@@ -368,7 +367,7 @@ CStackWindow::StackExperienceDetailsWindow::StackExperienceDetailsWindow(const C
 	auto getBonusTooltipText = [&](const std::shared_ptr<const Bonus> & bonus)
 	{
 		if(!bonus->description.empty())
-			return bonus->description.toString();
+			return bonus->description.toString(&GAME->translator());
 
 		auto tooltip = sourceStack->bonusToString(std::const_pointer_cast<Bonus>(bonus));
 		if(!tooltip.empty())
@@ -383,7 +382,7 @@ CStackWindow::StackExperienceDetailsWindow::StackExperienceDetailsWindow(const C
 	
 	auto isPercentBonus = [](const std::shared_ptr<const Bonus> & bonus)
 	{
-		const std::string descriptionText = bonus->description.toString();
+		const std::string descriptionText = bonus->description.toString(&GAME->translator());
 		if(descriptionText.find('%') != std::string::npos)
 			return true;
 
@@ -412,7 +411,7 @@ CStackWindow::StackExperienceDetailsWindow::StackExperienceDetailsWindow(const C
 			return PreferredRowPresentation{LIBRARY->generaltexth->translate("vcmi.stackExperience.table.maxDamage"), ImagePath::builtin("stackExperienceIconMaxDamage"), LIBRARY->generaltexth->translate("vcmi.stackExperience.desc.maxDamage"), std::nullopt};
 		if(key.type == BonusType::STACK_HEALTH)
 		{
-			auto override = [selector = makeStackExpSelector(key)](const CStackInstance & stackInst)
+			auto valueOverride = [selector = makeStackExpSelector(key)](const CStackInstance & stackInst)
 			{
 				int result = 0;
 				auto bonuses = stackInst.getBonuses(selector);
@@ -420,7 +419,7 @@ CStackWindow::StackExperienceDetailsWindow::StackExperienceDetailsWindow(const C
 					result += b->val;
 				return result;
 			};
-			return PreferredRowPresentation{LIBRARY->generaltexth->allTexts[388], ImagePath::builtin("stackExperienceIconHealth"), LIBRARY->generaltexth->translate("vcmi.stackExperience.desc.health"), override};
+			return PreferredRowPresentation{LIBRARY->generaltexth->allTexts[388], ImagePath::builtin("stackExperienceIconHealth"), LIBRARY->generaltexth->translate("vcmi.stackExperience.desc.health"), valueOverride};
 		}
 		if(key.type == BonusType::STACKS_SPEED)
 			return PreferredRowPresentation{LIBRARY->generaltexth->allTexts[193], ImagePath::builtin("stackExperienceIconSpeed"), LIBRARY->generaltexth->translate("vcmi.stackExperience.desc.speed"), std::nullopt};

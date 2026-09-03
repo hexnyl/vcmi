@@ -10,12 +10,12 @@
 #pragma once
 
 #include "BattleConstants.h"
-#include "../lib/battle/BattleHex.h"
-#include "../gui/CIntObject.h"
-#include "../../lib/spells/CSpellHandler.h" //CSpell::TAnimation
-#include "../../lib/ConditionalWait.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../gui/CIntObject.h"
+
+#include "../../lib/battle/BattleHex.h"
+#include "../../lib/spells/SpellAnimationItem.h"
+#include "../../lib/ConditionalWait.h"
 
 class CCreatureSet;
 class CGHeroInstance;
@@ -31,8 +31,7 @@ struct BattleTriggerEffect;
 struct InfoAboutHero;
 class ObstacleChanges;
 class CPlayerBattleCallback;
-
-VCMI_LIB_NAMESPACE_END
+class MetaString;
 
 class BattleHero;
 class Canvas;
@@ -68,7 +67,6 @@ struct StackAttackedInfo
 	bool killed; //if true, stack has been killed
 	bool rebirth; //if true, play rebirth animation after all
 	bool cloneKilled;
-	bool fireShield;
 };
 
 struct StackAttackInfo
@@ -84,7 +82,6 @@ struct StackAttackInfo
 	bool lucky;
 	bool unlucky;
 	bool deathBlow;
-	bool lifeDrain;
 	bool playCustomAnimation;
 };
 
@@ -135,7 +132,6 @@ public:
 	const CGHeroInstance *attackingHeroInstance;
 	const CGHeroInstance *defendingHeroInstance;
 
-	bool tacticsMode;
 	ui32 round;
 
 	std::unique_ptr<BattleProjectileController> projectilesController;
@@ -197,6 +193,8 @@ public:
 	void waitForAnimations();
 	bool hasAnimations();
 	void checkForAnimations();
+	/// true if an action for the given animation stage is still queued (not yet executed)
+	bool hasQueuedStage(EAnimationEvents event) const;
 	void addToAnimationStage( EAnimationEvents event, const AwaitingAnimationAction & action);
 
 	//call-ins
@@ -218,18 +216,20 @@ public:
 
 	void displayBattleLog(const std::vector<MetaString> & battleLog);
 
-	void displaySpellAnimationQueue(const CSpell * spell, const CSpell::TAnimationQueue & q, const BattleHex & destinationTile, bool isHit);
+	void displaySpellAnimationQueue(const CSpell * spell, const SpellAnimationQueue & q, const BattleHex & destinationTile, bool isHit);
 	void displaySpellCast(const CSpell * spell, const BattleHex & destinationTile); //displays spell`s cast animation
 	void displaySpellEffect(const CSpell * spell, const BattleHex & destinationTile); //displays spell`s affected animation
 	void displaySpellHit(const CSpell * spell, const BattleHex & destinationTile); //displays spell`s affected animation
 
 	void endAction(const BattleAction & action);
 
-	void obstaclePlaced(const std::vector<std::shared_ptr<const CObstacleInstance>> oi);
-	void obstacleRemoved(const std::vector<ObstacleChanges> & obstacles);
+	void obstaclePlaced(const std::shared_ptr<const CObstacleInstance> & oi);
+	void obstacleRemoved(const ObstacleChanges & obstacle);
 
 	void gateStateChanged(const EGateState state);
 
 	const CGHeroInstance *currentHero() const;
 	InfoAboutHero enemyHero() const;
+
+	bool isInTacticsMode();
 };

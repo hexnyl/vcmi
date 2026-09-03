@@ -13,6 +13,8 @@
 #include "../../lib/campaign/CampaignState.h"
 
 class CampaignState;
+
+
 class QAbstractButton;
 
 namespace Ui {

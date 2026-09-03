@@ -18,10 +18,12 @@
 #include "GameLibrary.h"
 #include "IGameSettings.h"
 #include "constants/StringConstants.h"
+#include "bonuses/BonusMigration.h"
 #include "bonuses/Limiters.h"
 #include "bonuses/Updaters.h"
 #include "bonuses/BonusParameters.h"
 #include "json/JsonBonus.h"
+#include "json/JsonUtils.h"
 #include "serializer/JsonDeserializer.h"
 #include "serializer/JsonUpdater.h"
 #include "texts/CGeneralTextHandler.h"
@@ -32,8 +34,6 @@
 #include "ExceptionsCommon.h"
 
 #include <vstd/RNG.h>
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 const std::map<CCreature::CreatureQuantityId, std::string> CCreature::creatureQuantityRanges =
 {
@@ -185,7 +185,7 @@ const TResources & CCreature::getFullRecruitCost() const
 	return cost;
 }
 
-bool CCreature::hasUpgrades() const 
+bool CCreature::hasUpgrades() const
 {
 	return !upgrades.empty();
 }
@@ -293,6 +293,10 @@ bool CCreature::isGood () const
 {
 	return LIBRARY->factions()->getById(faction)->getAlignment() == EAlignment::GOOD;
 }
+EAlignment CCreature::getAlignment () const
+{
+	return LIBRARY->factions()->getById(faction)->getAlignment();
+}
 
 /**
  * Determines if the creature is of an evil alignment.
@@ -391,46 +395,6 @@ int CCreature::getRandomAmount(vstd::RNG & ranGen) const
 		return ammMax;
 }
 
-void CCreature::updateFrom(const JsonNode & data)
-{
-	JsonUpdater handler(nullptr, data);
-
-	{
-		auto configScope = handler.enterStruct("config");
-
-		const JsonNode & configNode = handler.getCurrent();
-
-		serializeJson(handler);
-
-		if(!configNode["hitPoints"].isNull())
-			addBonus(configNode["hitPoints"].Integer(), BonusType::STACK_HEALTH);
-
-		if(!configNode["speed"].isNull())
-			addBonus(configNode["speed"].Integer(), BonusType::STACKS_SPEED);
-
-		if(!configNode["attack"].isNull())
-			addBonus(configNode["attack"].Integer(), BonusType::PRIMARY_SKILL, BonusSubtypeID(PrimarySkill::ATTACK));
-
-		if(!configNode["defense"].isNull())
-			addBonus(configNode["defense"].Integer(), BonusType::PRIMARY_SKILL, BonusSubtypeID(PrimarySkill::DEFENSE));
-
-		if(!configNode["damage"]["min"].isNull())
-			addBonus(configNode["damage"]["min"].Integer(), BonusType::CREATURE_DAMAGE, BonusCustomSubtype::creatureDamageMin);
-
-		if(!configNode["damage"]["max"].isNull())
-			addBonus(configNode["damage"]["max"].Integer(), BonusType::CREATURE_DAMAGE, BonusCustomSubtype::creatureDamageMax);
-
-		if(!configNode["shots"].isNull())
-			addBonus(configNode["shots"].Integer(), BonusType::SHOTS);
-
-		if(!configNode["spellPoints"].isNull())
-			addBonus(configNode["spellPoints"].Integer(), BonusType::CASTS);
-	}
-
-
-	handler.serializeBonuses("bonuses", this);
-}
-
 void CCreature::serializeJson(JsonSerializeFormat & handler)
 {
 	handler.serializeInt("fightValue", fightValue);
@@ -488,6 +452,8 @@ void CCreatureHandler::loadCommanders()
 	data.setModScope(modSource);
 
 	const JsonNode & config = data; // switch to const data accessors
+
+	commanderResurrectionPrice.resolveFromJson(config["resurrectionPrice"]);
 
 	for (auto bonus : config["bonusPerLevel"].Vector())
 	{
@@ -554,11 +520,14 @@ std::vector<JsonNode> CCreatureHandler::loadLegacyData()
 		parser.endLine();
 	}
 
+	const bool isRoe = LIBRARY->isRoeData();
+
 	for (size_t i=0; i<dataSize; i++)
 	{
 		//loop till non-empty line
 		while (parser.isNextEntryEmpty())
-			parser.endLine();
+			if(!parser.endLine())
+				break;
 
 		JsonNode data;
 
@@ -587,8 +556,9 @@ std::vector<JsonNode> CCreatureHandler::loadLegacyData()
 		if (float shots = parser.readNumber())
 			data["shots"].Float() = shots;
 
-		if (float spells = parser.readNumber())
-			data["spellPoints"].Float() = spells;
+		if(!isRoe)
+			if (float spells = parser.readNumber())
+				data["spellPoints"].Float() = spells;
 
 		data["advMapAmount"]["min"].Float() = parser.readNumber();
 		data["advMapAmount"]["max"].Float() = parser.readNumber();
@@ -625,6 +595,11 @@ std::shared_ptr<CCreature> CCreatureHandler::loadFromJson(const std::string & sc
 	cre->serializeJson(handler);
 
 	cre->cost.resolveFromJson(node["cost"]);
+	if(!node["resurrectionPrice"].isNull())
+	{
+		cre->commanderResurrectionPrice.emplace();
+		cre->commanderResurrectionPrice->resolveFromJson(node["resurrectionPrice"]);
+	}
 
 	LIBRARY->generaltexth->registerString(scope, cre->getNameSingularTextID(), node["name"]["singular"]);
 	LIBRARY->generaltexth->registerString(scope, cre->getNamePluralTextID(), node["name"]["plural"]);
@@ -883,6 +858,21 @@ void CCreatureHandler::loadUnitAnimInfo(JsonNode & graphics, CLegacyConfigParser
 		graphics.Struct().erase("missile");
 }
 
+RayColor RayColor::fromJson(const JsonNode & node)
+{
+	RayColor color;
+	color.start.r = node["start"].Vector()[0].Integer();
+	color.start.g = node["start"].Vector()[1].Integer();
+	color.start.b = node["start"].Vector()[2].Integer();
+	color.start.a = node["start"].Vector()[3].Integer();
+
+	color.end.r = node["end"].Vector()[0].Integer();
+	color.end.g = node["end"].Vector()[1].Integer();
+	color.end.b = node["end"].Vector()[2].Integer();
+	color.end.a = node["end"].Vector()[3].Integer();
+	return color;
+}
+
 void CCreatureHandler::loadJsonAnimation(CCreature * cre, const JsonNode & graphics) const
 {
 	cre->animation.timeBetweenFidgets = graphics["timeBetweenFidgets"].Float();
@@ -942,21 +932,7 @@ void CCreatureHandler::loadCreatureJson(CCreature * creature, const JsonNode & c
 	creature->animation.projectileImageName = AnimationPath::fromJson(config["graphics"]["missile"]["projectile"]);
 
 	for(const JsonNode & value : config["graphics"]["missile"]["ray"].Vector())
-	{
-		CCreature::CreatureAnimation::RayColor color;
-
-		color.start.r = value["start"].Vector()[0].Integer();
-		color.start.g = value["start"].Vector()[1].Integer();
-		color.start.b = value["start"].Vector()[2].Integer();
-		color.start.a = value["start"].Vector()[3].Integer();
-
-		color.end.r = value["end"].Vector()[0].Integer();
-		color.end.g = value["end"].Vector()[1].Integer();
-		color.end.b = value["end"].Vector()[2].Integer();
-		color.end.a = value["end"].Vector()[3].Integer();
-
-		creature->animation.projectileRay.push_back(color);
-	}
+		creature->animation.projectileRay.push_back(RayColor::fromJson(value));
 
 	creature->special = config["special"].Bool() || config["disabled"].Bool();
 	creature->excludeFromRandomization = config["excludeFromRandomization"].Bool();
@@ -1064,8 +1040,8 @@ void CCreatureHandler::loadStackExp(Bonus & b, BonusList & bl, CLegacyConfigPars
 		b.type = BonusType::DOUBLE_DAMAGE_CHANCE;
 		break;
 	case 'E':
-		b.type = BonusType::DEATH_STARE;
-		b.subtype = BonusCustomSubtype::deathStareGorgon;
+		b.type = BonusType::UNUSED_DEATH_STARE;
+		b.subtype = BonusCustomSubtype(0); // was deathStareGorgon, converted below
 		break;
 	case 'F':
 		b.type = BonusType::FEARFUL; break;
@@ -1091,7 +1067,7 @@ void CCreatureHandler::loadStackExp(Bonus & b, BonusList & bl, CLegacyConfigPars
 			case 'B':
 				b.type = BonusType::TWO_HEX_ATTACK_BREATH; break;
 			case 'c':
-				b.type = BonusType::JOUSTING; 
+				b.type = BonusType::JOUSTING;
 				b.val = 5;
 				break;
 			case 'D':
@@ -1268,7 +1244,7 @@ void CCreatureHandler::loadStackExp(Bonus & b, BonusList & bl, CLegacyConfigPars
 		b.val = stringToNumber(mod);
 		break;
 	case 's':
-		b.type = BonusType::ENCHANTED;
+		b.type = BonusType::UNUSED_ENCHANTED;
 		b.subtype = BonusSubtypeID(SpellID(stringToNumber(mod)));
 		b.valType = BonusValueType::INDEPENDENT_MAX;
 		break;
@@ -1332,6 +1308,11 @@ void CCreatureHandler::loadStackExp(Bonus & b, BonusList & bl, CLegacyConfigPars
 			}
 		}
 	}
+
+	// this table names abilities that are combat scripts now, and builds them without going
+	// through the json loader that would otherwise convert them
+	for(const auto & bonus : bl)
+		BonusMigration::migrateCombatAbility(*bonus);
 }
 
 int CCreatureHandler::stringToNumber(std::string & s) const
@@ -1344,6 +1325,14 @@ CCreatureHandler::~CCreatureHandler()
 {
 	for(auto & p : skillRequirements)
 		p.first.clear();
+}
+
+const ResourceSet & CCreatureHandler::getCommanderResurrectionPrice(const CCreature * commander) const
+{
+	if(commander && commander->commanderResurrectionPrice)
+		return *commander->commanderResurrectionPrice;
+
+	return commanderResurrectionPrice;
 }
 
 void CCreatureHandler::afterLoadFinalization()
@@ -1372,5 +1361,3 @@ std::set<CreatureID> CCreatureHandler::getDefaultAllowed() const
 
 	return result;
 }
-
-VCMI_LIB_NAMESPACE_END

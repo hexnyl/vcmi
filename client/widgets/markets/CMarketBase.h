@@ -10,15 +10,13 @@
 #pragma once
 
 #include "TradePanels.h"
-#include "../../widgets/Slider.h"
+#include "../Slider.h"
 #include "../../render/EFont.h"
 #include "../../render/Colors.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class IMarket;
 
-VCMI_LIB_NAMESPACE_END
+class CPlayerInterface;
 
 class CMarketBase : public CIntObject
 {
@@ -95,8 +93,11 @@ public:
 class CResourcesSelling : virtual public CMarketBase
 {
 public:
-	explicit CResourcesSelling(const CTradeableItem::ClickPressedFunctor & clickPressedCallback);
+	explicit CResourcesSelling(const CTradeableItem::ClickPressedFunctor & clickPressedCallback, CPlayerInterface * tradeInterface);
 	void updateSubtitles() const;
+
+private:
+	CPlayerInterface * tradeInterface;
 };
 
 class CMarketSlider : virtual public CMarketBase

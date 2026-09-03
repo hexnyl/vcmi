@@ -14,8 +14,6 @@
 
 #include <mutex>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 template<class Stream>
 inline uLong streamRead(voidpf opaque, voidpf stream, void * buf, uLong size)
 {
@@ -356,5 +354,3 @@ int ZCALLBACK CProxyROIOApi::errorFileProxy(voidpf opaque, voidpf stream)
 {
 	return 0;
 }
-
-VCMI_LIB_NAMESPACE_END

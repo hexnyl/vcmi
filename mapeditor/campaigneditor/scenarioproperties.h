@@ -15,8 +15,10 @@
 
 class CMap;
 class CampaignState;
-class QAbstractButton;
 class EditorCallback;
+
+
+class QAbstractButton;
 
 namespace Ui {
 class ScenarioProperties;

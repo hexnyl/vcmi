@@ -19,15 +19,13 @@
 #include "TownPortalEffect.h"
 #include "ViewWorldEffect.h"
 
-#include "../CSpellHandler.h"
 #include "../Problem.h"
+#include "../CSpell.h"
 
 #include "../../json/JsonBonus.h"
 #include "../../mapObjects/CGHeroInstance.h"
 #include "../../networkPacks/PacksForClient.h"
 #include "../../callback/IGameInfoCallback.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 std::unique_ptr<IAdventureSpellEffect> AdventureSpellMechanics::createAdventureEffect(const CSpell * s, const JsonNode & node)
 {
@@ -62,7 +60,16 @@ AdventureSpellMechanics::AdventureSpellMechanics(const CSpell * s)
 		levelOptions[level].castsPerDay = config["castsPerDay"].Integer();
 		levelOptions[level].castsPerDayXL = config["castsPerDayXL"].Integer();
 
-		levelOptions[level].bonuses = s->getLevelInfo(level).effects;
+		for(const auto & [name, bonusNode] : s->getLevelInfo(level).effects.Struct())
+		{
+			auto b = JsonUtils::parseBonus(bonusNode);
+			if(b)
+			{
+				b->sid = BonusSourceID(s->id);
+				b->source = BonusSource::SPELL_EFFECT;
+				levelOptions[level].bonuses.push_back(b);
+			}
+		}
 
 		for(const auto & elem : config["bonuses"].Struct())
 		{
@@ -96,6 +103,25 @@ bool AdventureSpellMechanics::givesBonus(const spells::Caster * caster, BonusTyp
 	return false;
 }
 
+int AdventureSpellMechanics::getCastsLimit(const spells::Caster * caster, const int3 & mapSize) const
+{
+	const auto & level = getLevel(caster);
+	bool mapSizeIsAtLeastXL = mapSize.x * mapSize.y * mapSize.z >= GameConstants::TOURNAMENT_RULES_DD_MAP_TILES_THRESHOLD;
+	bool useAlternativeLimit = mapSizeIsAtLeastXL && level.castsPerDayXL != 0;
+	return useAlternativeLimit ? level.castsPerDayXL : level.castsPerDay;
+}
+
+int AdventureSpellMechanics::getCastsAlreadyPerformed(const spells::Caster * caster) const
+{
+	if(!caster->getHeroCaster())
+		return 0;
+
+	std::stringstream cachingStr;
+	cachingStr << "source_" << vstd::to_underlying(BonusSource::SPELL_EFFECT) << "id_" << owner->id.num;
+	auto selectorForCastCounter = Selector::source(BonusSource::SPELL_EFFECT, BonusSourceID(owner->id)).And(Selector::type()(BonusType::SPELL_CAST_COUNTER));
+	return caster->getHeroCaster()->valOfBonuses(selectorForCastCounter, cachingStr.str());
+}
+
 bool AdventureSpellMechanics::canBeCast(spells::Problem & problem, const IGameInfoCallback * cb, const spells::Caster * caster) const
 {
 	if(!owner->isAdventure())
@@ -117,18 +143,13 @@ bool AdventureSpellMechanics::canBeCast(spells::Problem & problem, const IGameIn
 		if(heroCaster->mana < cost)
 			return false;
 
-		std::stringstream cachingStr;
-		cachingStr << "source_" << vstd::to_underlying(BonusSource::SPELL_EFFECT) << "id_" << owner->id.num;
-		int castsAlreadyPerformedThisTurn = caster->getHeroCaster()->getBonuses(Selector::source(BonusSource::SPELL_EFFECT, BonusSourceID(owner->id)), cachingStr.str())->size();
-		int3 mapSize = cb->getMapSize();
-		bool mapSizeIsAtLeastXL = mapSize.x * mapSize.y * mapSize.z >= GameConstants::TOURNAMENT_RULES_DD_MAP_TILES_THRESHOLD;
-		bool useAlternativeLimit = mapSizeIsAtLeastXL && getLevel(caster).castsPerDayXL != 0;
-		int castsLimit = useAlternativeLimit ? getLevel(caster).castsPerDayXL : getLevel(caster).castsPerDay;
+		int castsAlreadyPerformedThisTurn = getCastsAlreadyPerformed(caster);
+		int castsLimit = getCastsLimit(caster, cb->getMapSize());
 
 		if(castsLimit > 0 && castsLimit <= castsAlreadyPerformedThisTurn ) //limit casts per turn
 		{
 			MetaString message = MetaString::createFromTextID("core.genrltxt.338");
-			caster->getCasterName(message);
+			message.replaceTextID(caster->getCasterNameTextID());
 			problem.add(std::move(message));
 			return false;
 		}
@@ -169,7 +190,7 @@ void AdventureSpellMechanics::giveBonuses(SpellCastEnvironment * env, const Adve
 
 	GiveBonus gb;
 	gb.id = ObjectInstanceID(parameters.caster->getCasterUnitId());
-	gb.bonus = Bonus(BonusDuration::ONE_DAY, BonusType::NONE, BonusSource::SPELL_EFFECT, 0, BonusSourceID(owner->id));
+	gb.bonus = Bonus(BonusDuration::ONE_DAY, BonusType::SPELL_CAST_COUNTER, BonusSource::SPELL_EFFECT, 1, BonusSourceID(owner->id));
 	env->apply(gb);
 }
 
@@ -192,5 +213,3 @@ void AdventureSpellMechanics::performCast(SpellCastEnvironment * env, const Adve
 		getLevel(parameters.caster).effect->endCast(env, parameters);
 	}
 }
-
-VCMI_LIB_NAMESPACE_END

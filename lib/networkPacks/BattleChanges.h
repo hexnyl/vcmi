@@ -11,21 +11,18 @@
 
 #include "../json/JsonNode.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class BattleChanges
 {
 public:
 	enum class EOperation : si8
 	{
 		ADD,
-		RESET_STATE,
 		UPDATE,
 		REMOVE,
 	};
 
 	JsonNode data;
-	EOperation operation = EOperation::RESET_STATE;
+	EOperation operation = EOperation::UPDATE;
 
 	BattleChanges() = default;
 	explicit BattleChanges(EOperation operation_)
@@ -76,6 +73,4 @@ public:
 		h & operation;
 	}
 };
-
-VCMI_LIB_NAMESPACE_END
 

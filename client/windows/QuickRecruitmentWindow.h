@@ -9,11 +9,9 @@
  */
 #pragma once
 
-#include "../windows/CWindowObject.h"
+#include "CWindowObject.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
 class CGTownInstance;
-VCMI_LIB_NAMESPACE_END
 
 class CButton;
 class CreatureCostBox;

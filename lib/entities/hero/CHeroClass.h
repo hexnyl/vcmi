@@ -15,8 +15,6 @@
 #include "../../constants/Enumerations.h"
 #include "../../filesystem/ResourcePath.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace vstd
 {
 class RNG;
@@ -73,12 +71,7 @@ public:
 
 	bool isMagicHero() const;
 
-	void updateFrom(const JsonNode & data);
-	void serializeJson(JsonSerializeFormat & handler);
-
 	EAlignment getAlignment() const;
 
 	int tavernProbability(FactionID faction) const;
 };
-
-VCMI_LIB_NAMESPACE_END

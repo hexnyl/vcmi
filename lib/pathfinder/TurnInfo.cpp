@@ -19,8 +19,6 @@
 #include "../mapObjects/CGHeroInstance.h"
 #include "../mapObjects/MiscObjects.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 TConstBonusListPtr TurnInfoBonusList::getBonusList(const CGHeroInstance * target, const CSelector & bonusSelector)
 {
 	std::lock_guard guard(bonusListMutex);
@@ -82,6 +80,11 @@ int TurnInfo::getMovePointsLimitLand() const
 int TurnInfo::getMovePointsLimitWater() const
 {
 	return movePointsLimitWater;
+}
+
+int TurnInfo::getMovePointsLimitAir() const
+{
+	return movePointsLimitAir;
 }
 
 TurnInfo::TurnInfo(TurnInfoCache * sharedCache, const CGHeroInstance * target, int Turn)
@@ -162,6 +165,11 @@ TurnInfo::TurnInfo(TurnInfoCache * sharedCache, const CGHeroInstance * target, i
 	}
 
 	{
+		// A hero in an airship has 2000 movements. No modificators increasing the speed of moving either by land or water influence this quantity.
+		movePointsLimitAir = 2000;
+	}
+
+	{
 		static const CSelector selector = Selector::type()(BonusType::NO_TERRAIN_PENALTY);
 		const auto & bonuses = sharedCache->noTerrainPenalty.getBonusList(target, selector);
 		for (const auto & bonus : *bonuses)
@@ -170,12 +178,22 @@ TurnInfo::TurnInfo(TurnInfoCache * sharedCache, const CGHeroInstance * target, i
 			noterrainPenalty.at(affectedTerrain.num) = true;
 		}
 
-		const auto nativeTerrain = target->getNativeTerrain();
-		if (nativeTerrain.hasValue())
-			noterrainPenalty.at(nativeTerrain.num) = true;
+		const auto allStacksNativeForTerrain = [this](TerrainId terrainId)
+		{
+			for (const auto & slot : this->target->Slots())
+			{
+				if (!slot.second->isNativeTerrain(terrainId))
+					return false;
+			}
+			return true;
+		};
 
-		if (nativeTerrain == ETerrainId::ANY_TERRAIN)
-			boost::range::fill(noterrainPenalty, true);
+		for (const auto & terrain : LIBRARY->terrainTypeHandler->objects)
+		{
+			auto terrainId = terrain->getId();
+			if (allStacksNativeForTerrain(terrainId))
+				noterrainPenalty.at(terrainId.num) = true;
+		}
 	}
 }
 
@@ -184,7 +202,8 @@ bool TurnInfo::isLayerAvailable(const EPathfindingLayer & layer) const
 	switch(layer.toEnum())
 	{
 	case EPathfindingLayer::AIR:
-		if(target && target->inBoat() && target->getBoat()->layer == EPathfindingLayer::AIR)
+		//airship with aviation uses both AIR and AVIATE layers
+		if(target && target->inBoat() && (target->getBoat()->layer == EPathfindingLayer::AIR || target->getBoat()->layer == EPathfindingLayer::AVIATE))
 			break;
 
 		if(!hasFlyingMovement())
@@ -207,7 +226,10 @@ bool TurnInfo::isLayerAvailable(const EPathfindingLayer & layer) const
 
 int TurnInfo::getMaxMovePoints(const EPathfindingLayer & layer) const
 {
-	return layer == EPathfindingLayer::SAIL ? getMovePointsLimitWater() : getMovePointsLimitLand();
+	if(layer == EPathfindingLayer::SAIL)
+		return getMovePointsLimitWater();
+	else if(layer == EPathfindingLayer::AVIATE)
+		return getMovePointsLimitAir();
+	else
+		return getMovePointsLimitLand();
 }
-
-VCMI_LIB_NAMESPACE_END

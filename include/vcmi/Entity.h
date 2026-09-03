@@ -10,8 +10,6 @@
 
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class IBonusBearer;
 class FactionID;
 class TerrainId;
@@ -25,9 +23,8 @@ public:
 class DLL_LINKAGE INativeTerrainProvider
 {
 public:
-	virtual TerrainId getNativeTerrain() const = 0;
 	virtual FactionID getFactionID() const = 0;
-	virtual bool isNativeTerrain(TerrainId terrain) const;
+	virtual bool isNativeTerrain(TerrainId terrain) const = 0;
 };
 
 class DLL_LINKAGE Entity : boost::noncopyable
@@ -60,5 +57,3 @@ template <typename IdType>
 class DLL_LINKAGE EntityWithBonuses : public EntityT<IdType>, public IConstBonusProvider
 {
 };
-
-VCMI_LIB_NAMESPACE_END

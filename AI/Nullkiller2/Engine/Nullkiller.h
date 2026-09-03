@@ -23,11 +23,7 @@
 
 #include "../../../lib/ConditionalWait.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class PathfinderCache;
-
-VCMI_LIB_NAMESPACE_END
 
 namespace NK2AI
 {
@@ -73,13 +69,22 @@ public:
 	void mergeAndFilter(const Goals::TSubgoal& task);
 };
 
+enum class TaskFailureAction
+{
+	TRY_NEXT_TASK,
+	REPLAN,
+	STOP_TURN
+};
+
+TaskFailureAction chooseTaskFailureAction(bool hasAnySuccess, bool hasRemainingTasks, bool canReplan);
+
 class Nullkiller
 {
 private:
 	const CGHeroInstance * activeHero;
 	int3 targetTile;
 	ObjectInstanceID targetObject;
-	std::map<const CGHeroInstance *, HeroLockedReason> lockedHeroes;
+	HeroMap<HeroLockedReason> lockedHeroes;
 	std::unique_ptr<PathfinderCache> pathfinderCache;
 	ScanDepth scanDepth;
 	TResources lockedResources;
@@ -126,9 +131,10 @@ public:
 	ObjectInstanceID getTargetObject() const { return targetObject; }
 	void setTargetObject(int objid) { targetObject = ObjectInstanceID(objid); }
 	void setActive(const CGHeroInstance * hero, int3 tile) { activeHero = hero; targetTile = tile; }
-	void lockHero(const CGHeroInstance * hero, HeroLockedReason lockReason) { lockedHeroes[hero] = lockReason; }
-	void unlockHero(const CGHeroInstance * hero) { lockedHeroes.erase(hero); }
-	bool arePathHeroesLocked(const AIPath & path) const;
+	void lockHero(const CGHeroInstance * hero, HeroLockedReason lockReason);
+	void unlockHero(const CGHeroInstance * hero);
+	bool canReleaseDefenderForTownCapture(const CGHeroInstance * hero, const CGObjectInstance * target, const AIPath & path) const;
+	bool arePathHeroesLocked(const AIPath & path, const CGHeroInstance * releasedDefender = nullptr) const;
 	TResources getFreeResources() const;
 	int32_t getFreeGold() const { return getFreeResources()[EGameResID::GOLD]; }
 	void lockResources(const TResources & res);
@@ -139,17 +145,27 @@ public:
 	void invalidatePathfinderData();
 	std::shared_ptr<const CPathsInfo> getPathsInfo(const CGHeroInstance * h) const;
 	void invalidatePaths();
-	std::map<const CGHeroInstance *, HeroRole> getHeroesForPathfinding() const;
+	HeroMap<HeroRole> getHeroesForPathfinding() const;
 
 private:
 	void resetState();
 	void updateState();
+	void reserveRequiredTownDefenders();
+	const CGHeroInstance * findRequiredTownDefender(const CGTownInstance * town) const;
 	void decompose(Goals::TGoalVec & results, const Goals::TSubgoal& behavior, int decompositionMaxDepth) const;
 	Goals::TTask choseBestTask(Goals::TGoalVec & tasks) const;
-	Goals::TTaskVec buildPlanAndFilter(Goals::TGoalVec & tasks, int priorityTier) const;
-	bool executeTask(const Goals::TTask & task) const;
+	using EvaluationContextMap = std::map<const Goals::AbstractGoal *, EvaluationContext>;
+	EvaluationContextMap buildEvaluationContexts(const Goals::TGoalVec & tasks) const;
+	Goals::TTaskVec buildPlanAndFilter(
+		Goals::TGoalVec & tasks,
+		const EvaluationContextMap & evaluationContexts,
+		int priorityTier) const;
+	bool executeTask(const Goals::TTask & task);
 	bool areAffectedObjectsPresent(const Goals::TTask & task) const;
 	HeroRole getTaskRole(const Goals::TTask & task) const;
+	std::vector<const CGHeroInstance *> getTaskHeroes(const Goals::TTask & task) const;
+	void lockTaskHeroes(const Goals::TTask & task, HeroLockedReason lockReason);
+	bool hasUnlockedHeroWithMovement() const;
 	void tracePlayerStatus(bool beginning) const;
 };
 

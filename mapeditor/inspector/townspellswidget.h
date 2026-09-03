@@ -13,6 +13,7 @@
 #include "baseinspectoritemdelegate.h"
 #include "../../lib/mapObjects/CGTownInstance.h"
 
+
 namespace Ui {
 	class TownSpellsWidget;
 }

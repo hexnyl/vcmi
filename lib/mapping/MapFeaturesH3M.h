@@ -10,11 +10,9 @@
 
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 enum class EMapFormat : uint8_t;
 
-struct MapFormatFeaturesH3M
+struct DLL_LINKAGE MapFormatFeaturesH3M
 {
 private:
 	static MapFormatFeaturesH3M getFeaturesROE();
@@ -84,5 +82,3 @@ public:
 	bool levelHOTA8 = false; // 1.7.3
 	bool levelHOTA9 = false; // 1.8.0
 };
-
-VCMI_LIB_NAMESPACE_END

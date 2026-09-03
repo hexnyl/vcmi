@@ -15,7 +15,6 @@
 
 #include "../filesystem/Filesystem.h"
 
-VCMI_LIB_USING_NAMESPACE
 
 static const JsonNode nullNode;
 
@@ -111,8 +110,6 @@ static void maximizeNode(JsonNode & node, const JsonNode & schema)
 	eraseOptionalNodes(node, schema);
 }
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 void JsonUtils::minimize(JsonNode & node, const std::string & schemaName)
 {
 	minimizeNode(node, getSchema(schemaName));
@@ -127,6 +124,19 @@ bool JsonUtils::validate(const JsonNode & node, const std::string & schemaName, 
 {
 	JsonValidator validator;
 	std::string log = validator.check(schemaName, node);
+	if (!log.empty())
+	{
+		logMod->warn("Data in %s is invalid!", dataName);
+		logMod->warn(log);
+		logMod->trace("%s json: %s", dataName, node.toCompactString());
+	}
+	return log.empty();
+}
+
+bool JsonUtils::validate(const JsonNode & node, const JsonNode & schema, const std::string & dataName)
+{
+	JsonValidator validator;
+	std::string log = validator.check(schema, node);
 	if (!log.empty())
 	{
 		logMod->warn("Data in %s is invalid!", dataName);
@@ -408,5 +418,3 @@ void JsonUtils::detectConflicts(JsonNode & result, const JsonNode & left, const 
 		}
 	}
 }
-
-VCMI_LIB_NAMESPACE_END

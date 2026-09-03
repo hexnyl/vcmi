@@ -9,8 +9,6 @@
  */
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 /// Class which consists of three integer values. Represents position on adventure map.
 class int3
 {
@@ -177,18 +175,11 @@ public:
 			int3(1,1,0),int3(-1,1,0),int3(1,-1,0),int3(-1,-1,0) } };
 	}
 
-	// Solution by ChatGPT
-
-	// Assume values up to +- 1000
-    friend std::size_t hash_value(const int3& v) {
-        // Since the range is [-1000, 1000], offsetting by 1000 maps it to [0, 2000]
-        std::size_t hx = v.x + 1000;
-        std::size_t hy = v.y + 1000;
-        std::size_t hz = v.z + 1000;
-
-        // Combine the hash values, multiplying them by prime numbers
-        return ((hx * 4000037u) ^ (hy * 2003u)) + hz;
-    }
+	friend std::size_t hash_value(const int3 & v)
+	{
+		static const std::size_t max_value = 5000; //leaving space for map size increase
+		return (v.z * max_value * max_value) + (v.y * max_value) + v.x;
+	}
 };
 
 template<typename Container>
@@ -211,11 +202,9 @@ int3 findClosestTile (Container & container, int3 dest)
 	return result;
 }
 
-VCMI_LIB_NAMESPACE_END
-
 template<>
-struct std::hash<VCMI_LIB_WRAP_NAMESPACE(int3)> {
-	std::size_t operator()(VCMI_LIB_WRAP_NAMESPACE(int3) const& pos) const noexcept {
+struct std::hash<::int3> {
+	std::size_t operator()(::int3 const& pos) const noexcept {
 		return hash_value(pos);
 	}
 };

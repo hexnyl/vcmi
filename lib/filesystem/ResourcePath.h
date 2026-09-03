@@ -9,8 +9,6 @@
  */
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class JsonNode;
 class JsonSerializeFormat;
 
@@ -56,10 +54,7 @@ enum class EResType
 	PALETTE,
 	SAVEGAME,
 	DIRECTORY,
-	ERM,
-	ERT,
-	ERS,
-	LUA,
+	LUA_SCRIPT,
 	AI_MODEL,
 	OTHER,
 	UNDEFINED,
@@ -193,6 +188,7 @@ using TextPath = ResourcePathTempl<EResType::TEXT>;
 using JsonPath = ResourcePathTempl<EResType::JSON>;
 using VideoPath = ResourcePathTempl<EResType::VIDEO>;
 using AudioPath = ResourcePathTempl<EResType::SOUND>;
+using ScriptPath = ResourcePathTempl<EResType::LUA_SCRIPT>;
 
 namespace EResTypeHelper
 {
@@ -213,13 +209,11 @@ namespace EResTypeHelper
 	std::string getEResTypeAsString(EResType type);
 };
 
-VCMI_LIB_NAMESPACE_END
-
 namespace std
 {
-template <> struct hash<VCMI_LIB_WRAP_NAMESPACE(ResourcePath)>
+template <> struct hash<::ResourcePath>
 {
-	size_t operator()(const VCMI_LIB_WRAP_NAMESPACE(ResourcePath) & resourceIdent) const
+	size_t operator()(const ::ResourcePath & resourceIdent) const
 	{
 		std::hash<int> intHasher;
 		std::hash<std::string> stringHasher;

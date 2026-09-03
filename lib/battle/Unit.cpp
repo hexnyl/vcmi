@@ -11,22 +11,26 @@
 
 #include "Unit.h"
 
+#include "../CCreatureHandler.h"
 #include "../GameLibrary.h"
 #include "../texts/CGeneralTextHandler.h"
-
+#include "../bonuses/BonusParameters.h"
 #include "../serializer/JsonDeserializer.h"
 #include "../serializer/JsonSerializer.h"
 
 #include <vcmi/Faction.h>
 #include <vcmi/FactionService.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace battle
 {
 
 ///Unit
 Unit::~Unit() = default;
+
+int32_t Unit::unitLevel() const
+{
+	return creatureLevel();
+}
 
 bool Unit::isDead() const
 {
@@ -36,6 +40,47 @@ bool Unit::isDead() const
 bool Unit::isTurret() const
 {
 	return creatureIndex() == CreatureID::ARROW_TOWERS;
+}
+
+bool Unit::isCatapult() const
+{
+	return unitType()->warMachine == ArtifactID::CATAPULT;
+}
+
+bool Unit::isBallista() const
+{
+	return unitType()->warMachine == ArtifactID::BALLISTA;
+}
+
+bool Unit::isFirstAidTent() const
+{
+	return unitType()->warMachine == ArtifactID::FIRST_AID_TENT;
+}
+
+bool Unit::isAmmoCart() const
+{
+	return unitType()->warMachine == ArtifactID::AMMO_CART;
+}
+
+bool Unit::isSummoned() const
+{
+	return unitSlot() == SlotID::SUMMONED_SLOT_PLACEHOLDER;
+}
+
+
+bool Unit::hasImmunity(SpellID spell) const
+{
+	const auto & bonuses = getBonusesOfType(BonusType::SPELL_IMMUNITY, BonusSubtypeID(spell));
+	return !bonuses->empty();
+}
+
+bool Unit::hasAbsoluteImmunity(SpellID spell) const
+{
+	const auto & bonuses = getBonusesOfType(BonusType::SPELL_IMMUNITY, BonusSubtypeID(spell));
+		for (const auto & bonus : *bonuses)
+		if (bonus->parameters && bonus->parameters->toNumber() == 1)
+			return true;
+	return false;
 }
 
 bool Unit::isMeleeAttacker() const
@@ -202,29 +247,23 @@ BattleHex Unit::occupiedHex(const BattleHex & assumedPos, bool twoHex, BattleSid
 	}
 }
 
-void Unit::addText(MetaString & text, EMetaText type, int32_t serial, const boost::logic::tribool & plural) const
+void Unit::addText(MetaString & text, EMetaText type, int32_t serial) const
 {
-	if(boost::logic::indeterminate(plural))
-		serial = LIBRARY->generaltexth->pluralText(serial, getCount());
-	else if(plural)
-		serial = LIBRARY->generaltexth->pluralText(serial, 2);
-	else
-		serial = LIBRARY->generaltexth->pluralText(serial, 1);
-
+	serial = LIBRARY->generaltexth->pluralText(serial, getCount());
 	text.appendLocalString(type, serial);
 }
 
-void Unit::addNameReplacement(MetaString & text, const boost::logic::tribool & plural) const
+void Unit::addNameReplacement(MetaString & text) const
 {
-	if(boost::logic::indeterminate(plural))
-		text.replaceName(creatureId(), getCount());
-	else if(plural)
-		text.replaceNamePlural(creatureIndex());
-	else
-		text.replaceNameSingular(creatureIndex());
+	addNameReplacement(text, getCount());
 }
 
-std::string Unit::formatGeneralMessage(const int32_t baseTextId) const
+void Unit::addNameReplacement(MetaString & text, TQuantity count) const
+{
+	text.replaceName(creatureId(), count);
+}
+
+std::string Unit::formatGeneralMessage(const int32_t baseTextId, const ITranslator * translator) const
 {
 	const int32_t textId = LIBRARY->generaltexth->pluralText(baseTextId, getCount());
 
@@ -232,13 +271,14 @@ std::string Unit::formatGeneralMessage(const int32_t baseTextId) const
 	text.appendLocalString(EMetaText::GENERAL_TXT, textId);
 	text.replaceName(creatureId(), getCount());
 
-	return text.toString();
+	return text.toString(translator);
 }
 
 int Unit::getRawSurrenderCost() const
 {
-	//we pay for our stack that comes from our army slots - condition eliminates summoned cres and war machines
-	if(unitSlot().validSlot())
+	//we pay for army-slot stacks and for war machines (ballista, ammo cart, first aid tent);
+	//summoned creatures and the free siege catapult are not paid for
+	if(unitSlot().validSlot() || (unitSlot() == SlotID::WAR_MACHINES_SLOT && !isCatapult()))
 		return creatureCost() * getCount();
 	else
 		return 0;
@@ -260,16 +300,14 @@ void UnitInfo::save(JsonNode & data)
 {
 	data.clear();
 	JsonSerializer ser(nullptr, data);
-	ser.serializeStruct("newUnitInfo", *this);
+	serializeJson(ser);
 }
 
 void UnitInfo::load(uint32_t id_, const JsonNode & data)
 {
 	id = id_;
 	JsonDeserializer deser(nullptr, data);
-	deser.serializeStruct("newUnitInfo", *this);
+	serializeJson(deser);
 }
 
 }
-
-VCMI_LIB_NAMESPACE_END

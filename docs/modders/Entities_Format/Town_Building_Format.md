@@ -51,7 +51,7 @@ These are just a couple of examples of what can be done in VCMI. See vcmi config
 	},
 	"configuration" : {
 		"resetParameters" : {
-			"period" : 7,
+			"weeks" : 1,
 			"visitors" : true
 		},
 		"visitMode" : "once",
@@ -241,7 +241,6 @@ Following Heroes III buildings can be used as unique buildings for a town. Their
 - `castleGate`
 - `portalOfSummoning`
 - `library`
-- `escapeTunnel`
 - `treasury`
 - `auroraBorealis`
 

@@ -12,18 +12,13 @@
 
 #include "Entity.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class BonusList;
 class PrimarySkill;
 
 class DLL_LINKAGE AFactionMember: public IConstBonusProvider, public INativeTerrainProvider
 {
 public:
-	/**
-	 Returns native terrain considering some terrain bonuses.
-	*/
-	virtual TerrainId getNativeTerrain() const;
+	bool isNativeTerrain(TerrainId terrain) const override;
 	/**
 	 Returns magic resistance considering some bonuses.
 	*/
@@ -64,5 +59,3 @@ public:
 
 	bool unaffectedByMorale() const;
 };
-
-VCMI_LIB_NAMESPACE_END

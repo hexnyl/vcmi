@@ -12,6 +12,7 @@
 #include <QDialog>
 #include "../lib/LoadProgress.h"
 
+
 namespace Ui {
 class GeneratorProgress;
 }

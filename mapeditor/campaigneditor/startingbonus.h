@@ -16,6 +16,7 @@
 class CampaignBonus;
 class CMap;
 
+
 namespace Ui {
 class StartingBonus;
 }

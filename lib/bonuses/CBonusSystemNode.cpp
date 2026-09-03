@@ -15,8 +15,6 @@
 #include "Updaters.h"
 #include "Propagators.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 constexpr bool cachingEnabled = true;
 static std::atomic<int32_t> globalCounter = 1;
 
@@ -198,7 +196,9 @@ void CBonusSystemNode::attachTo(CBonusSystemNode & parent)
 		parent.children.push_back(this);
 	}
 
-	parent.nodeHasChanged();
+	// The new branch was invalidated by attachToSource. Adding it does not
+	// change the parent or existing branches; propagation invalidates every
+	// node whose bonuses actually change.
 }
 
 void CBonusSystemNode::attachToSource(const CBonusSystemNode & parent)
@@ -249,6 +249,7 @@ void CBonusSystemNode::detachFrom(CBonusSystemNode & parent)
 				nodeShortInfo(), static_cast<int>(nodeType), parent.nodeShortInfo(), static_cast<int>(parent.nodeType));
 		}
 	}
+
 	parent.nodeHasChanged();
 }
 
@@ -612,5 +613,3 @@ int32_t CBonusSystemNode::getTreeVersion() const
 {
 	return nodeChanged;
 }
-
-VCMI_LIB_NAMESPACE_END

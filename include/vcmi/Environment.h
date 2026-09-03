@@ -10,8 +10,6 @@
 
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class Services;
 
 class IGameInfoCallback;
@@ -34,8 +32,4 @@ public:
 	virtual const Services * services() const = 0;
 	virtual const BattleCb * battle(const BattleID & battleID) const = 0;
 	virtual const GameCb * game() const = 0;
-	virtual vstd::CLoggerBase * logger() const = 0;
-	virtual events::EventBus * eventBus() const = 0;
 };
-
-VCMI_LIB_NAMESPACE_END

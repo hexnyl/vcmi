@@ -48,8 +48,6 @@
 	ART_POS(SHOULDERS)  \
 	ART_POS(HEAD)
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 CArtHandler::~CArtHandler() = default;
 
 std::vector<JsonNode> CArtHandler::loadLegacyData()
@@ -61,7 +59,7 @@ std::vector<JsonNode> CArtHandler::loadLegacyData()
 	h3Data.reserve(dataSize);
 
 	#define ART_POS(x) #x ,
-	const std::vector<std::string> artSlots = { ART_POS_LIST };
+	std::vector<std::string> artSlots = { ART_POS_LIST };
 	#undef ART_POS
 
 	static const std::map<char, std::string> classes =
@@ -71,11 +69,30 @@ std::vector<JsonNode> CArtHandler::loadLegacyData()
 	CLegacyConfigParser events(TextPath::builtin("DATA/ARTEVENT.TXT"));
 
 	parser.endLine(); // header
+	for(int i = 0; i < 7; i++)
+		parser.readString();
+	bool isRoe = parser.readString() != "Misc 5";
 	parser.endLine();
+
+	if(isRoe)
+		artSlots.erase(artSlots.begin() + 5);
+
+	JsonNode roeMapping;
+	if(isRoe)
+		roeMapping = JsonNode(JsonPath::builtin("config/roeStringMapping.json"));
+	const JsonVector & artNewLines = roeMapping["newLines"]["DATA/ARTRAITS.TXT"].Vector();
 
 	for (size_t i = 0; i < dataSize; i++)
 	{
 		JsonNode artData;
+
+		if(isRoe && vstd::contains_if(artNewLines, [i](const JsonNode & item) -> bool {
+			return item.Integer() == static_cast<int64_t>(i);
+		}))
+		{
+			h3Data.push_back(artData);
+			continue;
+		}
 
 		artData["text"]["name"].String() = parser.readString();
 		artData["text"]["event"].String() = events.readString();
@@ -104,7 +121,7 @@ std::vector<JsonNode> CArtHandler::loadLegacyData()
 	return h3Data;
 }
 
-void CArtHandler::loadObject(std::string scope, std::string name, const JsonNode & data)
+void CArtHandler::loadObject(const std::string & scope, const std::string & name, const JsonNode & data)
 {
 	auto object = loadFromJson(scope, data, name, objects.size());
 
@@ -115,7 +132,7 @@ void CArtHandler::loadObject(std::string scope, std::string name, const JsonNode
 	registerObject(scope, "artifact", name, data, object->id.getNum());
 }
 
-void CArtHandler::loadObject(std::string scope, std::string name, const JsonNode & data, size_t index)
+void CArtHandler::loadObject(const std::string & scope, const std::string & name, const JsonNode & data, size_t index)
 {
 	auto object = loadFromJson(scope, data, name, index);
 
@@ -497,5 +514,3 @@ void CArtHandler::afterLoadFinalization()
 	}
 }
 
-
-VCMI_LIB_NAMESPACE_END

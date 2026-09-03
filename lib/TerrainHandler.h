@@ -17,8 +17,6 @@
 #include "Color.h"
 #include "filesystem/ResourcePath.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 struct DLL_LINKAGE TerrainPaletteAnimation
 {
 	/// index of first color to cycle
@@ -59,7 +57,6 @@ public:
 	std::string getModScope() const override;
 	void registerIcons(const IconRegistar & cb) const override {}
 	TerrainId getId() const override { return id;}
-	void updateFrom(const JsonNode & data) {};
 
 	std::string getNameTextID() const override;
 	std::string getNameTranslated() const override;
@@ -147,5 +144,3 @@ inline std::vector<MapLayerId> TerrainType::layersAllowed() const
 {
 	return allowedLayers;
 }
-
-VCMI_LIB_NAMESPACE_END

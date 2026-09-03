@@ -22,8 +22,6 @@
 
 #include <vstd/RNG.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 void QuestArtifactPlacer::process()
 {
 	findZonesForQuestArts();
@@ -38,7 +36,7 @@ void QuestArtifactPlacer::init()
 void QuestArtifactPlacer::addQuestArtZone(std::shared_ptr<Zone> otherZone)
 {
 	RecursiveLock lock(externalAccessMutex);
-	questArtZones.push_back(otherZone);
+	questArtZones.emplace_back(otherZone);
 }
 
 void QuestArtifactPlacer::addQuestArtifact(const ArtifactID& id, ui32 desiredValue)
@@ -132,16 +130,22 @@ void QuestArtifactPlacer::placeQuestArtifacts(vstd::RNG & rand)
 	for (const auto & questRequest : questArtifactsToPlace)
 	{
 		RandomGeneratorUtil::randomShuffle(questArtZones, rand);
-		for (auto zone : questArtZones)
+		for (const auto & zoneWeak : questArtZones)
 		{
-			auto* qap = zone->getModificator<QuestArtifactPlacer>();
-			
+			auto targetZone = zoneWeak.lock();
+			if (!targetZone)
+				throw rmgException("Quest artifact target zone expired unexpectedly");
+
+			auto* qap = targetZone->getModificator<QuestArtifactPlacer>();
+			if (!qap)
+				continue;
+
 			auto objectToReplace = qap->drawObjectToReplace(questRequest.desiredValue);
 			if (!objectToReplace)
 				continue;
 
 			logGlobal->trace("Replacing %s at %s with the quest artifact %s (desired value %u)",
-				objectToReplace->getObjectName(),
+				objectToReplace->getObjectNameTextID(),
 				objectToReplace->anchorPos().toString(),
 				LIBRARY->artifacts()->getById(questRequest.id)->getNameTranslated(),
 				questRequest.desiredValue);
@@ -198,5 +202,3 @@ void QuestArtifactPlacer::addRandomArtifact(const ArtifactID & artid)
 	questArtifacts.push_back(artid);
 	generator.unbanQuestArt(artid);
 }
-
-VCMI_LIB_NAMESPACE_END

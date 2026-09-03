@@ -14,8 +14,6 @@
 #include <boost/container/small_vector.hpp>
 #include <vstd/RNG.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 /**
 * @brief Class representing a collection of unique, valid BattleHex objects.
 
@@ -28,7 +26,7 @@ VCMI_LIB_NAMESPACE_BEGIN
 * - Attempting to insert invalid BattleHex objects will have no effect.
 *
 */
-class DLL_LINKAGE BattleHexArray
+class DLL_LINKAGE BattleHexArray final : public scripting::ApiCopyable<BattleHexArray>
 {
 public:
 	static constexpr uint8_t totalSize = GameConstants::BFIELD_SIZE;
@@ -323,5 +321,3 @@ private:
 	static ArrayOfBattleHexArrays precalculateAllNeighbouringTiles();
 	static ArrayOfBattleHexArrays precalculateNeighbouringTilesDoubleWide(BattleSide side);
 };
-
-VCMI_LIB_NAMESPACE_END

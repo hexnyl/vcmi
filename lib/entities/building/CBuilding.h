@@ -18,14 +18,14 @@
 #include "../../networkPacks/TradeItem.h"
 #include "../../rewardable/Info.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include <vcmi/scripting/ApiTags.h>
 
 class CTown;
 
 /// a typical building encountered in every castle ;]
 /// this is structure available to both client and server
 /// contains all mechanics-related data about town structures
-class DLL_LINKAGE CBuilding
+class DLL_LINKAGE CBuilding : public scripting::ApiRawPointer<CBuilding>
 {
 	std::string modScope;
 	std::string identifier;
@@ -81,7 +81,7 @@ public:
 	// returns how many times build has to be upgraded to become build
 	si32 getDistance(const BuildingID & build) const;
 
-	STRONG_INLINE
+	inline
 		bool IsTradeBuilding() const
 	{
 		return !marketModes.empty();
@@ -91,5 +91,3 @@ public:
 
 	friend class CTownHandler;
 };
-
-VCMI_LIB_NAMESPACE_END

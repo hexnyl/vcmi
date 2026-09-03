@@ -13,9 +13,7 @@
 #include "../int3.h"
 #include "../filesystem/ResourcePath.h"
 #include "../serializer/Serializeable.h"
-#include "../mapObjects/CompoundMapObjectID.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "CompoundMapObjectID.h"
 
 class CBinaryReader;
 class CLegacyConfigParser;
@@ -179,5 +177,3 @@ public:
 	}
 };
 
-
-VCMI_LIB_NAMESPACE_END

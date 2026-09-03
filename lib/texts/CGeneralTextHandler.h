@@ -10,8 +10,7 @@
 #pragma once
 
 #include "TextLocalizationContainer.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../json/JsonNode.h"
 
 class CGeneralTextHandler;
 
@@ -40,36 +39,19 @@ public:
 /// Handles all text-related data in game
 class DLL_LINKAGE CGeneralTextHandler: public TextLocalizationContainer
 {
+	/// the static store is filled once during load; a duplicate afterwards is a content bug
+	bool allowsStringOverride() const override { return false; }
+
 	void readToVector(const std::string & sourceID, const std::string & sourceName);
 
+	JsonNode roeMapping;
+
 public:
+	/// Returns true if the installed Heroes III data is RoE (Restoration of Erathia) or RoE Demo,
+	/// i.e. TENTCOLR.TXT (a SoD-specific file) is absent from the game data.
+	static bool isRoEData();
 	LegacyTextContainer allTexts;
-
-	LegacyTextContainer arraytxt;
-	LegacyTextContainer primarySkillNames;
-	LegacyTextContainer jktexts;
-	LegacyTextContainer heroscrn;
-	LegacyTextContainer overview;//text for Kingdom Overview window
-	LegacyTextContainer capColors; //names of player colors with first letter capitalized ("Red",...)
-	LegacyTextContainer turnDurations; //turn durations for pregame (1 Minute ... Unlimited)
-
-	//towns
-	LegacyTextContainer tcommands; //texts for town screen,
-	LegacyTextContainer hcommands; // town hall screen
-	LegacyTextContainer fcommands; // fort screen
-	LegacyTextContainer tavernInfo;
-
 	LegacyHelpContainer zelp;
-
-	//objects
-	LegacyTextContainer advobtxt;
-	LegacyTextContainer restypes; //names of resources
-	LegacyTextContainer seerEmpty;
-	LegacyTextContainer seerNames;
-	LegacyTextContainer tentColors;
-
-	//sec skills
-	LegacyTextContainer levels;
 
 	std::vector<std::string> findStringsWithPrefix(const std::string & prefix);
 
@@ -91,5 +73,3 @@ public:
 	/// Returns name of encoding of Heroes III text files
 	static std::string getInstalledEncoding();
 };
-
-VCMI_LIB_NAMESPACE_END

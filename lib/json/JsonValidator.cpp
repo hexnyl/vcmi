@@ -21,8 +21,6 @@
 #include "../ScopeGuard.h"
 #include "modding/CModVersion.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 /// Searches for keys similar to 'target' in 'candidates' map
 /// Returns closest match or empty string if no suitable candidates are found
 static std::string findClosestMatch(const JsonMap & candidates, const std::string & target)
@@ -485,7 +483,7 @@ static bool testFilePresence(const std::string & scope, const ResourcePath & res
 			if (CResourceHandler::get(entry)->existsResource(resource))
 				return true;
 		}
-		catch (const std::out_of_range & e)
+		catch (const std::out_of_range &)
 		{
 			throw std::out_of_range("Failed to find filesystem of mod '" + entry + "' when testing file '" + resource.getOriginalName() + "' for mod '" + scope + "'");
 		}
@@ -728,5 +726,3 @@ const JsonValidator::TFormatMap & JsonValidator::getKnownFormats()
 	static const TFormatMap knownFormats = createFormatMap();
 	return knownFormats;
 }
-
-VCMI_LIB_NAMESPACE_END

@@ -72,6 +72,7 @@ AdventureMapWidget::AdventureMapWidget( std::shared_ptr<AdventureMapShortcuts> s
 	build(config);
 	addUsedEvents(KEYBOARD);
 
+	updateMapLayerButtonIcon();
 	updateMapLayerButtonsHelp();
 }
 
@@ -159,7 +160,12 @@ std::shared_ptr<CIntObject> AdventureMapWidget::buildMapButton(const JsonNode & 
 	auto image = AnimationPath::fromJson(input["image"]);
 	auto help = readHintText(input["help"]);
 	bool playerColored = input["playerColored"].Bool();
-
+	// Store default image path for buttonLayerOther (used to restore when no custom icon is set)
+	if (input["name"].String() == "buttonLayerOther")
+	{
+		defaultLayerOtherImage = input["image"].String();
+		defaultLayerOtherGenerateSmall = input["generateSmall"].Bool();
+	}
 	if(!input["generateFromBaseImage"].isNull())
 	{
 		bool small = input["generateSmall"].Bool();
@@ -462,8 +468,6 @@ void AdventureMapWidget::updateActiveStateChildren(CIntObject * widget)
 	{
 		auto container = dynamic_cast<CAdventureMapContainerWidget *>(entry);
 
-		int mapLevels = GAME->interface()->cb->getMapHeader()->levels();
-
 		if (container)
 		{
 			if (container->disableCondition == "heroAwake")
@@ -473,28 +477,32 @@ void AdventureMapWidget::updateActiveStateChildren(CIntObject * widget)
 				container->setEnabled(shortcuts->optionHeroSleeping());
 
 			if (container->disableCondition == "heroGround")
-				container->setEnabled(!shortcuts->optionHeroBoat(EPathfindingLayer::SAIL) && !shortcuts->optionHeroBoat(EPathfindingLayer::AIR));
+				container->setEnabled(!shortcuts->optionHeroBoat(EPathfindingLayer::SAIL) && !shortcuts->optionHeroBoat(EPathfindingLayer::AIR) && !shortcuts->optionHeroBoat(EPathfindingLayer::AVIATE));
 
 			if (container->disableCondition == "heroBoat")
 				container->setEnabled(shortcuts->optionHeroBoat(EPathfindingLayer::SAIL));
 
 			if (container->disableCondition == "heroAirship")
-				container->setEnabled(shortcuts->optionHeroBoat(EPathfindingLayer::AIR));
-
-			if (container->disableCondition == "mapLayerSurface")
-				container->setEnabled(shortcuts->optionMapLevel() == 0);
-
-			if (container->disableCondition == "mapLayerUnderground")
-				container->setEnabled(shortcuts->optionMapLevel() == mapLevels - 1);
-
-			if (container->disableCondition == "mapLayerOther")
-				container->setEnabled(shortcuts->optionMapLevel() > 0 && shortcuts->optionMapLevel() < mapLevels - 1);
+				container->setEnabled(shortcuts->optionHeroBoat(EPathfindingLayer::AVIATE));
 
 			if (container->disableCondition == "mapViewMode")
 				container->setEnabled(shortcuts->optionInWorldView());
 
 			if (container->disableCondition == "worldViewMode")
 				container->setEnabled(!shortcuts->optionInWorldView());
+
+			const auto & mapLayers = GAME->interface()->cb->getMapHeader()->mapLayers;
+			MapLayerId currentLayer = mapLayers.at(shortcuts->optionMapLevel());
+
+			int mapLevelNext = (shortcuts->optionMapLevel() + 1) % GAME->interface()->cb->getMapHeader()->levels();
+			MapLayerId nextLayer = mapLayers.at(mapLevelNext);
+
+			if (container->disableCondition == "mapLayerSurface")
+				container->setEnabled(currentLayer == MapLayerId::SURFACE);
+			else if (container->disableCondition == "mapLayerUnderground")
+				container->setEnabled(nextLayer == MapLayerId::SURFACE);
+			else if (container->disableCondition == "mapLayerOther")
+				container->setEnabled(nextLayer != MapLayerId::SURFACE && nextLayer != MapLayerId::UNDERGROUND);
 
 			updateActiveStateChildren(container);
 		}
@@ -503,6 +511,7 @@ void AdventureMapWidget::updateActiveStateChildren(CIntObject * widget)
 
 void AdventureMapWidget::updateActiveState()
 {
+	updateMapLayerButtonIcon();
 	updateActiveStateChildren(this);
 
 	for (auto entry: shortcuts->getShortcuts())
@@ -534,12 +543,45 @@ void AdventureMapWidget::updateMapLayerButtonsHelp()
 			replaceText(hoverText);
 			auto helpText = MetaString::createFromTextID("vcmi.adventureMap.layer.help");
 			replaceText(helpText);
-			w->setHelp({hoverText.toString(), helpText.toString()});
+			w->setHelp({hoverText.toString(&GAME->translator()), helpText.toString(&GAME->translator())});
 			
 			// Refresh hover state using current cursor position so statusbar updates immediately
 			Point cursor = ENGINE->getCursorPosition();
 			bool inside = w->pos.isInside(cursor);
 			w->hover(inside);
+		}
+	}
+}
+
+void AdventureMapWidget::updateMapLayerButtonIcon()
+{
+	int mapLevelNext = (mapLevel + 1) % GAME->interface()->cb->getMapHeader()->levels();
+	auto nextLevel = GAME->interface()->cb->getMapHeader()->mapLayers.at(mapLevelNext);
+	auto nextLayerType = nextLevel.toEntity(LIBRARY);
+	auto layerIcon = nextLayerType->getIcon();
+
+	for (auto & widgetName : { "buttonLayerOther", "worldViewOther" })
+	{
+		if (auto w = widget<CButton>(widgetName))
+		{
+			AnimationPath targetAnim;
+			if (!layerIcon.empty())
+			{
+				std::string animName = "adventureLayersButton_" + layerIcon;
+				targetAnim = AnimationPath::builtin(animName);
+				auto assetGenerator = ENGINE->renderHandler().getAssetGenerator();
+				auto animationPath = AnimationPath::builtin("SPRITES/" + animName);
+				if (!assetGenerator->hasAnimationFile(animationPath))
+				{
+					auto layout = assetGenerator->createAdventureMapButton(ImagePath::builtin(layerIcon), defaultLayerOtherGenerateSmall);
+					assetGenerator->addAnimationFile(animationPath, layout);
+					ENGINE->renderHandler().updateGeneratedAssets();
+				}
+			}
+			else if (!defaultLayerOtherImage.empty())
+				targetAnim = AnimationPath::builtin(defaultLayerOtherImage);
+			if (!targetAnim.empty())
+				w->setImage(targetAnim, true);
 		}
 	}
 }

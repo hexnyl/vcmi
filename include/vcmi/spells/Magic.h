@@ -10,7 +10,7 @@
 
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include "vcmi/scripting/ApiTags.h"
 
 class MetaString;
 
@@ -43,13 +43,13 @@ enum class Mode
 
 enum class AimType
 {
-	NO_TARGET,
+	NOTHING,
 	CREATURE,
 	OBSTACLE,
 	LOCATION
 };
 
-class DLL_LINKAGE Problem
+class DLL_LINKAGE Problem : public scripting::ApiRawPointer<Problem>
 {
 public:
 	using Severity = int;
@@ -69,5 +69,3 @@ public:
 };
 
 }
-
-VCMI_LIB_NAMESPACE_END

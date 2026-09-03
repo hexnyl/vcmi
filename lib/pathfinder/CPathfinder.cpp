@@ -25,9 +25,7 @@
 #include "../mapObjects/MiscObjects.h"
 #include "../mapping/CMap.h"
 #include "../spells/CSpellHandler.h"
-#include "spells/ISpellMechanics.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../spells/ISpellMechanics.h"
 
 bool CPathfinderHelper::canMoveFromNode(const PathNodeInfo & source) const
 {
@@ -63,7 +61,6 @@ void CPathfinderHelper::calculateNeighbourTiles(NeighbourTilesVector & result, c
 		*source.tile,
 		source.node->coord,
 		result,
-		boost::logic::indeterminate,
 		source.node->layer == EPathfindingLayer::SAIL);
 
 	if(source.isNodeObjectVisitable())
@@ -345,6 +342,11 @@ bool CPathfinder::isLayerTransitionPossible() const
 			if(destination.tile->isWater())
 				return true;
 		}
+		else if(destLayer == ELayer::AVIATE)
+		{
+			// do not consider paths which include embarking on an airship
+			return false;
+		}
 		else
 			return true;
 
@@ -356,8 +358,13 @@ bool CPathfinder::isLayerTransitionPossible() const
 
 		break;
 
+	case ELayer::AVIATE:
+		if((destLayer == ELayer::LAND && !destination.tile->isWater()) || destLayer == ELayer::AIR)
+			return true;
+		break;
+
 	case ELayer::AIR:
-		if(destLayer == ELayer::LAND)
+		if(destLayer == ELayer::LAND || destLayer == ELayer::AVIATE)
 			return true;
 
 		break;
@@ -496,6 +503,14 @@ int CPathfinderHelper::getGuardiansCount(int3 tile) const
 	return gameInfo.getGuardingCreatures(tile).size();
 }
 
+bool CPathfinderHelper::isTileBlockedByHole(const int3 & tile) const
+{
+	if(!gameInfo.getSettings().getBoolean(EGameSettings::PATHFINDER_BLOCK_DISEMBARK_ON_HOLE))
+		return false;
+
+	return gameInfo.getTileDigStatus(tile) == EDiggingStatus::TILE_OCCUPIED;
+}
+
 CPathfinderHelper::CPathfinderHelper(const IGameInfoCallback & gameInfo, const CGHeroInstance * Hero, const PathfinderOptions & Options):
 	gameInfo(gameInfo),
 	turn(-1),
@@ -579,7 +594,6 @@ void CPathfinderHelper::getNeighbours(
 	const TerrainTile & sourceTile,
 	const int3 & srcCoord,
 	NeighbourTilesVector & vec,
-	const boost::logic::tribool & onLand,
 	const bool limitCoastSailing) const
 {
 	const TerrainType * sourceTerrain = sourceTile.getTerrain();
@@ -610,10 +624,7 @@ void CPathfinderHelper::getNeighbours(
 				continue;
 		}
 
-		if(indeterminate(onLand) || onLand == destTerrain->isLand())
-		{
-			vec.push_back(destCoord);
-		}
+		vec.push_back(destCoord);
 	}
 }
 
@@ -626,54 +637,47 @@ int CPathfinderHelper::getMovementCost(
 	return getMovementCost(
 		src.coord,
 		dst.coord,
-		src.tile,
-		dst.tile,
+		dst.node->layer,
 		remainingMovePoints,
 		checkLast,
-		dst.node->layer == EPathfindingLayer::SAIL,
-		dst.node->layer == EPathfindingLayer::WATER
+		src.tile,
+		dst.tile
 	);
 }
 
 int CPathfinderHelper::getMovementCost(
 	const int3 & src,
 	const int3 & dst,
-	const TerrainTile * ct,
-	const TerrainTile * dt,
+	const EPathfindingLayer & dstLayer,
 	const int remainingMovePoints,
 	const bool checkLast,
-	boost::logic::tribool isDstSailLayer,
-	boost::logic::tribool isDstWaterLayer) const
+	const TerrainTile * srcTile,
+	const TerrainTile * dstTile) const
 {
 	if(src == dst) //same tile
 		return 0;
 
+	assert(dstLayer >= EPathfindingLayer::LAND && dstLayer < EPathfindingLayer::NUM_LAYERS);
+
 	const auto * ti = getTurnInfo();
 
-	if(ct == nullptr || dt == nullptr)
+	if(srcTile == nullptr || dstTile == nullptr)
 	{
-		ct = hero->cb->getTile(src);
-		dt = hero->cb->getTile(dst);
+		srcTile = hero->cb->getTile(src);
+		dstTile = hero->cb->getTile(dst);
 	}
 
-	bool isSailLayer;
-	if(indeterminate(isDstSailLayer))
-		isSailLayer = hero->inBoat() && hero->getBoat()->layer == EPathfindingLayer::SAIL && dt->isWater();
-	else
-		isSailLayer = static_cast<bool>(isDstSailLayer);
+	bool isSailLayer = dstLayer == EPathfindingLayer::SAIL;
+	bool isWaterLayer = dstLayer == EPathfindingLayer::WATER;
 
-	bool isWaterLayer;
-	if(indeterminate(isDstWaterLayer))
-		isWaterLayer = ((hero->inBoat() && hero->getBoat()->layer == EPathfindingLayer::WATER) || ti->hasWaterWalking()) && dt->isWater();
-	else
-		isWaterLayer = static_cast<bool>(isDstWaterLayer);
-	
 	bool isAirLayer = (hero->inBoat() && hero->getBoat()->layer == EPathfindingLayer::AIR) || ti->hasFlyingMovement();
 
-	int movementCost = getTileMovementCost(*dt, *ct, ti);
+	bool isAviateLayer = hero->inBoat() && hero->getBoat()->layer == EPathfindingLayer::AVIATE;
+
+	int movementCost = getTileMovementCost(*dstTile, *srcTile, ti);
 	if(isSailLayer)
 	{
-		if(ct->hasFavorableWinds())
+		if(srcTile->hasFavorableWinds())
 			movementCost = static_cast<int>(movementCost * 2.0 / 3);
 	}
 	else if(isAirLayer)
@@ -683,7 +687,11 @@ int CPathfinderHelper::getMovementCost(
 	}
 	else if(isWaterLayer && ti->hasWaterWalking())
 		movementCost = static_cast<int>(movementCost * (100.0 + ti->getWaterWalkingValue()) / 100.0);
-
+	else if(isAviateLayer)
+	{
+		int baseCost = gameInfo.getSettings().getInteger(EGameSettings::HEROES_MOVEMENT_COST_BASE);
+		movementCost = baseCost;
+	}
 	if(src.x != dst.x && src.y != dst.y) //it's diagonal move
 	{
 		int old = movementCost;
@@ -700,7 +708,7 @@ int CPathfinderHelper::getMovementCost(
 	const int pointsLeft = remainingMovePoints - movementCost;
 	if(checkLast && pointsLeft > 0)
 	{
-		int minimalNextMoveCost = getTileMovementCost(*dt, *ct, ti);
+		int minimalNextMoveCost = isAirLayer ? gameInfo.getSettings().getInteger(EGameSettings::HEROES_MOVEMENT_COST_BASE) : getTileMovementCost(*dstTile, *srcTile, ti);
 
 		if (pointsLeft < minimalNextMoveCost)
 			return remainingMovePoints;
@@ -730,5 +738,3 @@ ui32 CPathfinderHelper::getTileMovementCost(const TerrainTile & dest, const Terr
 
 	return costWithPathfinding;
 }
-
-VCMI_LIB_NAMESPACE_END

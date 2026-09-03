@@ -11,15 +11,14 @@
 #pragma once
 
 #include "SubscriptionRegistry.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include <vcmi/scripting/ApiTags.h>
 
 class Environment;
 
 namespace events
 {
 
-class DLL_LINKAGE EventBus : public boost::noncopyable
+class DLL_LINKAGE EventBus : public boost::noncopyable, public scripting::ApiRawPointer<EventBus>
 {
 public:
 	template <typename E>
@@ -44,5 +43,3 @@ public:
 	}
 };
 }
-
-VCMI_LIB_NAMESPACE_END

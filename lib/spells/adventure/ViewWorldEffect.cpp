@@ -12,7 +12,6 @@
 
 #include "ViewWorldEffect.h"
 
-#include "../CSpellHandler.h"
 
 #include "../../CPlayerState.h"
 #include "../../callback/IGameInfoCallback.h"
@@ -20,8 +19,6 @@
 #include "../../mapping/CMap.h"
 #include "../../modding/IdentifierStorage.h"
 #include "../../networkPacks/PacksForClient.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 ViewWorldEffect::ViewWorldEffect(const CSpell * s, const JsonNode & config)
 {
@@ -64,5 +61,3 @@ ESpellCastResult ViewWorldEffect::applyAdventureEffects(SpellCastEnvironment * e
 
 	return ESpellCastResult::OK;
 }
-
-VCMI_LIB_NAMESPACE_END

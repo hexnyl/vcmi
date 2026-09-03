@@ -26,8 +26,6 @@
 
 #include <vstd/RNG.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace {
 	MetaString loadMessage(const JsonNode & value, const TextIdentifier & textIdentifier, EMetaText textSource = EMetaText::ADVOB_TXT )
 	{
@@ -234,9 +232,15 @@ void Rewardable::Info::configureReward(Rewardable::Configuration & object, IGame
 
 void Rewardable::Info::configureResetInfo(Rewardable::Configuration & object, IGameRandomizer & gameRandomizer, Rewardable::ResetInfo & resetParameters, const JsonNode & source) const
 {
-	resetParameters.period   = static_cast<ui32>(source["period"].Float());
+	resetParameters.days     = static_cast<ui32>(source["days"].Float());
+	resetParameters.weeks    = static_cast<ui32>(source["weeks"].Float());
+	resetParameters.months   = static_cast<ui32>(source["months"].Float());
 	resetParameters.visitors = source["visitors"].Bool();
 	resetParameters.rewards  = source["rewards"].Bool();
+
+	// MODS COMPATIBILTY FOR 1.7 and older: legacy "period" field is an alias for "days"
+	if (resetParameters.days == 0 && resetParameters.weeks == 0 && resetParameters.months == 0)
+		resetParameters.days = static_cast<ui32>(source["period"].Float());
 }
 
 void Rewardable::Info::configureVariables(Rewardable::Configuration & object, IGameRandomizer & gameRandomizer, IGameInfoCallback * cb, const JsonNode & source) const
@@ -346,7 +350,7 @@ void Rewardable::Info::replaceTextPlaceholders(MetaString & target, const Variab
 			loot.replaceName(creature.getId(), creature.getCount());
 		}
 
-		target.replaceRawString(loot.buildList());
+		target.replaceRawString(loot.buildList(LIBRARY->staticTexts()));
 	}
 	else
 	{
@@ -582,5 +586,3 @@ const JsonNode & Rewardable::Info::getParameters() const
 {
 	return parameters;
 }
-
-VCMI_LIB_NAMESPACE_END

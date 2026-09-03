@@ -14,21 +14,12 @@
 
 #define ASSERT_IF_CALLED_WITH_PLAYER if(!getPlayerID()) {logGlobal->error(BOOST_CURRENT_FUNCTION); assert(0);}
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 CPlayerBattleCallback::CPlayerBattleCallback(const IBattleInfo * battle, PlayerColor player):
 	battle(battle),
 	player(player)
 {
 
 }
-
-#if SCRIPTING_ENABLED
-scripting::Pool * CPlayerBattleCallback::getContextPool() const
-{
-	return nullptr; //TODO cl->getGlobalContextPool();
-}
-#endif
 
 const IBattleInfo * CPlayerBattleCallback::getBattle() const
 {
@@ -80,5 +71,3 @@ InfoAboutHero CPlayerBattleCallback::battleGetEnemyHero() const
 	return battleGetHeroInfo(otherSide(battleGetMySide()));
 }
 
-
-VCMI_LIB_NAMESPACE_END

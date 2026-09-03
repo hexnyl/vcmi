@@ -23,17 +23,21 @@
 #include "../../lib/entities/faction/CTownHandler.h"
 #include "../../lib/entities/ResourceTypeHandler.h"
 #include "../../lib/gameState/CGameState.h"
+
+#include <vcmi/scripting/MapEventDispatcher.h>
 #include "../../lib/gameState/SThievesGuildInfo.h"
 #include "../../lib/mapObjectConstructors/CObjectClassesHandler.h"
 #include "../../lib/mapObjects/CGHeroInstance.h"
 #include "../../lib/mapObjects/CGTownInstance.h"
 #include "../../lib/mapObjects/IOwnableObject.h"
+#include "../../lib/mapObjects/MiscObjects.h"
 #include "../../lib/mapping/CMap.h"
 #include "../../lib/mapping/CCastleEvent.h"
 #include "../../lib/networkPacks/PacksForClient.h"
 #include "../../lib/networkPacks/StackLocation.h"
 #include "../../lib/pathfinder/TurnInfo.h"
 #include "../../lib/texts/CGeneralTextHandler.h"
+#include "../TurnStartVisitScheduler.h"
 
 #include <vstd/RNG.h>
 
@@ -55,9 +59,17 @@ void NewTurnProcessor::handleTimeEvents(PlayerColor color)
 		if (!event.affectsPlayer(color, gameHandler->gameInfo().getPlayerState(color)->isHuman()))
 			continue;
 
+		if (auto * dispatcher = gameHandler->gameState().getMapEventDispatcher(); dispatcher && !event.scriptHandler.empty())
+		{
+			gameHandler->runScriptedEvent(*dispatcher, color, {},
+				[&](scripting::MapEventDispatcher & d){ return d.onPlayerTurnStart(*gameHandler, event.scriptHandler, color); });
+			continue;
+		}
+
 		InfoWindow iw;
 		iw.player = color;
 		iw.text = event.message;
+		iw.journalInfo = ScenarioEventJournalInfo{int3(-1, -1, -1)};
 
 		//give resources
 		if (!event.resources.empty())
@@ -93,10 +105,18 @@ void NewTurnProcessor::handleTownEvents(const CGTownInstance * town)
 		if (!event.affectsPlayer(player, gameHandler->gameInfo().getPlayerState(player)->isHuman()))
 			continue;
 
+		if (auto * dispatcher = gameHandler->gameState().getMapEventDispatcher(); dispatcher && !event.scriptHandler.empty())
+		{
+			gameHandler->runScriptedEvent(*dispatcher, player, {},
+				[&](scripting::MapEventDispatcher & d){ return d.onTownTurnStart(*gameHandler, event.scriptHandler, town); });
+			continue;
+		}
+
 		// dialog
 		InfoWindow iw;
 		iw.player = player;
 		iw.text = event.message;
+		iw.journalInfo = ScenarioEventJournalInfo{town->visitablePos()};
 
 		if (event.resources.nonZero())
 		{
@@ -149,15 +169,20 @@ void NewTurnProcessor::onPlayerTurnStarted(PlayerColor which)
 	for (const auto * t : playerState->getTowns())
 		handleTownEvents(t);
 
+	std::deque<PendingTurnStartVisit> visits;
+
 	for (const auto * t : playerState->getTowns())
 	{
 		//garrison hero first - consistent with original H3 Mana Vortex and Battle Scholar Academy levelup windows order
-		if (t->getGarrisonHero() != nullptr)
-			gameHandler->objectVisited(t, t->getGarrisonHero());
+		if(t->getGarrisonHero() != nullptr)
+			visits.push_back({which, t->id, t->getGarrisonHero()->id});
 
-		if (t->getVisitingHero() != nullptr)
-			gameHandler->objectVisited(t, t->getVisitingHero());
+		if(t->getVisitingHero() != nullptr)
+			visits.push_back({which, t->id, t->getVisitingHero()->id});
 	}
+
+	gameHandler->turnStartVisitScheduler->enqueue(which, std::move(visits));
+	gameHandler->turnStartVisitScheduler->processNext(which);
 }
 
 void NewTurnProcessor::onPlayerTurnEnded(PlayerColor which)
@@ -186,7 +211,7 @@ void NewTurnProcessor::onPlayerTurnEnded(PlayerColor which)
 	// check for 7 days without castle
 	gameHandler->checkVictoryLossConditionsForPlayer(which);
 
-	bool newWeek = gameHandler->gameInfo().getDate(Date::DAY_OF_WEEK) == LIBRARY->engineSettings()->getInteger(EGameSettings::GENERAL_DAYS_PER_WEEK); // end of 7th day
+	bool newWeek = gameHandler->gameInfo().getCalendar().nextDay().getDayOfWeek() == 1; // end of 7th day
 
 	if (newWeek) //new heroes in tavern
 		gameHandler->heroPool->onNewWeek(which);
@@ -264,14 +289,15 @@ ResourceSet NewTurnProcessor::generatePlayerIncome(PlayerColor playerID, bool ne
 		const JsonNode & difficultyConfig = weeklyBonusesConfig[difficultyName];
 
 		// Distribute weekly bonuses over 7 days, depending on the current day of the week
+		auto calendar = gameHandler->gameState().getCalendar();
 		for (GameResID i : LIBRARY->resourceTypeHandler->getAllObjects())
 		{
 			const std::string & name = i.toResource()->getJsonKey();
 			int64_t weeklyBonus = difficultyConfig[name].Integer();
-			int64_t dayOfWeek = gameHandler->gameState().getDate(Date::DAY_OF_WEEK);
+			int64_t dayOfWeek = calendar.getDayOfWeek();
 			int64_t dailyIncome = incomeHandicapped[i];
-			int64_t amountTillToday = dailyIncome * weeklyBonus * (dayOfWeek-1) / LIBRARY->engineSettings()->getInteger(EGameSettings::GENERAL_DAYS_PER_WEEK) / 100;
-			int64_t amountAfterToday = dailyIncome * weeklyBonus * dayOfWeek / LIBRARY->engineSettings()->getInteger(EGameSettings::GENERAL_DAYS_PER_WEEK) / 100;
+			int64_t amountTillToday = dailyIncome * weeklyBonus * (dayOfWeek-1) / calendar.getDaysInWeek() / 100;
+			int64_t amountAfterToday = dailyIncome * weeklyBonus * dayOfWeek / calendar.getDaysInWeek() / 100;
 			int64_t dailyBonusToday = amountAfterToday - amountTillToday;
 			int64_t totalIncomeToday = std::min(GameConstants::PLAYER_RESOURCES_CAP, incomeHandicapped[i] + dailyBonusToday);
 			incomeHandicapped[i] = totalIncomeToday;
@@ -616,8 +642,12 @@ std::vector<SetMovePoints> NewTurnProcessor::updateHeroesMovementPoints()
 		for (const CGHeroInstance *h : elem.second.getHeroes())
 		{
 			auto ti = h->getTurnInfo(1);
-			// NOTE: this code executed when bonuses of previous day not yet updated (this happen in NewTurn::applyGs). See issue 2356
-			int32_t newMovementPoints = h->movementPointsLimitCached(gameHandler->gameState().getMap().getTile(h->visitablePos()).isLand(), ti.get());
+			int32_t newMovementPoints = 0;
+			if (h->inBoat())
+				newMovementPoints = h->movementPointsLimitCached(h->getBoat()->layer, ti.get());
+			else
+				// NOTE: this code executed when bonuses of previous day not yet updated (this happen in NewTurn::applyGs). See issue 2356
+				newMovementPoints = h->movementPointsLimitCached(EPathfindingLayer::LAND, ti.get());
 
 			if (newMovementPoints != h->movementPointsRemaining())
 				result.emplace_back(h->id, newMovementPoints);
@@ -632,15 +662,15 @@ InfoWindow NewTurnProcessor::createInfoWindow(EWeekType weekType, CreatureID cre
 	switch (weekType)
 	{
 		case EWeekType::DOUBLE_GROWTH:
-			iw.text.appendLocalString(EMetaText::ARRAY_TXT, 131);
+			iw.text.appendTextID("core.arraytxt.131");
 			iw.text.replaceNameSingular(creatureWeek);
 			iw.text.replaceNameSingular(creatureWeek);
 			break;
 		case EWeekType::PLAGUE:
-			iw.text.appendLocalString(EMetaText::ARRAY_TXT, 132);
+			iw.text.appendTextID("core.arraytxt.132");
 			break;
 		case EWeekType::BONUS_GROWTH:
-			iw.text.appendLocalString(EMetaText::ARRAY_TXT, 134);
+			iw.text.appendTextID("core.arraytxt.134");
 			iw.text.replaceNameSingular(creatureWeek);
 			iw.text.replaceNameSingular(creatureWeek);
 			break;
@@ -650,7 +680,7 @@ InfoWindow NewTurnProcessor::createInfoWindow(EWeekType weekType, CreatureID cre
 			CreatureID upgradedCreature = creatureWeek;
 			if(base && !base->upgrades.empty())
 				upgradedCreature = *base->upgrades.rbegin();
-			iw.text.appendLocalString(EMetaText::ARRAY_TXT, 135);
+			iw.text.appendTextID("core.arraytxt.135");
 			iw.text.replaceNameSingular(creatureWeek);
 			iw.text.replaceNameSingular(creatureWeek);
 			iw.text.replacePositiveNumber(additionalGrowth);
@@ -661,12 +691,12 @@ InfoWindow NewTurnProcessor::createInfoWindow(EWeekType weekType, CreatureID cre
 		default:
 			if (newMonth)
 			{
-				iw.text.appendLocalString(EMetaText::ARRAY_TXT, 130);
+				iw.text.appendTextID("core.arraytxt.130");
 				iw.text.replaceLocalString(EMetaText::ARRAY_TXT, gameHandler->getRandomGenerator().nextInt(32, 41));
 			}
 			else
 			{
-				iw.text.appendLocalString(EMetaText::ARRAY_TXT, 133);
+				iw.text.appendTextID("core.arraytxt.133");
 				iw.text.replaceLocalString(EMetaText::ARRAY_TXT, gameHandler->getRandomGenerator().nextInt(43, 57));
 			}
 	}
@@ -680,12 +710,10 @@ NewTurn NewTurnProcessor::generateNewTurnPack()
 	n.creatureid = CreatureID::NONE;
 	n.day = gameHandler->gameState().day + 1;
 
-	int daysPerWeek = LIBRARY->engineSettings()->getInteger(EGameSettings::GENERAL_DAYS_PER_WEEK);
-	int daysPerMonth = LIBRARY->engineSettings()->getInteger(EGameSettings::GENERAL_WEEKS_PER_MONTH) * daysPerWeek;
-
-	bool firstTurn = !gameHandler->gameInfo().getDate(Date::DAY);
-	bool newWeek = gameHandler->gameInfo().getDate(Date::DAY_OF_WEEK) == daysPerWeek; //day numbers are confusing, as day was not yet switched
-	bool newMonth = gameHandler->gameInfo().getDate(Date::DAY_OF_MONTH) == daysPerMonth;
+	auto calendar = gameHandler->gameInfo().getCalendar();
+	bool firstTurn = !calendar.getCurrentDay();
+	bool newWeek = calendar.nextDay().getDayOfWeek() == 1; //day numbers are confusing, as day was not yet switched
+	bool newMonth = calendar.nextDay().getDayOfMonth() == 1;
 
 	int additionalGrowth = 0;
 
@@ -728,12 +756,10 @@ void NewTurnProcessor::onNewTurn()
 {
 	NewTurn n = generateNewTurnPack();
 
-	int daysPerWeek = LIBRARY->engineSettings()->getInteger(EGameSettings::GENERAL_DAYS_PER_WEEK);
-	int daysPerMonth = LIBRARY->engineSettings()->getInteger(EGameSettings::GENERAL_WEEKS_PER_MONTH) * daysPerWeek;
-
-	bool firstTurn = !gameHandler->gameInfo().getDate(Date::DAY);
-	bool newWeek = gameHandler->gameInfo().getDate(Date::DAY_OF_WEEK) == daysPerWeek; //day numbers are confusing, as day was not yet switched
-	bool newMonth = gameHandler->gameInfo().getDate(Date::DAY_OF_MONTH) == daysPerMonth;
+	auto calendar = gameHandler->gameInfo().getCalendar();
+	bool firstTurn = !calendar.getCurrentDay();
+	bool newWeek = calendar.nextDay().getDayOfWeek() == 1; //day numbers are confusing, as day was not yet switched
+	bool newMonth = calendar.nextDay().getDayOfMonth() == 1;
 
 	gameHandler->sendAndApply(n);
 
@@ -753,7 +779,7 @@ void NewTurnProcessor::onNewTurn()
 		{
 			const auto * t = gameHandler->gameState().getTown(townID);
 			if (!t->getOwner().isValidPlayer())
-				updateNeutralTownGarrison(t, 1 + gameHandler->gameInfo().getDate(Date::DAY) / LIBRARY->engineSettings()->getInteger(EGameSettings::GENERAL_DAYS_PER_WEEK));
+				updateNeutralTownGarrison(t, 1 + calendar.getCurrentDay() / calendar.getDaysInWeek());
 		}
 	}
 

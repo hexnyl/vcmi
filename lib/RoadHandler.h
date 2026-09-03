@@ -16,8 +16,6 @@
 #include "IHandlerBase.h"
 #include "filesystem/ResourcePath.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class DLL_LINKAGE RoadType : public EntityT<RoadId>
 {
 	friend class RoadTypeHandler;
@@ -32,7 +30,6 @@ public:
 	std::string getModScope() const override;
 	void registerIcons(const IconRegistar & cb) const override {}
 	RoadId getId() const override { return id;}
-	void updateFrom(const JsonNode & data) {};
 
 	std::string getNameTextID() const override;
 	std::string getNameTranslated() const override;
@@ -63,5 +60,3 @@ public:
 	const std::vector<std::string> & getTypeNames() const override;
 	std::vector<JsonNode> loadLegacyData() override;
 };
-
-VCMI_LIB_NAMESPACE_END

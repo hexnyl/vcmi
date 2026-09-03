@@ -12,7 +12,7 @@
 #include "BattleSpellMechanics.h"
 
 #include "Problem.h"
-#include "CSpellHandler.h"
+#include "CSpell.h"
 
 #include "../battle/IBattleState.h"
 #include "../battle/CBattleInfoCallback.h"
@@ -22,8 +22,6 @@
 #include "../CStack.h"
 
 #include <vstd/RNG.h>
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 namespace spells
 {
@@ -167,7 +165,7 @@ void BattleSpellMechanics::applyEffects(ServerCallback * server, const Target & 
 			}
 			else
 			{
-				EffectTarget filtered = effect->filterTarget(this, targets);
+				Target filtered = effect->filterTarget(this, targets);
 				effect->apply(server, this, filtered);
 			}
 		}
@@ -179,6 +177,9 @@ void BattleSpellMechanics::applyEffects(ServerCallback * server, const Target & 
 bool BattleSpellMechanics::canBeCast(Problem & problem) const
 {
 	auto genProblem = battle()->battleCanCastSpell(caster, mode);
+	// Orb of Inhibition (BLOCK_ALL_MAGIC) must not block level-0 creature abilities (stone gaze, death stare, ...)
+	if(genProblem == ESpellCastProblem::MAGIC_IS_BLOCKED && getSpellLevel() <= 0)
+		genProblem = ESpellCastProblem::OK;
 	if(genProblem != ESpellCastProblem::OK)
 		return adaptProblem(genProblem, problem);
 
@@ -296,7 +297,7 @@ bool BattleSpellMechanics::canBeCastAt(const Target & target, Problem & problem)
 		if(mainTarget && mainTarget == caster)
 			return false; // can't cast on self
 
-		if(mainTarget && mainTarget->isInvincible() && !getSpell()->getPositiveness())
+		if(mainTarget && mainTarget->isInvincible() && getSpell()->isNegative())
 			return false;
 	}
 	else if(getSpell()->canCastOnlyOnSelf())
@@ -312,11 +313,11 @@ std::vector<const CStack *> BattleSpellMechanics::getAffectedStacks(const Target
 {
 	Target spellTarget = transformSpellTarget(target);
 
-	EffectTarget all;
+	Target all;
 
 	effects->forEachEffect(getEffectLevel(), [&all, &target, &spellTarget, this](const effects::Effect * e, bool & stop)
 	{
-		EffectTarget one = e->transformTarget(this, target, spellTarget);
+		Target one = e->transformTarget(this, target, spellTarget);
 		vstd::concatenate(all, one);
 	});
 
@@ -415,7 +416,7 @@ void BattleSpellMechanics::cast(ServerCallback * server, const Target & target)
 	doRemoveEffects(server, affectedUnits, std::bind(&BattleSpellMechanics::counteringSelector, this, _1));
 
 	for(auto & unit : affectedUnits)
-		sc.affectedCres.insert(unit->unitId());
+		sc.affectedCres.push_back(unit->unitId());
 
 	if(!castDescription.lines.empty())
 		server->apply(castDescription);
@@ -488,7 +489,7 @@ void BattleSpellMechanics::beforeCast(BattleSpellCast & sc, vstd::RNG & rng, con
 	//prepare targets
 	effectsToApply = effects->prepare(this, target, spellTarget);
 
-	std::set<const battle::Unit *> unitTargets = collectTargets();
+	auto unitTargets = collectTargets();
 
 	//process them
 	for(const auto * unit : unitTargets)
@@ -560,7 +561,7 @@ void BattleSpellMechanics::castEval(ServerCallback * server, const Target & targ
 
 	effectsToApply = effects->prepare(this, target, spellTarget);
 
-	std::set<const battle::Unit *> unitTargets = collectTargets();
+	auto unitTargets = collectTargets();
 
 	auto selector = std::bind(&BattleSpellMechanics::counteringSelector, this, _1);
 
@@ -571,15 +572,17 @@ void BattleSpellMechanics::castEval(ServerCallback * server, const Target & targ
 		p.first->apply(server, this, p.second);
 }
 
-std::set<const battle::Unit *> BattleSpellMechanics::collectTargets() const
+battle::Units BattleSpellMechanics::collectTargets() const
 {
-	std::set<const battle::Unit *> result;
+	// preserve effect (e.g. chain-lightning hop) order while removing duplicates, so the client can
+	// reconstruct the target sequence from BattleSpellCast::affectedCres
+	battle::Units result;
 
 	for(const auto & p : effectsToApply)
 	{
 		for(const Destination & d : p.second)
-			if(d.unitValue)
-				result.insert(d.unitValue);
+			if(d.unitValue && !vstd::contains(result, d.unitValue))
+				result.push_back(d.unitValue);
 	}
 
 	return result;
@@ -675,7 +678,7 @@ std::vector<AimType> BattleSpellMechanics::getTargetTypes() const
 	{
 		effects->forEachEffect(getEffectLevel(), [&](const effects::Effect * e, bool & stop)
 		{
-			e->adjustTargetTypes(ret);
+			e->adjustTargetTypes(ret, this);
 			stop = ret.empty();
 		});
 	}
@@ -734,5 +737,3 @@ const Spell * BattleSpellMechanics::getSpell() const
 
 }
 
-
-VCMI_LIB_NAMESPACE_END

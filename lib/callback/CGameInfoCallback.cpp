@@ -18,16 +18,14 @@
 #include "../mapObjects/CGHeroInstance.h"
 #include "../mapObjects/CGTownInstance.h"
 #include "../mapObjects/MiscObjects.h"
+#include "../spells/CSpell.h"
 #include "../StartInfo.h"
 #include "../battle/BattleInfo.h"
 #include "../IGameSettings.h"
-#include "../spells/CSpellHandler.h"
 #include "../mapping/CMap.h"
 #include "../CPlayerState.h"
 
 #define ASSERT_IF_CALLED_WITH_PLAYER if(!getPlayerID()) {logGlobal->error(BOOST_CURRENT_FUNCTION); assert(0);}
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 //TODO make clean
 #define ERROR_VERBOSE_OR_NOT_RET_VAL_IF(cond, verbose, txt, retVal) do {if(cond){if(verbose)logGlobal->error("%s: %s",BOOST_CURRENT_FUNCTION, txt); return retVal;}} while(0)
@@ -97,13 +95,13 @@ TurnTimerInfo CGameInfoCallback::getPlayerTurnTime(PlayerColor color) const
 	{
 		return TurnTimerInfo{};
 	}
-	
+
 	auto player = gameState().players.find(color);
 	if(player != gameState().players.end())
 	{
 		return player->second.turnTimer;
 	}
-	
+
 	return TurnTimerInfo{};
 }
 
@@ -171,6 +169,11 @@ const StartInfo * CGameInfoCallback::getStartInfo() const
 const StartInfo * CGameInfoCallback::getInitialStartInfo() const
 {
 	return gameState().getInitialStartInfo();
+}
+
+const scripting::Pool & CGameInfoCallback::getScriptContextPool() const
+{
+	return gameState().getScriptContextPool();
 }
 
 int32_t CGameInfoCallback::getSpellCost(const spells::Spell * sp, const CGHeroInstance * caster) const
@@ -380,9 +383,9 @@ bool CGameInfoCallback::getHeroInfo(const CGObjectInstance * hero, InfoAboutHero
 	return true;
 }
 
-int CGameInfoCallback::getDate(Date mode) const
+Calendar CGameInfoCallback::getCalendar() const
 {
-	return gameState().getDate(mode);
+	return gameState().getCalendar();
 }
 
 bool CGameInfoCallback::isVisibleFor(int3 pos, PlayerColor player) const
@@ -613,14 +616,14 @@ EPlayerStatus CGameInfoCallback::getPlayerStatus(PlayerColor player, bool verbos
 	return ps->status;
 }
 
-std::string CGameInfoCallback::getTavernRumor(const CGObjectInstance * townOrTavern) const
+std::string CGameInfoCallback::getTavernRumor(const CGObjectInstance * townOrTavern, const ITranslator * translator) const
 {
 	MetaString text;
-	text.appendLocalString(EMetaText::GENERAL_TXT, 216);
-	
+	text.appendTextID("core.genrltxt.216");
+
 	std::string extraText;
 	if(gameState().currentRumor.type == RumorState::TYPE_NONE)
-		return text.toString();
+		return text.toString(translator);
 
 	auto rumor = gameState().currentRumor.last.at(gameState().currentRumor.type);
 	switch(gameState().currentRumor.type)
@@ -628,21 +631,22 @@ std::string CGameInfoCallback::getTavernRumor(const CGObjectInstance * townOrTav
 	case RumorState::TYPE_SPECIAL:
 		text.replaceLocalString(EMetaText::GENERAL_TXT, rumor.first);
 		if(rumor.first == RumorState::RUMOR_GRAIL)
-			text.replaceTextID(TextIdentifier("core", "arraytxt", 158 + rumor.second).get());
+			text.replaceTextID("core.arraytxt", 158 + rumor.second);
 		else
-			text.replaceTextID(TextIdentifier("core", "plcolors", rumor.second).get());
+			text.replaceTextID("core.plcolors", rumor.second);
 
 		break;
 	case RumorState::TYPE_MAP:
-		text.replaceRawString(gameState().getMap().rumors[rumor.first].text.toString());
+		// rumor text is map-defined, so only the caller's translator can resolve it
+		text.replaceRawString(gameState().getMap().rumors[rumor.first].text.toString(translator));
 		break;
 
 	case RumorState::TYPE_RAND:
-		text.replaceTextID(TextIdentifier("core", "randtvrn", rumor.first).get());
+		text.replaceTextID("core.randtvrn", rumor.first);
 		break;
 	}
 
-	return text.toString();
+	return text.toString(translator);
 }
 
 PlayerRelations CGameInfoCallback::getPlayerRelations( PlayerColor color1, PlayerColor color2 ) const
@@ -934,12 +938,3 @@ bool CGameInfoCallback::checkForVisitableDir(const int3 & src, const int3 & dst)
 	const TerrainTile * pom = &map.getTile(dst);
 	return map.checkForVisitableDir(src, pom, dst);
 }
-
-#if SCRIPTING_ENABLED
-scripting::Pool * CGameInfoCallback::getGlobalContextPool() const
-{
-	return nullptr; // TODO
-}
-#endif
-
-VCMI_LIB_NAMESPACE_END

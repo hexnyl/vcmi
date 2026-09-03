@@ -154,6 +154,9 @@
 	},
 	"navigation" : {
 		"index" : 5,
+		"tags" : {
+			"onlyOnWaterMap" : true
+		},
 		"specialty" : [
 			"main"
 		],
@@ -180,11 +183,13 @@
 			"effects" : {
 				"main" : { "val" : 150 }
 			}
-		},
-		"onlyOnWaterMap" : true
+		}
 	},
 	"leadership" : {
 		"index" : 6,
+		"tags" : {
+			"bannedForWitchHut" : true
+		},
 		"specialty" : [], // generic specialty not applicable
 		"base" : {
 			"effects" : {
@@ -213,7 +218,9 @@
 	"wisdom" : {
 		"index" : 7,
 		"specialty" : [], // generic specialty not applicable
-		"obligatoryMajor" : true,
+		"tags" : {
+			"wisdom" : true
+		},
 		"base" : {
 			"effects" : {
 				"main" : {
@@ -253,17 +260,17 @@
 		},
 		"basic" : {
 			"effects" : {
-				"main" : { "val" : 1 }
+				"main" : { "val" : 2 }
 			}
 		},
 		"advanced" : {
 			"effects" : {
-				"main" : { "val" : 2 }
+				"main" : { "val" : 3 }
 			}
 		},
 		"expert" : {
 			"effects" : {
-				"main" : { "val" : 3 }
+				"main" : { "val" : 4 }
 			}
 		}
 	},
@@ -300,12 +307,12 @@
 		"base" : {
 			"effects" : {
 				"main" : {
-					"subtype" : "spell.catapultShot",
+					"subtype" : "catapultShot",
 					"type" : "CATAPULT_EXTRA_SHOTS",
 					"valueType" : "BASE_NUMBER"
 				},
 				"ctrl" : {
-					"subtype" : "creature.catapult",
+					"subtype" : "catapult",
 					"type" : "MANUAL_CONTROL",
 					"val" : 100,
 					"valueType" : "BASE_NUMBER"
@@ -366,6 +373,10 @@
 	},
 	"necromancy" : {
 		"index" : 12,
+		"tags" : {
+			"bannedForWitchHut" : true,
+			"bannedForUniversity" : true
+		},
 		"specialty" : [
 			"main"
 		],
@@ -377,7 +388,7 @@
 				},
 				"power" : {
 					"type" : "IMPROVED_NECROMANCY",
-					"subtype" : "creature.skeleton",
+					"subtype" : "skeleton",
 					"addInfo" : 0
 				}
 			}
@@ -409,7 +420,7 @@
 		"base" : {
 			"effects" : {
 				"main" : {
-					"subtype" : "resource.gold",
+					"subtype" : "gold",
 					"type" : "GENERATE_RESOURCE",
 					"valueType" : "BASE_NUMBER"
 				}
@@ -434,11 +445,13 @@
 	"fireMagic" : {
 		"index" : 14,
 		"specialty" : [], // generic specialty not applicable
-		"obligatoryMinor" : true,
+		"tags" : {
+			"spellSchool" : true
+		},
 		"base" : {
 			"effects" : {
 				"main" : {
-					"subtype" : "spellSchool.fire",
+					"subtype" : "fire",
 					"type" : "MAGIC_SCHOOL_SKILL",
 					"valueType" : "BASE_NUMBER"
 				}
@@ -463,11 +476,13 @@
 	"airMagic" : {
 		"index" : 15,
 		"specialty" : [], // generic specialty not applicable
-		"obligatoryMinor" : true,
+		"tags" : {
+			"spellSchool" : true
+		},
 		"base" : {
 			"effects" : {
 				"main" : {
-					"subtype" : "spellSchool.air",
+					"subtype" : "air",
 					"type" : "MAGIC_SCHOOL_SKILL",
 					"valueType" : "BASE_NUMBER"
 				}
@@ -492,11 +507,13 @@
 	"waterMagic" : {
 		"index" : 16,
 		"specialty" : [], // generic specialty not applicable
-		"obligatoryMinor" : true,
+		"tags" : {
+			"spellSchool" : true
+		},
 		"base" : {
 			"effects" : {
 				"main" : {
-					"subtype" : "spellSchool.water",
+					"subtype" : "water",
 					"type" : "MAGIC_SCHOOL_SKILL",
 					"valueType" : "BASE_NUMBER"
 				}
@@ -521,11 +538,13 @@
 	"earthMagic" : {
 		"index" : 17,
 		"specialty" : [], // generic specialty not applicable
-		"obligatoryMinor" : true,
+		"tags" : {
+			"spellSchool" : true
+		},
 		"base" : {
 			"effects" : {
 				"main" : {
-					"subtype" : "spellSchool.earth",
+					"subtype" : "earth",
 					"type" : "MAGIC_SCHOOL_SKILL",
 					"valueType" : "BASE_NUMBER"
 				}
@@ -614,29 +633,29 @@
 		"base" : {
 			"effects" : {
 				"main" : {
-					"subtype" : "creature.ballista",
+					"subtype" : "ballista",
 					"type" : "BONUS_DAMAGE_CHANCE",
 					"valueType" : "BASE_NUMBER"
 				},
 				"val2" : {
-					"subtype" : "creature.ballista",
+					"subtype" : "ballista",
 					"type" : "HERO_GRANTS_ATTACKS",
 					"valueType" : "BASE_NUMBER"
 				},
 				"ctrl" : {
-					"subtype" : "creature.ballista",
+					"subtype" : "ballista",
 					"type" : "MANUAL_CONTROL",
 					"val" : 100,
 					"valueType" : "BASE_NUMBER"
 				},
 				"ctrl2" : {
-					"subtype" : "creature.arrowTower",
+					"subtype" : "arrowTower",
 					"type" : "MANUAL_CONTROL",
 					"val" : 100,
 					"valueType" : "BASE_NUMBER"
 				},
 				"damagePower" : {
-					"subtype" : "creature.ballista",
+					"subtype" : "ballista",
 					"type" : "BONUS_DAMAGE_PERCENTAGE",
 					"val" : 100,
 					"valueType" : "BASE_NUMBER"
@@ -789,7 +808,7 @@
 			"effects" : {
 				"main" : {
 					"type" : "SPELL_DAMAGE",
-					"subtype" : "spellSchool.any",
+					"subtype" : "any",
 					"valueType" : "BASE_NUMBER"
 				}
 			}
@@ -847,12 +866,12 @@
 		"base" : {
 			"effects" : {
 				"main" : {
-					"subtype" : "spell.firstAid",
+					"subtype" : "firstAid",
 					"type" : "SPECIFIC_SPELL_POWER",
 					"valueType" : "BASE_NUMBER"
 				},
 				"ctrl" : {
-					"subtype" : "creature.firstAidTent",
+					"subtype" : "firstAidTent",
 					"type" : "MANUAL_CONTROL",
 					"val" : 100,
 					"valueType" : "BASE_NUMBER"

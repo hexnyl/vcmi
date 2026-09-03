@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "../lib/Rect.h"
+#include "../../lib/Rect.h"
 
 #include <tbb/concurrent_queue.h>
 
@@ -24,6 +24,10 @@ class InputSourceKeyboard;
 class InputSourceTouch;
 class InputSourceText;
 class InputSourceGameController;
+namespace ControllerPrompt
+{
+	enum class Family;
+}
 
 enum class InputMode
 {
@@ -129,6 +133,7 @@ public:
 	bool isKeyboardShiftDown() const;
 
 	InputMode getCurrentInputMode();
+	ControllerPrompt::Family getActiveControllerPromptFamily() const;
 
 	void copyToClipBoard(const std::string & text);
 	PowerState getPowerState();

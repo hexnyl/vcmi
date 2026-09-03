@@ -27,10 +27,7 @@
 #include "../constants/StringConstants.h"
 #include "../entities/hero/CHero.h"
 #include "../modding/ModUtility.h"
-#include "../spells/CSpellHandler.h"
 #include "../texts/CGeneralTextHandler.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 std::string Bonus::Description(const IGameInfoCallback * cb, std::optional<si32> customValue) const
 {
@@ -60,7 +57,7 @@ std::string Bonus::Description(const IGameInfoCallback * cb, std::optional<si32>
 			case BonusSource::OBJECT_INSTANCE:
 				const auto * object = cb->getObj(sid.as<ObjectInstanceID>());
 				if (object)
-					descriptionHelper.appendTextID(LIBRARY->objtypeh->getObjectName(object->ID, object->subID));
+					descriptionHelper.appendTextID(object->getObjectNameTextID());
 		}
 	}
 
@@ -97,7 +94,7 @@ std::string Bonus::Description(const IGameInfoCallback * cb, std::optional<si32>
 			descriptionHelper.appendRawString(" +" + std::to_string(valueToShow));
 	}
 
-	return descriptionHelper.toString();
+	return descriptionHelper.toString(LIBRARY->staticTexts());
 }
 
 JsonNode Bonus::toJsonNode() const
@@ -122,7 +119,7 @@ JsonNode Bonus::toJsonNode() const
 	if(!stacking.empty())
 		root["stacking"].String() = stacking;
 	if(!description.empty())
-		root["description"].String() = description.toString();
+		root["description"].String() = description.toString(LIBRARY->staticTexts());
 	if(effectRange != BonusLimitEffect::NO_LIMIT)
 		root["effectRange"].String() = vstd::findKey(bonusLimitEffect, effectRange);
 	if(duration != BonusDuration::PERMANENT)
@@ -147,9 +144,9 @@ void Bonus::convertAddInfo(const std::vector<int> & oldAddInfo)
 
 	if (oldAddInfo.size() == 1 && oldAddInfo[0] != -1)
 	{
-		if (type == BonusType::SPECIAL_UPGRADE || type == BonusType::TRANSMUTATION)
+		if (type == BonusType::SPECIAL_UPGRADE || type == BonusType::UNUSED_TRANSMUTATION)
 			parameters = std::make_shared<BonusParameters>(CreatureID(oldAddInfo[0]));
-		else if (type == BonusType::DEATH_STARE)
+		else if (type == BonusType::UNUSED_DEATH_STARE)
 			parameters = std::make_shared<BonusParameters>(SpellID(oldAddInfo[0]));
 		else
 			parameters = std::make_shared<BonusParameters>(oldAddInfo[0]);
@@ -272,5 +269,3 @@ std::shared_ptr<Bonus> Bonus::addPropagationUpdater(const TUpdaterPtr & newUpdat
 	propagationUpdater = appendToUpdaters(propagationUpdater, newUpdater);
 	return this->shared_from_this();
 }
-
-VCMI_LIB_NAMESPACE_END

@@ -19,11 +19,9 @@
 #include "../CMapGenerator.h"
 #include "../Functions.h"
 #include "../../TerrainHandler.h"
-#include "../lib/mapping/CMapEditManager.h"
+#include "../../mapping/CMapEditManager.h"
 #include "../TileInfo.h"
 #include "../MapProxy.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 class TileInfo;
 
@@ -35,7 +33,7 @@ void RockFiller::process()
 void RockFiller::processMap()
 {
 	//Merge all areas
-	for(auto & z : map.getZonesOnLevel(1))
+	for(auto & z : map.getZonesOnLevel(zone.getPos().z))
 	{
 		auto zone = z.second;
 		if(auto * m = zone->getModificator<RockPlacer>())
@@ -45,7 +43,7 @@ void RockFiller::processMap()
 		}
 	}
 	
-	for(auto & z : map.getZonesOnLevel(1))
+	for(auto & z : map.getZonesOnLevel(zone.getPos().z))
 	{
 		auto zone = z.second;
 		if(auto * m = zone->getModificator<RockPlacer>())
@@ -78,5 +76,3 @@ char RockFiller::dump(const int3 & t)
 	}
 	return Modificator::dump(t);
 }
-
-VCMI_LIB_NAMESPACE_END

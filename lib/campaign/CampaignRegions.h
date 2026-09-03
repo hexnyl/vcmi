@@ -13,14 +13,19 @@
 #include "../filesystem/ResourcePath.h"
 #include "../constants/EntityIdentifiers.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#ifdef ENABLE_EDITOR
+class CampaignEditor;
+class CampaignProperties;
+class ScenarioProperties;
+#endif
 
 class DLL_LINKAGE CampaignRegions
 {
-	// Campaign editor
-	friend class CampaignEditor;
-	friend class CampaignProperties;
-	friend class ScenarioProperties;
+#ifdef ENABLE_EDITOR
+	friend class ::CampaignEditor;
+	friend class ::CampaignProperties;
+	friend class ::ScenarioProperties;
+#endif
 
 	/// Shared prefix for all campaign images
 	std::string campPrefix;
@@ -76,5 +81,3 @@ public:
 
 	JsonNode toJson() const;
 };
-
-VCMI_LIB_NAMESPACE_END

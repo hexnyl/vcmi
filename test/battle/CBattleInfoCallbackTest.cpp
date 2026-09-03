@@ -17,9 +17,7 @@
 #include "mock/mock_BonusBearer.h"
 #include "mock/mock_battle_IBattleState.h"
 #include "mock/mock_battle_Unit.h"
-#if SCRIPTING_ENABLED
 #include "mock/mock_scripting_Pool.h"
-#endif
 
 using namespace battle;
 using namespace testing;
@@ -162,16 +160,11 @@ public:
 	public:
 
 		const IBattleInfo * battle;
-#if SCRIPTING_ENABLED
 		scripting::Pool * pool;
 
 		TestSubject(scripting::Pool * p)
 			: CBattleInfoCallback(),
 			pool(p)
-#else
-		TestSubject()
-			: CBattleInfoCallback()
-#endif
 		{
 		}
 
@@ -184,18 +177,9 @@ public:
 		{
 			return std::nullopt;
 		}
-
-#if SCRIPTING_ENABLED
-		scripting::Pool * getContextPool() const override
-		{
-			return pool;
-		}
-#endif
 	};
 
-#if SCRIPTING_ENABLED
 	StrictMock<scripting::PoolMock> pool;
-#endif
 
 	TestSubject subject;
 
@@ -203,10 +187,8 @@ public:
 	UnitsFake unitsFake;
 
 	CBattleInfoCallbackTest()
-#if SCRIPTING_ENABLED
 		: pool(),
 		subject(&pool)
-#endif
 	{
 
 	}
@@ -873,7 +855,6 @@ TEST_F(BattleMatchOwnerTest, normalToSelf)
 	startBattle();
 
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit1, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit1, boost::logic::indeterminate));
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit1, false));
 }
 
@@ -888,7 +869,6 @@ TEST_F(BattleMatchOwnerTest, hypnotizedToSelf)
 	startBattle();
 
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit1, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit1, boost::logic::indeterminate));
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit1, false));
 }
 
@@ -904,7 +884,6 @@ TEST_F(BattleMatchOwnerTest, normalToNormalAlly)
 	startBattle();
 
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, boost::logic::indeterminate));
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit2, false));
 }
 
@@ -922,7 +901,6 @@ TEST_F(BattleMatchOwnerTest, hypnotizedToNormalAlly)
 	startBattle();
 
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit2, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, boost::logic::indeterminate));
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, false));
 }
 
@@ -939,7 +917,6 @@ TEST_F(BattleMatchOwnerTest, normalToHypnotizedAlly)
 	startBattle();
 
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, boost::logic::indeterminate));
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit2, false));
 }
 
@@ -958,7 +935,6 @@ TEST_F(BattleMatchOwnerTest, hypnotizedToHypnotizedAlly)
 	startBattle();
 
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit2, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, boost::logic::indeterminate));
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, false));
 }
 
@@ -975,7 +951,6 @@ TEST_F(BattleMatchOwnerTest, normalToNormalEnemy)
 	startBattle();
 
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit2, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, boost::logic::indeterminate));
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, false));
 }
 
@@ -993,7 +968,6 @@ TEST_F(BattleMatchOwnerTest, hypnotizedToNormalEnemy)
 	startBattle();
 
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, boost::logic::indeterminate));
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit2, false));
 }
 
@@ -1010,7 +984,6 @@ TEST_F(BattleMatchOwnerTest, normalToHypnotizedEnemy)
 	startBattle();
 
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit2, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, boost::logic::indeterminate));
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, false));
 }
 
@@ -1029,6 +1002,5 @@ TEST_F(BattleMatchOwnerTest, hypnotizedToHypnotizedEnemy)
 	startBattle();
 
 	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, true));
-	EXPECT_TRUE(subject.battleMatchOwner(&unit1, &unit2, boost::logic::indeterminate));
 	EXPECT_FALSE(subject.battleMatchOwner(&unit1, &unit2, false));
 }

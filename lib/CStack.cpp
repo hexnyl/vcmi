@@ -18,10 +18,8 @@
 #include "texts/CGeneralTextHandler.h"
 #include "battle/BattleInfo.h"
 #include "GameLibrary.h"
-#include "spells/CSpellHandler.h"
 #include "networkPacks/PacksForClientBattle.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "spells/CSpell.h"
 
 
 ///CStack
@@ -81,7 +79,7 @@ void CStack::localInit(BattleInfo * battleInfo)
 	position = initialPosition;
 }
 
-ui32 CStack::level() const
+int32_t CStack::unitLevel() const
 {
 	if(base)
 		return base->getLevel(); //creature or commander
@@ -223,50 +221,10 @@ void CStack::prepareAttacked(BattleStackAttacked & bsa, vstd::RNG & rand, const 
 		}
 	}
 
-	customState->save(bsa.newState.data);
+	bsa.newState.data = customState->save();
 	bsa.newState.healthDelta = -bsa.damageAmount;
 	bsa.newState.id = customState->unitId();
-	bsa.newState.operation = UnitChanges::EOperation::RESET_STATE;
-}
-
-BattleHexArray CStack::meleeAttackHexes(const battle::Unit * attacker, const battle::Unit * defender, BattleHex attackerPos, BattleHex defenderPos)
-{
-	BattleHexArray res;
-
-	if (!attackerPos.isValid())
-		attackerPos = attacker->getPosition();
-	if (!defenderPos.isValid())
-		defenderPos = defender->getPosition();
-
-	BattleHexArray defenderHexes = defender->getHexes(defenderPos);
-	BattleHexArray attackerHexes = attacker->getHexes(attackerPos);
-
-	for (BattleHex defenderHex : defenderHexes)
-	{
-		if (attackerHexes.contains(defenderHex))
-		{
-			logGlobal->debug("CStack::meleeAttackHexes: defender and attacker positions overlap");
-			return res;
-		}
-	}
-
-	const BattleHexArray attackableHxs = attacker->getSurroundingHexes(attackerPos);
-
-	for (BattleHex defenderHex : defenderHexes)
-	{
-		if (attackableHxs.contains(defenderHex))
-			res.insert(defenderHex);
-	}
-
-	return res;
-}
-
-bool CStack::isMeleeAttackPossible(const battle::Unit * attacker, const battle::Unit * defender, BattleHex attackerPos, BattleHex defenderPos)
-{
-	if(defender->isInvincible())
-		return false;
-		
-	return !meleeAttackHexes(attacker, defender, attackerPos, defenderPos).empty();
+	bsa.newState.operation = UnitChanges::EOperation::UPDATE;
 }
 
 std::string CStack::getName() const
@@ -281,8 +239,7 @@ bool CStack::canBeHealed() const
 
 bool CStack::isOnNativeTerrain() const
 {
-	auto nativeTerrain = getNativeTerrain();
-	return nativeTerrain == ETerrainId::ANY_TERRAIN || getCurrentTerrain() == nativeTerrain;
+	return isNativeTerrain(getCurrentTerrain());
 }
 
 TerrainId CStack::getCurrentTerrain() const
@@ -309,7 +266,7 @@ bool CStack::unitHasAmmoCart(const battle::Unit * unit) const
 {
 	for(const auto & st : battle->stacks)
 	{
-		if(battle->battleMatchOwner(st.get(), unit, true) && st->unitType()->getId() == CreatureID::AMMO_CART)
+		if(battle->battleMatchOwner(st.get(), unit, true) && st->isAmmoCart())
 		{
 			return st->alive();
 		}
@@ -394,5 +351,3 @@ void CStack::postDeserialize(const CArmedInstance * army)
 
 	doubleWideCached = battle::CUnitState::doubleWide();
 }
-
-VCMI_LIB_NAMESPACE_END

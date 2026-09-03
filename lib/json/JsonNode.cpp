@@ -15,7 +15,6 @@
 #include "JsonWriter.h"
 #include "filesystem/Filesystem.h"
 
-#include <boost/lexical_cast.hpp>
 
 // to avoid duplicating const and non-const code
 template<typename Node>
@@ -30,7 +29,7 @@ Node & resolvePointer(Node & in, const std::string & pointer)
 	std::string entry = pointer.substr(1, splitPos - 1);
 	std::string remainder = splitPos == std::string::npos ? "" : pointer.substr(splitPos);
 
-	if(in.getType() == VCMI_LIB_WRAP_NAMESPACE(JsonNode)::JsonType::DATA_VECTOR)
+	if(in.getType() == ::JsonNode::JsonType::DATA_VECTOR)
 	{
 		if(entry.find_first_not_of("0123456789") != std::string::npos) // non-numbers in string
 			throw std::runtime_error("Invalid Json pointer");
@@ -38,15 +37,13 @@ Node & resolvePointer(Node & in, const std::string & pointer)
 		if(entry.size() > 1 && entry[0] == '0') // leading zeros are not allowed
 			throw std::runtime_error("Invalid Json pointer");
 
-		auto index = boost::lexical_cast<size_t>(entry);
+		auto index = std::stoull(entry);
 
 		if(in.Vector().size() > index)
 			return in.Vector()[index].resolvePointer(remainder);
 	}
 	return in[entry].resolvePointer(remainder);
 }
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 static const JsonNode nullNode;
 
@@ -93,25 +90,25 @@ JsonNode::JsonNode(const JsonMap & map)
 {
 }
 
-JsonNode::JsonNode(const std::byte * data, size_t datasize, const std::string & fileName)
-	: JsonNode(data, datasize, JsonParsingSettings(), fileName)
+JsonNode::JsonNode(const std::byte * stringData, size_t dataSize, const std::string & fileName)
+	: JsonNode(stringData, dataSize, JsonParsingSettings(), fileName)
 {
 }
 
-JsonNode::JsonNode(const std::byte * data, size_t datasize, const JsonParsingSettings & parserSettings, const std::string & fileName)
+JsonNode::JsonNode(const std::byte * stringData, size_t dataSize, const JsonParsingSettings & parserSettings, const std::string & fileName)
 {
-	JsonParser parser(data, datasize, parserSettings);
+	JsonParser parser(stringData, dataSize, parserSettings);
 	*this = parser.parse(fileName);
 }
 
-JsonNode::JsonNode(const char * data, size_t datasize, const std::string & fileName)
-	: JsonNode(data, datasize, JsonParsingSettings(), fileName)
+JsonNode::JsonNode(const char * stringData, size_t dataSize, const std::string & fileName)
+	: JsonNode(stringData, dataSize, JsonParsingSettings(), fileName)
 {
 }
 
-JsonNode::JsonNode(const char * data, size_t datasize, const JsonParsingSettings & parserSettings, const std::string & fileName)
+JsonNode::JsonNode(const char * stringData, size_t dataSize, const JsonParsingSettings & parserSettings, const std::string & fileName)
 {
-	JsonParser parser(data, datasize, parserSettings);
+	JsonParser parser(stringData, dataSize, parserSettings);
 	*this = parser.parse(fileName);
 }
 
@@ -503,5 +500,3 @@ std::string JsonNode::toString() const
 	writer.writeNode(*this);
 	return out.str();
 }
-
-VCMI_LIB_NAMESPACE_END

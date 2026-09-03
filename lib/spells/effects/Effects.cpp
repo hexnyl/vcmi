@@ -15,21 +15,17 @@
 
 #include "../ISpellMechanics.h"
 
-#include "../../serializer/JsonSerializeFormat.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../../GameLibrary.h"
+#include "../../json/JsonNode.h"
+#include "../../modding/IdentifierStorage.h"
+#include "../../scripting/ScriptService.h"
+#include "../../texts/TextIdentifier.h"
 
 
 namespace spells
 {
 namespace effects
 {
-
-void Effects::add(const std::string & name, const std::shared_ptr<Effect>& effect, const int level)
-{
-	effect->name = name;
-	data.at(level)[name] = effect;
-}
 
 bool Effects::applicable(Problem & problem, const Mechanics * m) const
 {
@@ -42,7 +38,7 @@ bool Effects::applicable(Problem & problem, const Mechanics * m) const
 
 	auto callback = [&](const Effect * e, bool & stop)
 	{
-		if(e->applicable(problem, m))
+		if(e->applicableGeneral(problem, m))
 		{
 			oneEffectApplicable = true;
 		}
@@ -72,9 +68,9 @@ bool Effects::applicable(Problem & problem, const Mechanics * m, const Target & 
 		if(e->indirect)
 			return;
 
-		EffectTarget target = e->transformTarget(m, aimPoint, spellTarget);
+		Target target = e->transformTarget(m, aimPoint, spellTarget);
 
-		if(e->applicable(problem, m, target))
+		if(e->applicableTarget(problem, m, target))
 		{
 			oneEffectApplicable = true;
 		}
@@ -118,7 +114,7 @@ Effects::EffectsToApply Effects::prepare(const Mechanics * m, const Target & aim
 
 		if(applyThis)
 		{
-			EffectTarget target = e->transformTarget(m, aimPoint, spellTarget);
+			Target target = e->transformTarget(m, aimPoint, spellTarget);
 			effectsToApply.push_back(std::make_pair(e, target));
 		}
 	};
@@ -128,31 +124,46 @@ Effects::EffectsToApply Effects::prepare(const Mechanics * m, const Target & aim
 	return effectsToApply;
 }
 
-void Effects::serializeJson(const Registry * registry, JsonSerializeFormat & handler, const int level)
+Effects::EffectsMap Effects::loadJson(const JsonNode & effectMap, const std::string & spellScope, const std::string & spellIdentifier)
 {
-	assert(!handler.saving);
+	EffectsMap result;
 
-	const JsonNode & effectMap = handler.getCurrent();
-
-	for(const auto & p : effectMap.Struct())
+	for(const auto & [name, raw] : effectMap.Struct())
 	{
-		const std::string & name = p.first;
+		auto identifier = LIBRARY->identifiers()->getIdentifier("script", raw["type"]);
 
-		auto guard = handler.enterStruct(name);
-
-		std::string type;
-		handler.serializeString("type", type);
-
-		auto effect = Effect::create(registry, type);
-		if(effect)
+		if(!identifier.has_value())
 		{
-			effect->serializeJson(handler);
-			add(name, effect, level);
+			logMod->error("Spell '%s:%s' uses unknown script '%s' as effect '%s'!", spellScope, spellIdentifier, raw["type"].String(), name);
+			continue;
 		}
+
+		ScriptID effectID(*identifier);
+
+		if(LIBRARY->scriptTypes()->getById(effectID).kind != ScriptKind::SPELL_EFFECT)
+		{
+			logMod->error("Spell '%s:%s' uses script '%s' as effect '%s', but that script is not a spell effect!", spellScope, spellIdentifier, raw["type"].String(), name);
+			continue;
+		}
+
+		JsonNode data = raw;
+		LIBRARY->scriptTypes()->prepareParameters(effectID, data, TextIdentifier("spell", spellScope, spellIdentifier, name));
+
+		auto effect = LIBRARY->scriptTypes()->createSpellEffect(effectID);
+
+		if(!effect)
+			continue; // reported by the handler
+
+		effect->name = name;
+		effect->spellScope = spellScope;
+		effect->spellIdentifier = spellIdentifier;
+		effect->init(std::move(data));
+
+		result.try_emplace(name, std::move(effect));
 	}
+
+	return result;
 }
 
 }
 }
-
-VCMI_LIB_NAMESPACE_END

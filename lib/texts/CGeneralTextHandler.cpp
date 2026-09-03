@@ -15,9 +15,12 @@
 #include "IGameSettings.h"
 #include "Languages.h"
 #include "../filesystem/Filesystem.h"
-#include "../mapObjects/CQuest.h"
+#include "../mapObjects/Quest.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+bool CGeneralTextHandler::isRoEData()
+{
+	return !CResourceHandler::get("core")->existsResource(ResourcePath("DATA/TENTCOLR.TXT"));
+}
 
 /// Detects language and encoding of H3 text files based on matching against pregenerated footprints of H3 file
 void CGeneralTextHandler::detectInstallParameters()
@@ -92,7 +95,7 @@ void CGeneralTextHandler::detectInstallParameters()
 			deviations[i] += std::abs((footprint[j] - knownFootprints[i][j]));
 	}
 
-	size_t bestIndex = boost::range::min_element(deviations) - deviations.begin();
+	size_t bestIndex = std::ranges::min_element(deviations) - deviations.begin();
 
 	for (size_t i = 0; i < deviations.size(); ++i)
 		logGlobal->debug("Comparing to %s: %f", knownLanguages[i], deviations[i]);
@@ -109,10 +112,19 @@ void CGeneralTextHandler::detectInstallParameters()
 
 void CGeneralTextHandler::readToVector(const std::string & sourceID, const std::string & sourceName)
 {
+	bool resExists = CResourceHandler::get()->existsResource(ResourcePath(sourceName));
+	if(!resExists && roeMapping["newLines"][sourceName].isVector())
+		return;
+
 	CLegacyConfigParser parser(TextPath::builtin(sourceName));
 	size_t index = 0;
 	do
 	{
+		while(vstd::contains_if(roeMapping["newLines"][sourceName].Vector(), [index](JsonNode item) -> bool {
+			return item.Integer() == index;
+		}))
+			index += 1;
+
 		registerString( "core", {sourceID, index}, parser.readString());
 		index += 1;
 	}
@@ -120,27 +132,13 @@ void CGeneralTextHandler::readToVector(const std::string & sourceID, const std::
 }
 
 CGeneralTextHandler::CGeneralTextHandler():
-	tcommands        (*this, "core.tcommand" ),
-	hcommands        (*this, "core.hallinfo" ),
-	fcommands        (*this, "core.castinfo" ),
-	advobtxt         (*this, "core.advevent" ),
-	restypes         (*this, "core.restypes" ),
-	overview         (*this, "core.overview" ),
-	arraytxt         (*this, "core.arraytxt" ),
-	primarySkillNames(*this, "core.priskill" ),
-	jktexts          (*this, "core.jktext"   ),
-	tavernInfo       (*this, "core.tvrninfo" ),
-	turnDurations    (*this, "core.turndur"  ),
-	heroscrn         (*this, "core.heroscrn" ),
-	tentColors       (*this, "core.tentcolr" ),
-	levels           (*this, "core.skilllev" ),
-	zelp             (*this, "core.help"     ),
 	allTexts         (*this, "core.genrltxt" ),
-	// pseudo-array, that don't have H3 file with same name
-	seerEmpty        (*this, "core.seerhut.empty"  ),
-	seerNames        (*this, "core.seerhut.names"  ),
-	capColors        (*this, "vcmi.capitalColors"  )
+	zelp             (*this, "core.help"     ),
+
+	roeMapping()
 {
+	if(isRoEData())
+		roeMapping = JsonNode(JsonPath::builtin("config/roeStringMapping.json"));
 	readToVector("core.vcdesc",   "DATA/VCDESC.TXT"   );
 	readToVector("core.lcdesc",   "DATA/LCDESC.TXT"   );
 	readToVector("core.tcommand", "DATA/TCOMMAND.TXT" );
@@ -184,6 +182,11 @@ CGeneralTextHandler::CGeneralTextHandler():
 		size_t index = 0;
 		do
 		{
+			while(vstd::contains_if(roeMapping["newLines"]["DATA/GENRLTXT.TXT"].Vector(), [index](JsonNode item) -> bool {
+				return item.Integer() == index;
+			}))
+				index += 1;
+
 			registerString("core", {"core.genrltxt", index}, parser.readString());
 			index += 1;
 		}
@@ -194,6 +197,11 @@ CGeneralTextHandler::CGeneralTextHandler():
 		size_t index = 0;
 		do
 		{
+			while(vstd::contains_if(roeMapping["newLines"]["DATA/HELP.TXT"].Vector(), [index](JsonNode item) -> bool {
+				return item.Integer() == index;
+			}))
+				index += 1;
+
 			std::string first = parser.readString();
 			std::string second = parser.readString();
 			registerString("core", "core.help." + std::to_string(index) + ".hover", first);
@@ -218,11 +226,11 @@ CGeneralTextHandler::CGeneralTextHandler():
 		{
 			EQuestMission missionID = static_cast<EQuestMission>(i+1);
 
-			std::string questName = CQuest::missionName(missionID);
+			std::string questName = Quest::missionName(missionID);
 
 			for (size_t j = 0; j < 5; ++j)
 			{
-				std::string questState = CQuest::missionState(j);
+				std::string questState = Quest::missionState(j);
 
 				parser.readString(); //front description
 				for (size_t k = 0; k < 6; ++k)
@@ -323,7 +331,6 @@ std::string CGeneralTextHandler::getInstalledEncoding()
 
 std::vector<std::string> CGeneralTextHandler::findStringsWithPrefix(const std::string & prefix)
 {
-	std::lock_guard globalLock(globalTextMutex);
 	std::vector<std::string> result;
 
 	for(const auto & entry : stringsLocalizations)
@@ -357,5 +364,3 @@ std::pair<std::string, std::string> LegacyHelpContainer::operator[](size_t index
 		owner.translate(basePath + "." + std::to_string(index) + ".help")
 	};
 }
-
-VCMI_LIB_NAMESPACE_END

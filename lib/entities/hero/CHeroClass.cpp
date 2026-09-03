@@ -17,8 +17,6 @@
 
 #include <vstd/RNG.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 bool CHeroClass::isMagicHero() const
 {
 	return affinity == MAGIC;
@@ -77,21 +75,9 @@ std::string CHeroClass::getNameTextID() const
 	return TextIdentifier("heroClass", modScope, identifier, "name").get();
 }
 
-void CHeroClass::updateFrom(const JsonNode & data)
-{
-	//TODO: CHeroClass::updateFrom
-}
-
-void CHeroClass::serializeJson(JsonSerializeFormat & handler)
-{
-
-}
-
 CHeroClass::CHeroClass():
 	faction(0),
 	affinity(0),
 	defaultTavernChance(0)
 {
 }
-
-VCMI_LIB_NAMESPACE_END

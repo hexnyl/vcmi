@@ -11,8 +11,7 @@
 #pragma once
 
 #include "FactionMember.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "scripting/ApiTags.h"
 
 class CreatureID;
 class ResourceSet;
@@ -34,7 +33,7 @@ class DLL_LINKAGE CreatureEntity : public EntityT<IdType>, public ACreature
 {
 };
 
-class DLL_LINKAGE Creature : public CreatureEntity<CreatureID>
+class DLL_LINKAGE Creature : public CreatureEntity<CreatureID>, public scripting::ApiRawPointer<Creature>
 {
 protected:
 	// use getNamePlural/Singular instead
@@ -72,5 +71,3 @@ public:
 
 	virtual bool isDoubleWide() const = 0;
 };
-
-VCMI_LIB_NAMESPACE_END

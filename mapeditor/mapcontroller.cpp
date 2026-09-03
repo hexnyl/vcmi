@@ -27,9 +27,9 @@
 #include "../lib/modding/ModDescription.h"
 #include "../lib/TerrainHandler.h"
 #include "../lib/CSkillHandler.h"
-#include "../lib/spells/CSpellHandler.h"
 #include "../lib/CRandomGenerator.h"
 #include "../lib/serializer/CMemorySerializer.h"
+#include "../lib/spells/CSpellHandler.h"
 #include "mapsettings/modsettings.h"
 #include "mapview.h"
 #include "scenelayer.h"
@@ -38,13 +38,14 @@
 #include "inspector/inspector.h"
 #include "GameLibrary.h"
 #include "PlayerSelectionDialog.h"
+#include "translator.h"
 
 MapController::MapController(QObject * parent)
 	: QObject(parent)
 {
 }
 
-MapController::MapController(MainWindow * m): main(m)
+MapController::MapController(EditorMainWindow * m): main(m)
 {
 	for(int i = 0; i < MAX_LEVELS; i++)
 	{
@@ -69,6 +70,9 @@ void MapController::connectScenes()
 
 MapController::~MapController()
 {
+	if(_map)
+		Translator::instance().uninstall(*_map->texts);
+
 	main = nullptr;
 }
 
@@ -231,9 +235,15 @@ void MapController::repairMap(CMap * map)
 
 void MapController::setMap(std::unique_ptr<CMap> cmap)
 {
+	if(_map)
+		Translator::instance().uninstall(*_map->texts);
+
 	cmap->cb = _cb.get();
 	_map = std::move(cmap);
 	_cb->setMap(_map.get());
+
+	// map texts are inert data - the editor has to install them to render map-defined names
+	Translator::instance().install(_map->texts);
 	
 	repairMap();
 	

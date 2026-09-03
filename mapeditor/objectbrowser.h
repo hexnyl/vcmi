@@ -13,6 +13,7 @@
 #include <QSortFilterProxyModel>
 #include "../lib/GameConstants.h"
 
+
 class ObjectBrowserProxyModel : public QSortFilterProxyModel
 {
 public:

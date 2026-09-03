@@ -22,7 +22,6 @@
 #include "../CConfigHandler.h"
 #include "../texts/CGeneralTextHandler.h"
 #include "../CSkillHandler.h"
-#include "../spells/CSpellHandler.h"
 #include "../gameState/CGameState.h"
 #include "../mapping/CMap.h"
 #include "../CPlayerState.h"
@@ -31,21 +30,21 @@
 #include "../mapObjectConstructors/AObjectTypeHandler.h"
 #include "../mapObjectConstructors/CObjectClassesHandler.h"
 #include "../mapObjectConstructors/CommonConstructors.h"
-#include "../mapObjects/CGHeroInstance.h"
+#include "CGHeroInstance.h"
 #include "../networkPacks/PacksForClient.h"
 #include "../networkPacks/PacksForClientBattle.h"
 #include "../networkPacks/StackLocation.h"
-#include "../lib/gameState/UpgradeInfo.h"
+#include "../gameState/UpgradeInfo.h"
 
 #include <vstd/RNG.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 ///helpers
-static std::string visitedTxt(const bool visited)
+static MetaString visitedTxt(const bool visited)
 {
 	int id = visited ? 352 : 353;
-	return LIBRARY->generaltexth->allTexts[id];
+	MetaString result;
+	result.appendLocalString(EMetaText::GENERAL_TXT, id);
+	return result;
 }
 
 void CTeamVisited::setPropertyDer(ObjProperty what, ObjPropertyID identifier)
@@ -98,7 +97,14 @@ void CGMine::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstance *
 	{
 		BlockingDialog ynd(true,false);
 		ynd.player = h->tempOwner;
-		ynd.text.appendLocalString(EMetaText::ADVOB_TXT, isAbandoned() ? 84 : 187); //TODO: alternative text for custom guards
+		// ownedGuardedMessage applies to any owned mine with guards.
+		const bool useOwnedGuardedMessage = tempOwner != PlayerColor::NEUTRAL;
+		const std::string guardedMessageTextID = useOwnedGuardedMessage ? getResourceHandler()->getOwnedGuardedMessageTextID() : getResourceHandler()->getOnGuardedMessageTextID();
+		if(!guardedMessageTextID.empty())
+			ynd.text.appendTextID(guardedMessageTextID);
+		else
+			ynd.text.appendTextID("core.advevent.187");
+
 		gameEvents.showBlockingDialog(this, &ynd);
 		return;
 	}
@@ -108,13 +114,18 @@ void CGMine::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstance *
 
 void CGMine::initObj(IGameRandomizer & gameRandomizer)
 {
+	const auto configuredGuards = getResourceHandler()->getGuards(cb, gameRandomizer);
+	if(!configuredGuards.empty())
+	{
+		for(const auto & stack : configuredGuards)
+		{
+			auto guards = std::make_unique<CStackInstance>(cb, stack.getId(), stack.getCount());
+			putStack(SlotID(stacksCount()), std::move(guards));
+		}
+	}
+
 	if(isAbandoned())
 	{
-		//set guardians
-		int howManyGuards = gameRandomizer.getDefault().nextInt(abandonedMineGuards.minAmount, abandonedMineGuards.maxAmount);
-		auto guards = std::make_unique<CStackInstance>(cb, abandonedMineGuards.creature, howManyGuards);
-		putStack(SlotID(0), std::move(guards));
-
 		assert(!abandonedMineResources.empty());
 		if (!abandonedMineResources.empty())
 		{
@@ -166,27 +177,32 @@ ResourceSet CGMine::dailyIncome() const
 	return result;
 }
 
-std::string CGMine::getObjectName() const
+MetaString CGMine::getObjectName() const
 {
 	if(getResourceHandler()->getResourceType() == GameResID::NONE || getObjTypeIndex() < GameConstants::RESOURCE_QUANTITY)
-		return LIBRARY->generaltexth->translate("core.minename", getObjTypeIndex());
+		return MetaString::createFromTextID("core.minename", getObjTypeIndex());
 	else
-		return getResourceHandler()->getNameTranslated();
+		return MetaString::createFromTextID(getResourceHandler()->getNameTextID());
 }
 
-std::string CGMine::getHoverText(PlayerColor player) const
+MetaString CGMine::getHoverText(PlayerColor player) const
 {
-	std::string hoverName = CArmedInstance::getHoverText(player);
+	MetaString hoverName = CArmedInstance::getHoverText(player);
 
 	if (tempOwner != PlayerColor::NEUTRAL)
-		hoverName += "\n(" + producedResource.toResource()->getNameTranslated() + ")";
+	{
+		hoverName.appendEOL();
+		hoverName.appendRawString("(");
+		hoverName.appendName(producedResource);
+		hoverName.appendRawString(")");
+	}
 
 	if(stacksCount())
 	{
-		hoverName += "\n";
-		hoverName += LIBRARY->generaltexth->allTexts[202]; //Guarded by
-		hoverName += " ";
-		hoverName += getArmyDescription();
+		hoverName.appendEOL();
+		hoverName.appendTextID("core.genrltxt.202"); //Guarded by
+		hoverName.appendRawString(" ");
+		hoverName.append(getArmyDescription());
 	}
 	return hoverName;
 }
@@ -198,10 +214,11 @@ void CGMine::flagMine(IGameEventCallback & gameEvents, const PlayerColor & playe
 
 	InfoWindow iw;
 	iw.type = EInfoWindowMode::AUTO;
-	if(getResourceHandler()->getResourceType() == GameResID::NONE || getObjTypeIndex() < GameConstants::RESOURCE_QUANTITY)
-		iw.text.appendTextID(TextIdentifier("core.mineevnt", producedResource.getNum()).get()); //not use subID, abandoned mines uses default mine texts
+	const auto descriptionTextID = getResourceHandler()->getDescriptionTextID();
+	if(!descriptionTextID.empty())
+		iw.text.appendTextID(descriptionTextID);
 	else
-		iw.text.appendRawString(getResourceHandler()->getDescriptionTranslated());
+		iw.text.appendTextID("core.mineevnt", producedResource.getNum());
 	iw.player = player;
 	iw.components.emplace_back(ComponentType::RESOURCE_PER_DAY, producedResource, getProducedQuantity());
 	gameEvents.showInfoDialog(&iw);
@@ -238,7 +255,15 @@ void CGMine::battleFinished(IGameEventCallback & gameEvents, const CGHeroInstanc
 	{
 		if(isAbandoned())
 		{
-			hero->showInfoDialog(gameEvents, 85); //TODO: alternative text for custom guards
+			const auto onCaptureMessageTextID = getResourceHandler()->getOnCaptureMessageTextID();
+			if(!onCaptureMessageTextID.empty())
+			{
+				InfoWindow iw;
+				iw.type = EInfoWindowMode::AUTO;
+				iw.player = hero->tempOwner;
+				iw.text.appendTextID(onCaptureMessageTextID);
+				gameEvents.showInfoDialog(&iw);
+			}
 		}
 		flagMine(gameEvents, hero->tempOwner);
 	}
@@ -378,10 +403,17 @@ void CGTeleport::addToChannel(std::map<TeleportChannelID, std::shared_ptr<Telepo
 
 TeleportChannelID CGMonolith::findMeChannel(const std::vector<Obj> & IDs, MapObjectSubID SubID) const
 {
-	for(auto teleportObj : cb->gameState().getMap().getObjects<CGMonolith>())
+	// teleportChannels only ever contains already-paired monoliths, same as before this searched
+	auto matches = [&](const ObjectInstanceID & objId) -> bool
 	{
-		if(vstd::contains(IDs, teleportObj->ID) && teleportObj->subID == SubID)
-			return teleportObj->channel;
+		const auto * obj = cb->getObj(objId);
+		return obj && vstd::contains(IDs, obj->ID) && obj->subID == SubID;
+	};
+
+	for(const auto & [channelID, channel] : cb->gameState().getMap().teleportChannels)
+	{
+		if(vstd::contains_if(channel->entrances, matches) || vstd::contains_if(channel->exits, matches))
+			return channelID;
 	}
 	return TeleportChannelID();
 }
@@ -435,21 +467,35 @@ void CGMonolith::teleportDialogAnswered(IGameEventCallback & gameEvents, const C
 
 void CGMonolith::initObj(IGameRandomizer & gameRandomizer)
 {
-	std::vector<Obj> IDs;
-	IDs.push_back(ID);
+	// channel pairing is deferred to assignTeleportChannel()
 	switch(ID.toEnum())
 	{
 	case Obj::MONOLITH_ONE_WAY_ENTRANCE:
 		type = ENTRANCE;
-		IDs.emplace_back(Obj::MONOLITH_ONE_WAY_EXIT);
 		break;
 	case Obj::MONOLITH_ONE_WAY_EXIT:
 		type = EXIT;
-		IDs.emplace_back(Obj::MONOLITH_ONE_WAY_ENTRANCE);
 		break;
 	case Obj::MONOLITH_TWO_WAY:
 	default:
 		type = BOTH;
+		break;
+	}
+}
+
+void CGMonolith::assignTeleportChannel()
+{
+	std::vector<Obj> IDs;
+	IDs.push_back(ID);
+	switch(type)
+	{
+	case ENTRANCE:
+		IDs.emplace_back(Obj::MONOLITH_ONE_WAY_EXIT);
+		break;
+	case EXIT:
+		IDs.emplace_back(Obj::MONOLITH_ONE_WAY_ENTRANCE);
+		break;
+	default:
 		break;
 	}
 
@@ -577,7 +623,7 @@ void CGWhirlpool::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInsta
 		InfoWindow iw;
 		iw.type = EInfoWindowMode::AUTO;
 		iw.player = h->tempOwner;
-		iw.text.appendLocalString(EMetaText::ADVOB_TXT, 168);
+		iw.text.appendTextID("core.advevent.168");
 		iw.components.emplace_back(ComponentType::CREATURE, h->getCreature(targetstack)->getId(), -countToTake);
 		gameEvents.showInfoDialog(&iw);
 		gameEvents.changeStackCount(StackLocation(h->id, targetstack), -countToTake, ChangeValueMode::RELATIVE);
@@ -628,7 +674,9 @@ bool CGWhirlpool::isProtected(const CGHeroInstance * h)
 
 const CArtifactInstance * CGArtifact::getArtifactInstance() const
 {
-	assert(storedArtifact.hasValue());
+	if(!storedArtifact.hasValue())
+		return nullptr;
+
 	return cb->getArtInstance(storedArtifact);
 }
 
@@ -694,29 +742,33 @@ void CGArtifact::initObj(IGameRandomizer & gameRandomizer)
 	assert(!getArtifactInstance()->getParentNodes().empty());
 }
 
-std::string CGArtifact::getObjectName() const
+MetaString CGArtifact::getObjectName() const
 {
 	if(ID == Obj::SPELL_SCROLL || ID == Obj::ARTIFACT)
-		return getArtifactType().toEntity(LIBRARY)->getNameTranslated();
+		return MetaString::createFromTextID(getArtifactType().toEntity(LIBRARY)->getNameTextID());
 
 	// random artifact
 	return CGObjectInstance::getObjectName();
 }
 
-std::string CGArtifact::getPopupText(PlayerColor player) const
+MetaString CGArtifact::getPopupText(PlayerColor player) const
 {
 	if (settings["general"]["enableUiEnhancements"].Bool())
 	{
-		std::string description = getArtifactType().toEntity(LIBRARY)->getDescriptionTranslated();
+		// spell scroll description carries a placeholder for the spell name that must be erased
 		if (getArtifactType() == ArtifactID::SPELL_SCROLL)
-			ArtifactUtils::insertScrrollSpellName(description, SpellID::NONE); // erase text placeholder
-		return description;
+		{
+			std::string description = getArtifactType().toEntity(LIBRARY)->getDescriptionTranslated();
+			ArtifactUtils::insertScrrollSpellName(description, SpellID::NONE);
+			return MetaString::createFromRawString(description);
+		}
+		return MetaString::createFromTextID(getArtifactType().toEntity(LIBRARY)->getDescriptionTextID());
 	}
 	else
 		return getObjectName();
 }
 
-std::string CGArtifact::getPopupText(const CGHeroInstance * hero) const
+MetaString CGArtifact::getPopupText(const CGHeroInstance * hero) const
 {
 	return getPopupText(hero->getOwner());
 }
@@ -757,7 +809,7 @@ void CGArtifact::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstan
 					iw.text = message;
 				else
 				{
-					iw.text.appendLocalString(EMetaText::ADVOB_TXT,135);
+					iw.text.appendTextID("core.advevent.135");
 					iw.text.replaceName(spell);
 				}
 			}
@@ -766,7 +818,7 @@ void CGArtifact::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstan
 		}
 		else
 		{
-			iw.text.appendLocalString(EMetaText::ADVOB_TXT, 2);
+			iw.text.appendTextID("core.advevent.2");
 		}
 		gameEvents.showInfoDialog(&iw);
 		pick(gameEvents, h);
@@ -784,10 +836,11 @@ void CGArtifact::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstan
 				else
 				{
 					// TODO: Guard text is more complex in H3, see mantis issue 2325 for details
-					ynd.text.appendLocalString(EMetaText::GENERAL_TXT, 420);
+					ynd.text.appendTextID("core.genrltxt.420");
 					ynd.text.replaceRawString("");
-					ynd.text.replaceRawString(getArmyDescription());
-					ynd.text.replaceLocalString(EMetaText::GENERAL_TXT, 43); // creatures
+					// TODO: server-side resolution, remove once MetaString supports nested replacement
+					ynd.text.replaceRawString(getArmyDescription().toString(LIBRARY->staticTexts()));
+					ynd.text.replaceTextID("core.genrltxt.43"); // creatures
 				}
 				gameEvents.showBlockingDialog(this, &ynd);
 			}
@@ -1043,9 +1096,12 @@ void CGSirens::initObj(IGameRandomizer & gameRandomizer)
 	blockVisit = true;
 }
 
-std::string CGSirens::getHoverText(const CGHeroInstance * hero) const
+MetaString CGSirens::getHoverText(const CGHeroInstance * hero) const
 {
-	return getObjectName() + " " + visitedTxt(hero->hasBonusFrom(BonusSource::OBJECT_TYPE, BonusSourceID(ID)));
+	MetaString result = getObjectName();
+	result.appendRawString(" ");
+	result.append(visitedTxt(hero->hasBonusFrom(BonusSource::OBJECT_TYPE, BonusSourceID(ID))));
+	return result;
 }
 
 void CGSirens::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstance * h) const
@@ -1055,7 +1111,7 @@ void CGSirens::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstance
 	if(h->hasBonusFrom(BonusSource::OBJECT_TYPE, BonusSourceID(ID))) //has already visited Sirens
 	{
 		iw.type = EInfoWindowMode::AUTO;
-		iw.text.appendLocalString(EMetaText::ADVOB_TXT,133);
+		iw.text.appendTextID("core.advevent.133");
 	}
 	else
 	{
@@ -1081,13 +1137,13 @@ void CGSirens::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstance
 		if(xp)
 		{
 			xp = h->calculateXp(static_cast<int>(xp));
-			iw.text.appendLocalString(EMetaText::ADVOB_TXT,132);
+			iw.text.appendTextID("core.advevent.132");
 			iw.text.replaceNumber(static_cast<int>(xp));
 			gameEvents.giveExperience(h, xp);
 		}
 		else
 		{
-			iw.text.appendLocalString(EMetaText::ADVOB_TXT,134);
+			iw.text.appendTextID("core.advevent.134");
 		}
 	}
 	gameEvents.showInfoDialog(&iw);
@@ -1148,6 +1204,26 @@ BoatId CGShipyard::getBoatType() const
 	return createdBoat;
 }
 
+EPathfindingLayer CGShipyard::getBoatLayer() const
+{
+	auto handler = LIBRARY->objtypeh->getHandlerFor(Obj::BOAT, getBoatType());
+	auto boatConstructor = std::dynamic_pointer_cast<const BoatInstanceConstructor>(handler);
+	return boatConstructor->getLayer();
+}
+
+void CGShipyard::getBoatCost(ResourceSet & cost) const
+{
+	if (getBoatLayer() == EPathfindingLayer::AVIATE)
+	{
+		cost[EGameResID::WOOD] = 20;
+		cost[EGameResID::GOLD] = 5000;
+	}
+	else
+	{
+		IShipyard::getBoatCost(cost);
+	}
+}
+
 const IOwnableObject * CGShipyard::asOwnable() const
 {
 	return this;
@@ -1179,7 +1255,7 @@ void CGObelisk::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstanc
 
 	if(!wasVisited(team))
 	{
-		iw.text.appendLocalString(EMetaText::ADVOB_TXT, 96);
+		iw.text.appendTextID("core.advevent.96");
 		gameEvents.sendAndApply(iw);
 
 		// increment general visited obelisks counter
@@ -1194,7 +1270,7 @@ void CGObelisk::onHeroVisit(IGameEventCallback & gameEvents, const CGHeroInstanc
 	}
 	else
 	{
-		iw.text.appendLocalString(EMetaText::ADVOB_TXT, 97);
+		iw.text.appendTextID("core.advevent.97");
 		gameEvents.sendAndApply(iw);
 	}
 
@@ -1205,12 +1281,15 @@ void CGObelisk::initObj(IGameRandomizer & gameRandomizer)
 	cb->gameState().getMap().obeliskCount++;
 }
 
-std::string CGObelisk::getHoverText(PlayerColor player) const
+MetaString CGObelisk::getHoverText(PlayerColor player) const
 {
-	return getObjectName() + " " + visitedTxt(wasVisited(player));
+	MetaString result = getObjectName();
+	result.appendRawString(" ");
+	result.append(visitedTxt(wasVisited(player)));
+	return result;
 }
 
-std::string CGObelisk::getObjectDescription(PlayerColor player) const
+MetaString CGObelisk::getObjectDescription(PlayerColor player) const
 {
 	return visitedTxt(wasVisited(player));
 }
@@ -1256,17 +1335,17 @@ void HillFort::fillUpgradeInfo(UpgradeInfo & info, const CStackInstance &stack) 
 	}
 }
 
-std::string HillFort::getPopupText(PlayerColor player) const
+MetaString HillFort::getPopupText(PlayerColor player) const
 {
 	MetaString message = MetaString::createFromRawString("{%s}\r\n\r\n%s");
 
-	message.replaceName(ID, subID);
+	message.replaceTextID(getObjectNameTextID());
 	message.replaceTextID(getDescriptionToolTip());
 
-	return message.toString();
+	return message;
 }
 
-std::string HillFort::getPopupText(const CGHeroInstance * hero) const
+MetaString HillFort::getPopupText(const CGHeroInstance * hero) const
 {
 	return getPopupText(hero->getOwner());
 }
@@ -1282,5 +1361,3 @@ std::string HillFort::getUnavailableUpgradeMessage() const
 	assert(getObjectHandler()->getModScope() != "core");
 	return TextIdentifier(getObjectHandler()->getBaseTextID(), "unavailableUpgradeMessage").get();
 }
-
-VCMI_LIB_NAMESPACE_END

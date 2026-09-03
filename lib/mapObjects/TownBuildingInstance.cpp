@@ -14,12 +14,10 @@
 #include "CGTownInstance.h"
 #include "../callback/IGameInfoCallback.h"
 #include "../callback/IGameEventCallback.h"
-#include "../mapObjects/CGHeroInstance.h"
+#include "CGHeroInstance.h"
 #include "../entities/building/CBuilding.h"
 
 #include <vstd/RNG.h>
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 TownBuildingInstance::TownBuildingInstance(IGameInfoCallback * cb)
 	: IObjectInterface(cb)
@@ -111,7 +109,10 @@ Rewardable::Configuration TownRewardableBuildingInstance::generateConfiguration(
 
 void TownRewardableBuildingInstance::newTurn(IGameEventCallback & gameEvents, IGameRandomizer & gameRandomizer) const
 {
-	if (configuration.resetParameters.period != 0 && cb->getDate(Date::DAY) > 1 && ((cb->getDate(Date::DAY)-1) % configuration.resetParameters.period) == 0)
+	auto calendar = cb->getCalendar();
+	int currentDay = calendar.getCurrentDay();
+	ui32 resetDuration = configuration.getResetDuration(calendar);
+	if (resetDuration != 0 && currentDay > 1 && ((currentDay-1) % resetDuration) == 0)
 	{
 		auto newConfiguration = generateConfiguration(gameRandomizer);
 		gameEvents.setRewardableObjectConfiguration(town->id, getBuildingType(), newConfiguration);
@@ -234,5 +235,3 @@ void TownRewardableBuildingInstance::markAsScouted(IGameEventCallback & gameEven
 	// no-op - town building is always 'scouted' by owner
 }
 
-
-VCMI_LIB_NAMESPACE_END

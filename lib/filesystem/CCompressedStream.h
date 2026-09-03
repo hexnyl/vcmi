@@ -13,8 +13,6 @@
 
 struct z_stream_s;
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class DLL_LINKAGE DecompressionException : public std::runtime_error
 {
 public:
@@ -24,7 +22,7 @@ public:
 
 /// Abstract class that provides buffer for one-directional input streams (e.g. compressed data)
 /// Used for zip archives support and in .lod deflate compression
-class CBufferedStream : public CInputStream
+class DLL_LINKAGE CBufferedStream : public CInputStream
 {
 public:
 	CBufferedStream();
@@ -144,5 +142,3 @@ private:
 		FINISHED
 	};
 };
-
-VCMI_LIB_NAMESPACE_END

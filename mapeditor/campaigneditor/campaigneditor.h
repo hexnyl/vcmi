@@ -19,6 +19,7 @@ class CampaignState;
 class CMap;
 class EditorCallback;
 
+
 namespace Ui {
 class CampaignEditor;
 }
@@ -28,7 +29,7 @@ class CampaignEditor : public QWidget
 	Q_OBJECT
 
 public:
-	explicit CampaignEditor(EditorCallback * cb);
+	explicit CampaignEditor(EditorCallback * cb, QWidget * parent = nullptr);
 	~CampaignEditor();
 
 	void redraw();
@@ -45,7 +46,8 @@ private slots:
 	void on_actionSave_triggered();
 	void on_actionCampaignProperties_triggered();
 	void on_actionScenarioProperties_triggered();
-	
+    void on_actionExit_triggered();
+
 private:
 	bool getAnswerAboutUnsavedChanges();
 	void setTitle();
@@ -53,8 +55,11 @@ private:
 	bool validate();
 	void saveCampaign();
 	void loadCampaignFile(const QString & filenameSelect);
+	/// Swaps in the campaign being edited, keeping its texts installed in the editor translator
+	void setCampaign(std::shared_ptr<CampaignState> newState);
 
 	void closeEvent(QCloseEvent *event) override;
+	void changeEvent(QEvent *event) override;
 	void dragEnterEvent(QDragEnterEvent *event) override;
 	void dropEvent(QDropEvent *event) override;
 

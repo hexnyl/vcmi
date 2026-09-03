@@ -15,14 +15,14 @@
 #include "../networkPacks/BattleChanges.h"
 #include "../serializer/Serializeable.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include <vcmi/scripting/ApiTags.h>
 
 class ObstacleInfo;
 class ObstacleChanges;
 class JsonSerializeFormat;
 class SpellID;
 
-struct DLL_LINKAGE CObstacleInstance : public Serializeable
+struct DLL_LINKAGE CObstacleInstance : public Serializeable, public scripting::ApiSharedPointer<CObstacleInstance>
 {
 	enum EObstacleType : ui8
 	{
@@ -94,8 +94,7 @@ struct DLL_LINKAGE SpellCreatedObstacle : CObstacleInstance
 	AudioPath appearSound;
 	AnimationPath appearAnimation;
 	AnimationPath animation;
-
-	int animationYOffset;
+	AnimationPath removalAnimation;
 
 	BattleHexArray customSize;
 
@@ -138,5 +137,3 @@ struct DLL_LINKAGE SpellCreatedObstacle : CObstacleInstance
 		h & customSize;
 	}
 };
-
-VCMI_LIB_NAMESPACE_END

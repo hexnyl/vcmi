@@ -10,6 +10,8 @@
 #include "StdInc.h"
 #include "StackQueue.h"
 
+#include "BattleActionsController.h"
+#include "BattleFieldController.h"
 #include "BattleInterface.h"
 #include "BattleSiegeController.h"
 #include "BattleStacksController.h"
@@ -116,7 +118,7 @@ std::optional<uint32_t> StackQueue::getHoveredUnitIdIfAny() const
 }
 
 StackQueue::StackBox::StackBox(StackQueue * owner)
-	: CIntObject(SHOW_POPUP | HOVER)
+	: CIntObject(LCLICK | SHOW_POPUP | HOVER)
 	, owner(owner)
 {
 	OBJECT_CONSTRUCTION;
@@ -163,7 +165,7 @@ void StackQueue::StackBox::setUnit(const battle::Unit * unit, size_t turn, std::
 		// if mod is not up to date and does have arrow tower icon yet - second setFrame call will fail and retain previously set image
 		// for 1.2 release & later next line should be moved into 'else' block
 		icon->setFrame(unit->creatureIconIndex(), 0);
-		if(unit->unitType()->getId() == CreatureID::ARROW_TOWERS)
+		if(unit->isTurret())
 			icon->setFrame(owner->getSiegeShooterIconID(), 1);
 
 		roundRect->setEnabled(currentTurn.has_value());
@@ -232,10 +234,32 @@ void StackQueue::StackBox::show(Canvas & to)
 		to.drawBorder(background->pos, Colors::CYAN, 2);
 }
 
+BattleHex StackQueue::StackBox::getBoundUnitHex() const
+{
+	if(!boundUnitID.has_value())
+		return BattleHex::INVALID;
+
+	const auto * unit = owner->owner.getBattle()->battleGetUnitByID(*boundUnitID);
+	if(!unit || !unit->alive())
+		return BattleHex::INVALID;
+
+	return unit->getPosition();
+}
+
+void StackQueue::StackBox::clickPressed(const Point & cursorPosition)
+{
+	// clicking a stack in the queue is equivalent to clicking it on the battlefield
+	BattleHex hex = getBoundUnitHex();
+
+	if(hex.isValid())
+		owner->owner.actionsController->onHexLeftClicked(hex);
+}
+
 void StackQueue::StackBox::showPopupWindow(const Point & cursorPosition)
 {
-	auto stacks = owner->owner.getBattle()->battleGetAllStacks();
-	for(const CStack * stack : stacks)
-		if(boundUnitID.has_value() && stack->unitId() == *boundUnitID)
-			ENGINE->windows().createAndPushWindow<CStackWindow>(stack, true);
+	// right-clicking a stack in the queue is equivalent to right-clicking it on the battlefield
+	BattleHex hex = getBoundUnitHex();
+
+	if(hex.isValid())
+		owner->owner.actionsController->onHexRightClicked(hex);
 }

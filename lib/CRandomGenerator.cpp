@@ -13,8 +13,6 @@
 
 #include <boost/stacktrace.hpp>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace
 {
 template<typename T>
@@ -117,5 +115,3 @@ CRandomGenerator & CRandomGenerator::getDefault()
 	return defaultRand;
 }
 
-
-VCMI_LIB_NAMESPACE_END

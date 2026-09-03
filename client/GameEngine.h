@@ -9,11 +9,9 @@
  */
 #pragma once
 
-VCMI_LIB_NAMESPACE_BEGIN
 class Point;
 class AsyncRunner;
 class Rect;
-VCMI_LIB_NAMESPACE_END
 
 enum class MouseButton;
 class ShortcutHandler;
@@ -101,6 +99,10 @@ public:
 	bool isKeyboardCmdDown() const;
 	/// returns true if Shift is currently pressed down
 	bool isKeyboardShiftDown() const;
+
+	/// returns game data mode
+	bool isRoeData() const;
+	bool isDemoData() const;
 
 	IScreenHandler & screenHandler();
 	IRenderHandler & renderHandler();

@@ -17,8 +17,6 @@
 
 #include <vcmi/Artifact.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CArtifactSet;
 
 class DLL_LINKAGE CCombinedArtifact
@@ -137,8 +135,7 @@ public:
 	void addNewBonus(const std::shared_ptr<Bonus> & b) override;
 	const std::map<ArtBearer, std::vector<ArtifactPosition>> & getPossibleSlots() const;
 
-	virtual bool canBePutAt(const CArtifactSet * artSet, ArtifactPosition slot = ArtifactPosition::FIRST_AVAILABLE, bool assumeDestRemoved = false) const;
-	void updateFrom(const JsonNode & data);
+	bool canBePutAt(const CArtifactSet * artSet, ArtifactPosition slot = ArtifactPosition::FIRST_AVAILABLE, bool assumeDestRemoved = false) const;
 	// Is used for testing purposes only
 	void setImage(int32_t iconIndex, const std::string & image, const std::string & large);
 
@@ -147,5 +144,3 @@ public:
 
 	friend class CArtHandler;
 };
-
-VCMI_LIB_NAMESPACE_END

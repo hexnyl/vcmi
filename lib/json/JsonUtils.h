@@ -11,8 +11,6 @@
 
 #include "JsonNode.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 namespace JsonUtils
 {
 	/**
@@ -72,6 +70,15 @@ namespace JsonUtils
 	*/
 	DLL_LINKAGE bool validate(const JsonNode & node, const std::string & schemaName, const std::string & dataName);
 
+	/**
+	* @brief validate node against provided inline schema
+	* @param node - JsonNode to check
+	* @param schema - schema to validate against
+	* @param dataName - some way to identify data (printed in console in case of errors)
+	* @returns true if data in node fully compliant with schema
+	*/
+	DLL_LINKAGE bool validate(const JsonNode & node, const JsonNode & schema, const std::string & dataName);
+
 	/// get schema by json URI: vcmi:<name of file in schemas directory>#<entry in file, optional>
 	/// example: schema "vcmi:settings" is used to check user settings
 	DLL_LINKAGE const JsonNode & getSchema(const std::string & URI);
@@ -82,5 +89,3 @@ namespace JsonUtils
 	/// result[pathToKey][modID] -> node that was conflicting
 	DLL_LINKAGE void detectConflicts(JsonNode & result, const JsonNode & left, const JsonNode & right, const std::string & keyName);
 }
-
-VCMI_LIB_NAMESPACE_END

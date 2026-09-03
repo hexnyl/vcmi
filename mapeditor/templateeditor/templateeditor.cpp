@@ -21,16 +21,28 @@
 #include "GeometryAlgorithm.h"
 
 #include "../helper.h"
+#include "../editorfiledialog.h"
+
+#ifdef VCMI_ANDROID
+#include <QAndroidJniObject>
+#include <QtAndroid>
+#endif
 
 #include "../../lib/VCMIDirs.h"
 #include "../../lib/rmg/CRmgTemplate.h"
 #include "../../lib/texts/MetaString.h"
+#include "../translator.h"
 
-TemplateEditor::TemplateEditor():
+TemplateEditor::TemplateEditor(QWidget * parent): QWidget{parent},
 	ui(new Ui::TemplateEditor)
 {
 	ui->setupUi(this);
-	
+	setWindowFlag(Qt::Window);
+
+#ifdef VCMI_MOBILE
+	ui->menubar->setNativeMenuBar(false);
+#endif
+
 	setWindowIcon(QIcon{":/icons/menu-game.png"});
 	ui->actionOpen->setIcon(QIcon{":/icons/document-open.png"});
 	ui->actionSave->setIcon(QIcon{":/icons/document-save.png"});
@@ -60,7 +72,7 @@ TemplateEditor::TemplateEditor():
 	loadContent();
 
 	setTitle();
-	
+
 	setWindowModality(Qt::ApplicationModal);
 
 	show();
@@ -131,6 +143,9 @@ void TemplateEditor::autoPositionZones()
 {
 	auto & zones = templates[selectedTemplate]->getZones();
 
+	if (zones.empty())
+		return;
+
 	std::vector<GeometryAlgorithm::Node> nodes;
 	std::default_random_engine rng(0);
 	std::uniform_real_distribution<double> distX(0.0, 500);
@@ -145,11 +160,14 @@ void TemplateEditor::autoPositionZones()
 	}
 	std::vector<GeometryAlgorithm::Edge> edges;
 	for(auto & item : templates[selectedTemplate]->getConnectedZoneIds())
-		edges.push_back({
-			vstd::find_pos_if(nodes, [item](auto & elem){ return elem.id == item.getZoneA(); }),
-			vstd::find_pos_if(nodes, [item](auto & elem){ return elem.id == item.getZoneB(); })
-		});
-		
+	{
+		const auto from = vstd::find_pos_if(nodes, [item](auto & elem){ return elem.id == item.getZoneA(); });
+		const auto to = vstd::find_pos_if(nodes, [item](auto & elem){ return elem.id == item.getZoneB(); });
+		if (from >= nodes.size() || to >= nodes.size())
+			continue;
+		edges.push_back({from, to});
+	}
+
 	GeometryAlgorithm::forceDirectedLayout(nodes, edges, 1000, 500, 500);
 
 	for(auto & item : nodes)
@@ -169,7 +187,7 @@ void TemplateEditor::loadContent(bool autoPosition)
 		return;
 
 	auto & zones = templates[selectedTemplate]->getZones();
-	if(autoPosition || std::all_of(zones.begin(), zones.end(), [](auto & item){ return item.second->getVisiblePosition().x == 0 && item.second->getVisiblePosition().y == 0; }))
+	if(!zones.empty() && (autoPosition || std::all_of(zones.begin(), zones.end(), [](auto & item){ return item.second->getVisiblePosition().x == 0 && item.second->getVisiblePosition().y == 0; })))
 		autoPositionZones();
 
 	for(auto & zone : zones)
@@ -204,7 +222,7 @@ void TemplateEditor::loadContent(bool autoPosition)
 
 		updateZoneCards();
 	}
-	
+
 	updateConnectionLines(true);
 	updateZonePositions();
 
@@ -332,13 +350,13 @@ void TemplateEditor::loadZoneMenuContent(bool onlyPosition)
 {
 	if(selectedZone < 0 || selectedTemplate.empty())
 		return;
-	
+
 	auto setValue = [](auto& target, const auto& newValue){ target->setValue(newValue); };
 	auto & zone = templates[selectedTemplate]->getZones().at(selectedZone);
 	setValue(ui->spinBoxZoneVisPosX, zone->getVisiblePosition().x);
 	setValue(ui->spinBoxZoneVisPosY, zone->getVisiblePosition().y);
 	setValue(ui->doubleSpinBoxZoneVisSize, zone->getVisibleSize());
-	
+
 	if(onlyPosition)
 		return;
 
@@ -368,7 +386,7 @@ void TemplateEditor::loadZoneMenuContent(bool onlyPosition)
 	ui->spinBoxZoneLinkTerrain->setEnabled(zone->terrainTypeLikeZone != rmg::ZoneOptions::NO_ZONE);
 	ui->spinBoxZoneLinkTreasure->setEnabled(zone->treasureLikeZone != rmg::ZoneOptions::NO_ZONE);
 	ui->spinBoxZoneLinkCustomObjects->setEnabled(zone->customObjectsLikeZone != rmg::ZoneOptions::NO_ZONE);
-	
+
 	setValue(ui->spinBoxZoneId, zone->id);
 	ui->spinBoxZoneId->setEnabled(false);
 
@@ -392,7 +410,7 @@ void TemplateEditor::loadZoneMenuContent(bool onlyPosition)
 		{
 			MetaString str;
 			str.appendName(color);
-			ui->comboBoxZoneOwner->addItem(QString::fromStdString(str.toString()), QVariant(static_cast<int>(color + 1)));
+			ui->comboBoxZoneOwner->addItem(QString::fromStdString(str.toString(&Translator::instance())), QVariant(static_cast<int>(color + 1)));
 		}
 		for (int i = 0; i < ui->comboBoxZoneOwner->count(); ++i)
 			if (ui->comboBoxZoneOwner->itemData(i).toInt() == static_cast<int>(*zone->getOwner()))
@@ -425,6 +443,8 @@ void TemplateEditor::loadZoneMenuContent(bool onlyPosition)
 
 void TemplateEditor::loadZoneConnectionMenuContent()
 {
+	updateConnectionAddButton();
+
 	auto widget = ui->tableWidgetConnections;
 	auto & connections = templates[selectedTemplate]->connections;
 
@@ -504,6 +524,12 @@ void TemplateEditor::loadZoneConnectionMenuContent()
 		widget->setCellWidget(i, 5, delButton);
 	};
 	widget->resizeColumnsToContents();
+}
+
+void TemplateEditor::updateConnectionAddButton()
+{
+	const bool canAddConnection = templates.count(selectedTemplate) && templates[selectedTemplate]->getZones().size() >= 2;
+	ui->pushButtonConnectionAdd->setEnabled(canAddConnection);
 }
 
 void TemplateEditor::saveZoneMenuContent()
@@ -634,7 +660,7 @@ bool TemplateEditor::getAnswerAboutUnsavedChanges()
 void TemplateEditor::setTitle()
 {
 	QFileInfo fileInfo(filename);
-	QString title = QString("%1%2 - %3 (%4)").arg(fileInfo.fileName(), unsaved ? "*" : "", tr("VCMI Template Editor"), GameConstants::VCMI_VERSION.c_str());
+	QString title = QString("%1%2 - %3 (%4)").arg(fileInfo.fileName(), unsaved ? "*" : "", tr("VCMI Template Editor"), GameConstants::VCMI_VERSION);
 	setWindowTitle(title);
 }
 
@@ -725,7 +751,7 @@ bool TemplateEditor::validate()
 			}
 		}
 	}
-	
+
 	return true;
 }
 
@@ -739,8 +765,8 @@ void TemplateEditor::saveTemplate()
 
 void TemplateEditor::showTemplateEditor(QWidget *parent)
 {
-	auto * dialog = new TemplateEditor();
-	
+	auto * dialog = new TemplateEditor(parent);
+
 	dialog->move(parent->geometry().center() - dialog->rect().center());
 
 	dialog->setAttribute(Qt::WA_DeleteOnClose);
@@ -753,10 +779,12 @@ void TemplateEditor::on_actionOpen_triggered()
 
 	if(!getAnswerAboutUnsavedChanges())
 		return;
-	
-	auto filenameSelect = QFileDialog::getOpenFileName(this, tr("Open template"),
-		QString::fromStdString(VCMIDirs::get().userDataPath().make_preferred().string()),
-		tr("VCMI templates(*.json)"));
+
+	auto title = tr("Open template");
+	auto dir = QString::fromStdString(VCMIDirs::get().userDataPath().make_preferred().string());
+	auto filter = tr("VCMI templates(*.json)");
+
+	auto filenameSelect = EditorFileDialog::getOpenFileName(this, title, dir, filter, /*externalOnly=*/true);
 	if(filenameSelect.isEmpty())
 		return;
 
@@ -772,7 +800,12 @@ void TemplateEditor::on_actionSave_as_triggered()
 	if(!validate())
 		return;
 
-	auto filenameSelect = QFileDialog::getSaveFileName(this, tr("Save template"), "", tr("VCMI templates (*.json)"));
+	auto title = tr("Save template");
+	auto filter = tr("VCMI templates (*.json)");
+
+	QString contentUri;
+	auto filenameSelect = EditorFileDialog::getSaveFileName(this, title, QString(), filter,
+		contentUri, /*externalOnly=*/true);
 
 	if(filenameSelect.isNull())
 		return;
@@ -785,6 +818,8 @@ void TemplateEditor::on_actionSave_as_triggered()
 	filename = filenameSelect;
 	saveTemplate();
 	setTitle();
+
+	EditorFileDialog::writeFileToUri(filename, contentUri);
 }
 
 void TemplateEditor::on_actionNew_triggered()
@@ -795,7 +830,7 @@ void TemplateEditor::on_actionNew_triggered()
 	templates = std::map<std::string, std::shared_ptr<CRmgTemplate>>();
 	templates["TemplateEditor"] = std::make_shared<CRmgTemplate>();
 	setDefaultContent(templates["TemplateEditor"]);
-	
+
 	changed();
 	initContent();
 	loadContent();
@@ -806,7 +841,7 @@ void TemplateEditor::on_actionSave_triggered()
 {
 	if(filename.isNull())
 		on_actionSave_as_triggered();
-	else 
+	else
 		saveTemplate();
 	setTitle();
 }
@@ -880,9 +915,26 @@ void TemplateEditor::on_comboBoxTemplateSelection_activated(int index)
 void TemplateEditor::closeEvent(QCloseEvent *event)
 {
 	if(getAnswerAboutUnsavedChanges())
+	{
 		QWidget::closeEvent(event);
+#ifdef VCMI_ANDROID
+		QApplication::quit();
+		QAndroidJniObject activity = QtAndroid::androidActivity();
+		if(activity.isValid())
+			activity.callMethod<void>("finishAffinity");
+#else
+		parentWidget()->show();
+#endif
+	}
 	else
 		event->ignore();
+}
+
+void TemplateEditor::changeEvent(QEvent *event)
+{
+	QWidget::changeEvent(event);
+	if(event->type() == QEvent::LanguageChange)
+		ui->retranslateUi(this);
 }
 
 void TemplateEditor::on_pushButtonAddSubTemplate_clicked()
@@ -941,19 +993,19 @@ void TemplateEditor::on_pushButtonRenameSubTemplate_clicked()
 	selectedTemplate = text.toStdString();
 }
 
-void TemplateEditor::on_spinBoxZoneVisPosX_valueChanged()
+void TemplateEditor::on_spinBoxZoneVisPosX_valueChanged(int)
 {
 	if(ui->spinBoxZoneVisPosX->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxZoneVisPosY_valueChanged()
+void TemplateEditor::on_spinBoxZoneVisPosY_valueChanged(int)
 {
 	if(ui->spinBoxZoneVisPosY->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_doubleSpinBoxZoneVisSize_valueChanged()
+void TemplateEditor::on_doubleSpinBoxZoneVisSize_valueChanged(double)
 {
 	if(ui->doubleSpinBoxZoneVisSize->hasFocus())
 		saveZoneMenuContent();
@@ -963,7 +1015,7 @@ void TemplateEditor::on_comboBoxZoneType_currentTextChanged(const QString &text)
 {
 	if(!ui->comboBoxZoneType->hasFocus())
 		return;
-	ui->comboBoxZoneType->clearFocus(); 
+	ui->comboBoxZoneType->clearFocus();
 
 	saveZoneMenuContent();
 	loadZoneMenuContent();
@@ -981,55 +1033,55 @@ void TemplateEditor::on_comboBoxForcedLevel_currentTextChanged(const QString &te
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxZoneSize_valueChanged()
+void TemplateEditor::on_spinBoxZoneSize_valueChanged(int)
 {
 	if(ui->spinBoxZoneSize->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxTownCountPlayer_valueChanged()
+void TemplateEditor::on_spinBoxTownCountPlayer_valueChanged(int)
 {
 	if(ui->spinBoxTownCountPlayer->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxCastleCountPlayer_valueChanged()
+void TemplateEditor::on_spinBoxCastleCountPlayer_valueChanged(int)
 {
 	if(ui->spinBoxCastleCountPlayer->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxTownDensityPlayer_valueChanged()
+void TemplateEditor::on_spinBoxTownDensityPlayer_valueChanged(int)
 {
 	if(ui->spinBoxTownDensityPlayer->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxCastleDensityPlayer_valueChanged()
+void TemplateEditor::on_spinBoxCastleDensityPlayer_valueChanged(int)
 {
 	if(ui->spinBoxCastleDensityPlayer->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxTownCountNeutral_valueChanged()
+void TemplateEditor::on_spinBoxTownCountNeutral_valueChanged(int)
 {
 	if(ui->spinBoxTownCountNeutral->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxCastleCountNeutral_valueChanged()
+void TemplateEditor::on_spinBoxCastleCountNeutral_valueChanged(int)
 {
 	if(ui->spinBoxCastleCountNeutral->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxTownDensityNeutral_valueChanged()
+void TemplateEditor::on_spinBoxTownDensityNeutral_valueChanged(int)
 {
 	if(ui->spinBoxTownDensityNeutral->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxCastleDensityNeutral_valueChanged()
+void TemplateEditor::on_spinBoxCastleDensityNeutral_valueChanged(int)
 {
 	if(ui->spinBoxCastleDensityNeutral->hasFocus())
 		saveZoneMenuContent();
@@ -1053,37 +1105,37 @@ void TemplateEditor::on_comboBoxMonsterStrength_currentTextChanged(const QString
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxZoneId_valueChanged()
+void TemplateEditor::on_spinBoxZoneId_valueChanged(int)
 {
 	if(ui->spinBoxZoneId->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxZoneLinkTowns_valueChanged()
+void TemplateEditor::on_spinBoxZoneLinkTowns_valueChanged(int)
 {
 	if(ui->spinBoxZoneLinkTowns->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxZoneLinkMines_valueChanged()
+void TemplateEditor::on_spinBoxZoneLinkMines_valueChanged(int)
 {
 	if(ui->spinBoxZoneLinkMines->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxZoneLinkTerrain_valueChanged()
+void TemplateEditor::on_spinBoxZoneLinkTerrain_valueChanged(int)
 {
 	if(ui->spinBoxZoneLinkTerrain->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxZoneLinkTreasure_valueChanged()
+void TemplateEditor::on_spinBoxZoneLinkTreasure_valueChanged(int)
 {
 	if(ui->spinBoxZoneLinkTreasure->hasFocus())
 		saveZoneMenuContent();
 }
 
-void TemplateEditor::on_spinBoxZoneLinkCustomObjects_valueChanged()
+void TemplateEditor::on_spinBoxZoneLinkCustomObjects_valueChanged(int)
 {
 	if(ui->spinBoxZoneLinkCustomObjects->hasFocus())
 		saveZoneMenuContent();
@@ -1159,8 +1211,20 @@ void TemplateEditor::on_checkBoxAllowedWaterContentIslands_stateChanged(int stat
 
 void TemplateEditor::on_pushButtonConnectionAdd_clicked()
 {
+	const auto & zones = templates[selectedTemplate]->getZones();
+	if (zones.size() < 2)
+	{
+		QMessageBox::warning(this, tr("Too few zones"), tr("Create at least two zones before adding a connection."));
+		return;
+	}
+
 	auto & connections = templates[selectedTemplate]->connections;
-	connections.push_back(rmg::ZoneConnection());
+	rmg::ZoneConnection connection;
+	auto zoneIt = zones.begin();
+	connection.zoneA = zoneIt->first;
+	++zoneIt;
+	connection.zoneB = zoneIt->first;
+	connections.push_back(connection);
 	loadZoneConnectionMenuContent();
 }
 
@@ -1239,4 +1303,9 @@ void TemplateEditor::on_pushButtonEntitiesBannedHeroes_clicked()
 {
 	EntityIds entitiesVariant = std::ref(templates[selectedTemplate]->bannedHeroes);
 	EntitiesSelector::showEntitiesSelector(entitiesVariant);
+}
+
+void TemplateEditor::on_actionExit_triggered()
+{
+	close();
 }

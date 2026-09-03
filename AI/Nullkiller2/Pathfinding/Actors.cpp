@@ -46,7 +46,7 @@ ChainActor::ChainActor(const CGHeroInstance * hero, HeroRole heroRole, uint64_t 
 	initialMovement = hero->movementPointsRemaining();
 	initialTurn = 0;
 	armyValue = getHeroArmyStrengthWithCommander(hero, hero);
-	heroFightingStrength = hero->getHeroStrength();
+	heroFightingStrength = normalizeHeroStrength(hero->getHeroStrength());
 }
 
 ChainActor::ChainActor(const ChainActor * carrier, const ChainActor * other, const CCreatureSet * heroArmy)
@@ -74,12 +74,12 @@ int ChainActor::maxMovePoints(CGPathNode::ELayer layer)
 		throw std::logic_error("Asking movement points for static actor");
 #endif
 
-	return hero->movementPointsLimit(layer != EPathfindingLayer::SAIL);
+	return hero->getTurnInfo(0)->getMaxMovePoints(layer);
 }
 
 std::string ChainActor::toString() const
 {
-	return hero->getNameTranslated();
+	return hero->getNameTextID();
 }
 
 ObjectActor::ObjectActor(const CGObjectInstance * obj, const CCreatureSet * army, uint64_t chainMask, int initialTurn)
@@ -94,7 +94,7 @@ const CGObjectInstance * ObjectActor::getActorObject() const
 
 std::string ObjectActor::toString() const
 {
-	return object->getObjectName() + " at " + object->visitablePos().toString();
+	return object->getObjectNameTextID() + " at " + object->visitablePos().toString();
 }
 
 HeroActor::HeroActor(const CGHeroInstance * hero, HeroRole heroRole, uint64_t chainMask, const Nullkiller * aiNk)
@@ -215,14 +215,7 @@ ExchangeResult HeroExchangeMap::tryExchangeNoLock(const ChainActor * other)
 	ExchangeResult result;
 
 	{
-		std::shared_lock lock(sync, std::try_to_lock);
-
-		if(!lock.owns_lock())
-		{
-			result.lockAcquired = false;
-
-			return result;
-		}
+		std::shared_lock lock(sync);
 
 		auto position = exchangeMap.find(other);
 
@@ -235,13 +228,14 @@ ExchangeResult HeroExchangeMap::tryExchangeNoLock(const ChainActor * other)
 	}
 
 	{
-		std::unique_lock uniqueLock(sync, std::try_to_lock);
+		std::unique_lock uniqueLock(sync);
 
-		if(!uniqueLock.owns_lock())
+		auto position = exchangeMap.find(other);
+		if(position != exchangeMap.end())
 		{
-			result.lockAcquired = false;
+			result.actor = position->second;
 
-			return result;
+			return result; // inserted while waiting for unique lock
 		}
 
 		auto inserted = exchangeMap.insert(std::pair<const ChainActor *, HeroActor *>(other, nullptr));
@@ -469,5 +463,5 @@ TownGarrisonActor::TownGarrisonActor(const CGTownInstance * town, uint64_t chain
 
 std::string TownGarrisonActor::toString() const
 {
-	return town->getNameTranslated();
+	return town->getNameTextID();
 }

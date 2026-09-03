@@ -11,8 +11,6 @@
 
 #include "../lib/constants/EntityIdentifiers.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CGHeroInstance;
 class CGTownInstance;
 class CArmedInstance;
@@ -20,8 +18,6 @@ class JsonNode;
 struct CGPath;
 class int3;
 struct CPathsInfo;
-
-VCMI_LIB_NAMESPACE_END
 
 class CPlayerInterface;
 
@@ -77,7 +73,7 @@ public:
 	void swapWanderingHero(size_t pos1, size_t pos2);
 
 	void setPath(const CGHeroInstance * h, const CGPath & path);
-	bool setPath(const CGHeroInstance * h, const int3 & destination);
+	bool setPath(const CGHeroInstance * h, const int3 & destination, const EPathfindingLayer & layer);
 
 	const CGPath & getPath(const CGHeroInstance * h) const;
 	bool hasPath(const CGHeroInstance * h) const;

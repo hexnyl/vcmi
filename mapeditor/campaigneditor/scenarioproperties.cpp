@@ -8,12 +8,16 @@
  *
  */
 #include "StdInc.h"
+#include "../helper.h"
 #include "scenarioproperties.h"
 #include "ui_scenarioproperties.h"
 #include "startingbonus.h"
 #include "campaigneditor.h"
 
 #include "callback/EditorCallback.h"
+#include "../editorfiledialog.h"
+
+#include "../../lib/VCMIDirs.h"
 #include "../../lib/GameLibrary.h"
 #include "../../lib/CCreatureHandler.h"
 #include "../../lib/texts/CGeneralTextHandler.h"
@@ -22,6 +26,7 @@
 #include "../../lib/campaign/CampaignState.h"
 #include "../../lib/mapping/CMap.h"
 #include "../../lib/constants/StringConstants.h"
+#include "../translator.h"
 
 ScenarioProperties::ScenarioProperties(std::shared_ptr<CampaignState> campaignState, CampaignScenarioID scenario, EditorCallback * cb):
 	ui(new Ui::ScenarioProperties),
@@ -31,19 +36,19 @@ ScenarioProperties::ScenarioProperties(std::shared_ptr<CampaignState> campaignSt
 	cb(cb)
 {
 	ui->setupUi(this);
-
+	Helper::decorateDialog(this);
 	setWindowTitle(tr("Scenario Properties"));
 	
 	setWindowModality(Qt::ApplicationModal);
 
 	ui->lineEditRegionName->setText(QString::fromStdString(campaignState->getRegions().regions.at(scenario).infix));
-	ui->plainTextEditRightClickText->setPlainText(QString::fromStdString(campaignState->scenarios.at(scenario).regionText.toString()));
+	ui->plainTextEditRightClickText->setPlainText(QString::fromStdString(campaignState->scenarios.at(scenario).regionText.toString(&Translator::instance())));
 	
 	for(int i = 0, index = 0; i < PlayerColor::PLAYER_LIMIT_I; ++i)
 	{
 		MetaString str;
 		str.appendName(PlayerColor(i));
-		ui->comboBoxRegionColor->addItem(QString::fromStdString(str.toString()), QVariant(i));
+		ui->comboBoxRegionColor->addItem(QString::fromStdString(str.toString(&Translator::instance())), QVariant(i));
 		if(i == campaignState->scenarios.at(scenario).regionColor)
 			ui->comboBoxRegionColor->setCurrentIndex(index);
 		++index;
@@ -51,7 +56,7 @@ ScenarioProperties::ScenarioProperties(std::shared_ptr<CampaignState> campaignSt
 
 	for(int i = 0, index = 0; i < 5; ++i)
 	{
-		ui->comboBoxDefaultDifficulty->addItem(QString::fromStdString(LIBRARY->generaltexth->arraytxt[142 + i]), QVariant(i));
+		ui->comboBoxDefaultDifficulty->addItem(QString::fromStdString(Translator::instance().translate("core.arraytxt", 142 + i)), QVariant(i));
 		if(i == campaignState->scenarios.at(scenario).difficulty)
 			ui->comboBoxDefaultDifficulty->setCurrentIndex(index);
 		++index;
@@ -72,13 +77,13 @@ ScenarioProperties::ScenarioProperties(std::shared_ptr<CampaignState> campaignSt
 	ui->lineEditPrologueVideoLoop->setText(QString::fromStdString(campaignState->scenarios.at(scenario).prolog.prologVideo.second.getName()));
 	ui->lineEditPrologueMusic->setText(QString::fromStdString(campaignState->scenarios.at(scenario).prolog.prologMusic.getName()));
 	ui->lineEditPrologueVoice->setText(QString::fromStdString(campaignState->scenarios.at(scenario).prolog.prologVoice.getName()));
-	ui->plainTextEditPrologueText->setPlainText(QString::fromStdString(campaignState->scenarios.at(scenario).prolog.prologText.toString()));
+	ui->plainTextEditPrologueText->setPlainText(QString::fromStdString(campaignState->scenarios.at(scenario).prolog.prologText.toString(&Translator::instance())));
 	ui->checkBoxEpilogueEnabled->setChecked(campaignState->scenarios.at(scenario).epilog.hasPrologEpilog);
 	ui->lineEditEpilogueVideo->setText(QString::fromStdString(campaignState->scenarios.at(scenario).epilog.prologVideo.first.getName()));
 	ui->lineEditEpilogueVideoLoop->setText(QString::fromStdString(campaignState->scenarios.at(scenario).epilog.prologVideo.second.getName()));
 	ui->lineEditEpilogueMusic->setText(QString::fromStdString(campaignState->scenarios.at(scenario).epilog.prologMusic.getName()));
 	ui->lineEditEpilogueVoice->setText(QString::fromStdString(campaignState->scenarios.at(scenario).epilog.prologVoice.getName()));
-	ui->plainTextEditEpilogueText->setPlainText(QString::fromStdString(campaignState->scenarios.at(scenario).epilog.prologText.toString()));
+	ui->plainTextEditEpilogueText->setPlainText(QString::fromStdString(campaignState->scenarios.at(scenario).epilog.prologText.toString(&Translator::instance())));
 
 	ui->checkBoxCrossoverExperience->setChecked(campaignState->scenarios.at(scenario).travelOptions.whatHeroKeeps.experience);
 	ui->checkBoxCrossoverPrimarySkills->setChecked(campaignState->scenarios.at(scenario).travelOptions.whatHeroKeeps.primarySkills);
@@ -129,15 +134,24 @@ ScenarioProperties::ScenarioProperties(std::shared_ptr<CampaignState> campaignSt
 
 ScenarioProperties::~ScenarioProperties()
 {
+	if(map)
+		Translator::instance().uninstall(*map->texts);
 	delete ui;
 }
 
 void ScenarioProperties::reloadMapRelatedUi()
 {
+	if(map)
+		Translator::instance().uninstall(*map->texts);
+
 	map = campaignState->getMap(scenario, cb);
 
+	// the scenario map carries the names this dialog shows - its own and those of its heroes
+	if(map)
+		Translator::instance().install(map->texts);
+
 	ui->lineEditMapFile->setText(QString::fromStdString(campaignState->scenarios.at(scenario).mapName));
-	ui->lineEditScenarioName->setText(map ? QString::fromStdString(map->name.toString()) : tr("No map"));
+	ui->lineEditScenarioName->setText(map ? QString::fromStdString(map->name.toString(&Translator::instance())) : tr("No map"));
 	if(!map)
 		ui->lineEditScenarioName->setStyleSheet("background-color: red;");
 	else
@@ -185,7 +199,7 @@ void ScenarioProperties::reloadMapRelatedUi()
 			str.appendRawString(" (");
 			str.appendName(PlayerColor(i));
 			str.appendRawString(")");
-			ui->comboBoxStartingBonusPlayerPosition->addItem(QString::fromStdString(str.toString()), QVariant(i));
+			ui->comboBoxStartingBonusPlayerPosition->addItem(QString::fromStdString(str.toString(&Translator::instance())), QVariant(i));
 		}
 		int index = ui->comboBoxStartingBonusPlayerPosition->findData(campaignState->scenarios.at(scenario).travelOptions.playerColor.getNum());
 		if(index != -1)
@@ -388,7 +402,11 @@ void ScenarioProperties::on_pushButtonCreatureTypeNone_clicked()
 
 void ScenarioProperties::on_pushButtonImport_clicked()
 {
-	auto filename = QFileDialog::getOpenFileName(this, tr("Open map"), "", tr("All supported maps (*.vmap *.h3m);;VCMI maps(*.vmap);;HoMM3 maps(*.h3m)"));
+	auto title = tr("Open map");
+	auto dir = QString::fromStdString(VCMIDirs::get().userDataPath().make_preferred().string());
+	auto filter = tr("All supported maps (*.vmap *.h3m);;VCMI maps(*.vmap);;HoMM3 maps(*.h3m)");
+
+	auto filename = EditorFileDialog::getOpenFileName(this, title, dir, filter);
 	if(filename.isEmpty())
 		return;
 
@@ -421,7 +439,13 @@ void ScenarioProperties::on_pushButtonExport_clicked()
 {
 	auto mapName = QString::fromStdString(campaignState->scenarios.at(scenario).mapName);
 	bool isVmap = mapName.toLower().endsWith(".vmap");
-	QString fileName = QFileDialog::getSaveFileName(nullptr, tr("Save map"), mapName, isVmap ? tr("VCMI maps (*.vmap);") : tr("HoMM3 maps (*.h3m);"));
+
+	auto title = tr("Save map");
+	auto dir = QString::fromStdString(VCMIDirs::get().userDataPath().make_preferred().string());
+	auto filter = isVmap ? tr("VCMI maps (*.vmap);") : tr("HoMM3 maps (*.h3m);");
+
+	QString contentUri;
+	QString fileName = EditorFileDialog::getSaveFileName(this, title, dir, filter, contentUri);
 	if (fileName.isEmpty())
 		return;
 
@@ -436,6 +460,8 @@ void ScenarioProperties::on_pushButtonExport_clicked()
 	QByteArray fileData(reinterpret_cast<const char*>(byteArray.data()), byteArray.size());
 
 	file.write(fileData);
+
+	EditorFileDialog::writeFileToUri(fileName, contentUri);
 }
 
 void ScenarioProperties::on_pushButtonRemove_clicked()

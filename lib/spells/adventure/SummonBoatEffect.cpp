@@ -12,15 +12,13 @@
 
 #include "SummonBoatEffect.h"
 
-#include "../CSpellHandler.h"
+#include "../CSpell.h"
 
 #include "../../mapObjects/CGHeroInstance.h"
 #include "../../mapObjects/MiscObjects.h"
 #include "../../mapping/CMap.h"
 #include "../../modding/IdentifierStorage.h"
 #include "../../networkPacks/PacksForClient.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
 
 SummonBoatEffect::SummonBoatEffect(const CSpell * s, const JsonNode & config)
 	: owner(s)
@@ -55,7 +53,7 @@ bool SummonBoatEffect::canBeCastImpl(spells::Problem & problem, const IGameInfoC
 	if(caster->getHeroCaster()->inBoat())
 	{
 		MetaString message = MetaString::createFromTextID("core.genrltxt.333");
-		caster->getCasterName(message);
+		message.replaceTextID(caster->getCasterNameTextID());
 		problem.add(std::move(message));
 		return false;
 	}
@@ -65,7 +63,7 @@ bool SummonBoatEffect::canBeCastImpl(spells::Problem & problem, const IGameInfoC
 	if(summonPos.x < 0)
 	{
 		MetaString message = MetaString::createFromTextID("core.genrltxt.334");
-		caster->getCasterName(message);
+		message.replaceTextID(caster->getCasterNameTextID());
 		problem.add(std::move(message));
 		return false;
 	}
@@ -80,8 +78,8 @@ ESpellCastResult SummonBoatEffect::applyAdventureEffects(SpellCastEnvironment * 
 	{
 		InfoWindow iw;
 		iw.player = parameters.caster->getCasterOwner();
-		iw.text.appendLocalString(EMetaText::GENERAL_TXT, 336); //%s tried to summon a boat, but failed.
-		parameters.caster->getCasterName(iw.text);
+		iw.text.appendTextID("core.genrltxt.336"); //%s tried to summon a boat, but failed.
+		iw.text.replaceTextID(parameters.caster->getCasterNameTextID());
 		env->apply(iw);
 		return ESpellCastResult::OK;
 	}
@@ -120,7 +118,7 @@ ESpellCastResult SummonBoatEffect::applyAdventureEffects(SpellCastEnvironment * 
 	{
 		InfoWindow iw;
 		iw.player = parameters.caster->getCasterOwner();
-		iw.text.appendLocalString(EMetaText::GENERAL_TXT, 335); //There are no boats to summon.
+		iw.text.appendTextID("core.genrltxt.335"); //There are no boats to summon.
 		env->apply(iw);
 		return ESpellCastResult::ERROR;
 	}
@@ -130,5 +128,3 @@ ESpellCastResult SummonBoatEffect::applyAdventureEffects(SpellCastEnvironment * 
 	}
 	return ESpellCastResult::OK;
 }
-
-VCMI_LIB_NAMESPACE_END

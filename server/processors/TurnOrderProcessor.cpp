@@ -192,10 +192,11 @@ bool TurnOrderProcessor::computeCanActSimultaneously(PlayerColor active, PlayerC
 			return false;
 	}
 
-	if (gameHandler->gameInfo().getDate(Date::DAY) < simturnsTurnsMinLimit())
+	int currentDay = gameHandler->gameInfo().getCalendar().getCurrentDay();
+	if (currentDay < simturnsTurnsMinLimit())
 		return true;
 
-	if (gameHandler->gameInfo().getDate(Date::DAY) > simturnsTurnsMaxLimit())
+	if (currentDay > simturnsTurnsMaxLimit())
 		return false;
 
 	if (gameHandler->gameInfo().getStartInfo()->simturnsInfo.ignoreAlliedContacts && activeInfo->team == waitingInfo->team)
@@ -222,9 +223,6 @@ bool TurnOrderProcessor::mustActBefore(PlayerColor left, PlayerColor right) cons
 
 	if (leftInfo->isHuman() && !rightInfo->isHuman())
 		return true;
-
-	if (!leftInfo->isHuman() && rightInfo->isHuman())
-		return false;
 
 	return false;
 }
@@ -277,9 +275,7 @@ void TurnOrderProcessor::doStartPlayerTurn(PlayerColor which)
 	assert(gameHandler->gameInfo().getPlayerState(which));
 	assert(gameHandler->gameInfo().getPlayerState(which)->status == EPlayerStatus::INGAME);
 
-	// Only if player is actually starting his turn (and not loading from save)
-	if (!actingPlayers.count(which))
-		gameHandler->onPlayerTurnStarted(which);
+	const bool wasAlreadyActing = actingPlayers.count(which);
 
 	actingPlayers.insert(which);
 	awaitingPlayers.erase(which);
@@ -297,7 +293,26 @@ void TurnOrderProcessor::doStartPlayerTurn(PlayerColor which)
 		pst.queryID = turnQuery->queryID;
 	}
 
-	gameHandler->sendAndApply(pst);
+	if(isHuman)
+	{
+		gameHandler->sendAndApply(pst);
+
+		// Only if player is actually starting his turn (and not loading from save).
+		// Send PlayerStartsTurn first so the client enters the new-turn flow before
+		// deferred turn-start visits (e.g. Battle Scholar Academy) start producing dialogs.
+		if (!wasAlreadyActing)
+			gameHandler->onPlayerTurnStarted(which);
+	}
+	else
+	{
+		// AI starts acting immediately from PlayerStartsTurn/yourTurn, so keep the
+		// original ordering and prepare deferred turn-start visits first.
+		if (!wasAlreadyActing)
+			gameHandler->onPlayerTurnStarted(which);
+
+		gameHandler->sendAndApply(pst);
+	}
+
 	assert(!actingPlayers.empty());
 }
 
@@ -424,10 +439,10 @@ bool TurnOrderProcessor::isPlayerAwaitsNewDay(PlayerColor which) const
 
 void TurnOrderProcessor::setMinSimturnsDuration(int days)
 {
-	simturnsMinDurationDays = gameHandler->gameInfo().getDate(Date::DAY) + days;
+	simturnsMinDurationDays = gameHandler->gameInfo().getCalendar().getCurrentDay() + days;
 }
 
 void TurnOrderProcessor::setMaxSimturnsDuration(int days)
 {
-	simturnsMaxDurationDays = gameHandler->gameInfo().getDate(Date::DAY) + days;
+	simturnsMaxDurationDays = gameHandler->gameInfo().getCalendar().getCurrentDay() + days;
 }

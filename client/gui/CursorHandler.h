@@ -98,6 +98,10 @@ namespace Cursor
 		//POINTER_COPY       = 40, // probably unused
 		TELEPORT         = 41,
 		SCUTTLE_BOAT     = 42,
+		T1_AVIATE        =  43,
+		T2_AVIATE        =  44,
+		T3_AVIATE        =  45,
+		T4_AVIATE        =  46,
 
 		COUNT
 	};
@@ -135,8 +139,12 @@ class CursorHandler final
 	int32_t currentFrame {};
 	Cursor::ShowType showType;
 	bool showing;
+	bool showingRequested;
+	bool controllerNativeHidden;
+	bool cursorImageUpdatePending;
 
 	void updateAnimatedCursor();
+	void applyCursorImage();
 
 	std::unique_ptr<ICursor> cursor;
 
@@ -167,6 +175,7 @@ public:
 
 	void hide();
 	void show();
+	void setControllerNativeHidden(bool hidden);
 	void onScreenResize();
 
 	/// change cursor's positions to (x, y)

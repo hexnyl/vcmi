@@ -10,8 +10,8 @@
 #include "StdInc.h"
 #include "CreatureCostBox.h"
 
-#include "../widgets/Images.h"
-#include "../widgets/TextControls.h"
+#include "Images.h"
+#include "TextControls.h"
 #include "../GameEngine.h"
 
 CreatureCostBox::CreatureCostBox(Rect position, std::string titleText)
@@ -61,7 +61,7 @@ void CreatureCostBox::createItems(TResources res)
 			curx -= ((16 * resourcesCount) + (8 * (resourcesCount - 1)));
 		}
 		//reverse to display gold as first resource
-		for(auto & currentRes : boost::adaptors::reverse(resources))
+		for(auto & currentRes : std::views::reverse(resources))
 		{
 			currentRes.second.first->moveBy(Point(curx + 2, 22));
 			currentRes.second.second->moveBy(Point(curx, 22));

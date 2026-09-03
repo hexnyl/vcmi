@@ -25,8 +25,6 @@
 
 #include <vstd/RNG.h>
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 std::shared_ptr<ResourceInstanceConstructor> CGResource::getResourceHandler() const
 {
 	const auto & baseHandler = getObjectHandler();
@@ -44,14 +42,29 @@ uint32_t CGResource::getAmount() const
 	return amount;
 }
 
+void CGResource::setAmount(uint32_t value)
+{
+	amount = value;
+}
+
+const MetaString & CGResource::getMessage() const
+{
+	return message;
+}
+
+void CGResource::setMessage(MetaString && value)
+{
+	message = std::move(value);
+}
+
 GameResID CGResource::resourceID() const
 {
 	return getResourceHandler()->getResourceType();
 }
 
-std::string CGResource::getHoverText(PlayerColor player) const
+MetaString CGResource::getHoverText(PlayerColor player) const
 {
-	return resourceID().toResource()->getNameTranslated();
+	return MetaString::createFromName(resourceID());
 }
 
 void CGResource::pickRandomObject(IGameRandomizer & gameRandomizer)
@@ -107,7 +120,7 @@ void CGResource::collectRes(IGameEventCallback & gameEvents, const PlayerColor &
 	else
 	{
 		sii.type = EInfoWindowMode::INFO;
-		sii.text.appendLocalString(EMetaText::ADVOB_TXT,113);
+		sii.text.appendTextID("core.advevent.113");
 		sii.text.replaceName(resourceID());
 	}
 	sii.components.emplace_back(ComponentType::RESOURCE, resourceID(), amount);
@@ -137,5 +150,3 @@ void CGResource::serializeJsonOptions(JsonSerializeFormat & handler)
 	handler.serializeStruct("guardMessage", message);
 }
 
-
-VCMI_LIB_NAMESPACE_END

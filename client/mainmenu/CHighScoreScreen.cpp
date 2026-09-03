@@ -197,7 +197,8 @@ void CHighScoreScreen::buttonExitClick()
 
 void CHighScoreScreen::showAll(Canvas & to)
 {
-	to.fillTexture(ENGINE->renderHandler().loadImage(ImagePath::builtin("DiBoxBck"), EImageBlitMode::OPAQUE));
+	const auto & bgConfig = CMainMenuConfig::get().getConfig()["backgroundAround"];
+	to.fillTexture(ENGINE->renderHandler().loadImage(bgConfig.isString() ? ImagePath::fromJson(bgConfig) : ImagePath::builtin("DIBOXBCK"), EImageBlitMode::OPAQUE));
 	CWindowObject::showAll(to);
 }
 
@@ -268,7 +269,7 @@ int CHighScoreInputScreen::addEntry(std::string text) {
 	if(calc.isCampaign)
 		newNode["campaignName"].String() = calc.calculate().cheater ? LIBRARY->generaltexth->translate("core.genrltxt.260") : calc.parameters[0].campaignName;
 	else
-		newNode["scenarioName"].String() = calc.calculate().cheater ? LIBRARY->generaltexth->translate("core.genrltxt.260") : calc.parameters[0].scenarioName;
+		newNode["scenarioName"].String() = calc.calculate().cheater ? LIBRARY->generaltexth->translate("core.genrltxt.260") : calc.parameters[0].scenarioName.toString(&GAME->translator());
 	newNode["days"].Integer() = calc.calculate().sumDays;
 	newNode["points"].Integer() = calc.calculate().cheater ? 0 : calc.calculate().total;
 	newNode["datetime"].String() = TextOperations::getFormattedDateTimeLocal(std::time(nullptr));
@@ -284,7 +285,7 @@ int CHighScoreInputScreen::addEntry(std::string text) {
 		baseNode.resize(highscoreEntriesCap - 1);
 
 	baseNode.push_back(newNode);
-	boost::range::sort(baseNode, sortFunctor);
+	std::ranges::sort(baseNode, sortFunctor);
 
 	int pos = -1;
 	for (int i = 0; i < baseNode.size(); i++)
@@ -332,7 +333,7 @@ void CHighScoreInputScreen::clickPressed(const Point & cursorPosition)
 	if(!input)
 	{
 		input = std::make_shared<CHighScoreInput>(calc.parameters[0].playerName,
-		[&] (std::string text)
+		[this] (std::string text)
 		{
 			if(!text.empty())
 			{

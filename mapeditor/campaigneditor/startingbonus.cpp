@@ -8,6 +8,7 @@
  *
  */
 #include "StdInc.h"
+#include "../helper.h"
 #include "startingbonus.h"
 #include "ui_startingbonus.h"
 
@@ -20,8 +21,9 @@
 #include "../../lib/mapping/CMap.h"
 #include "../../lib/CSkillHandler.h"
 #include "../../lib/CCreatureHandler.h"
-#include "../../lib/spells/CSpellHandler.h"
 #include "../../lib/texts/CGeneralTextHandler.h"
+#include "../../lib/spells/CSpellHandler.h"
+#include "../translator.h"
 
 StartingBonus::StartingBonus(PlayerColor color, std::shared_ptr<CMap> map, CampaignBonus bonus):
 	ui(new Ui::StartingBonus),
@@ -30,7 +32,7 @@ StartingBonus::StartingBonus(PlayerColor color, std::shared_ptr<CMap> map, Campa
 	color(color)
 {
 	ui->setupUi(this);
-
+	Helper::decorateDialog(this);
 	setWindowTitle(tr("Edit Starting Bonus"));
 	
 	setWindowModality(Qt::ApplicationModal);
@@ -57,11 +59,11 @@ void StartingBonus::initControls()
 	{
 		const auto * hero = dynamic_cast<const CGHeroInstance*>(map->objects.at(heroID.getNum()).get());
 		if(hero->getOwner() == color || color == PlayerColor::CANNOT_DETERMINE)
-			heroSelection.emplace(hero->getHeroTypeID(), hero->getNameTranslated());
+			heroSelection.try_emplace(hero->getHeroTypeID(), Translator::instance().translate(hero->getNameTextID()));
 	}
-	heroSelection.emplace(HeroTypeID::CAMP_STRONGEST, tr("Strongest").toStdString());
-	heroSelection.emplace(HeroTypeID::CAMP_GENERATED, tr("Generated").toStdString());
-	heroSelection.emplace(HeroTypeID::CAMP_RANDOM, tr("Random").toStdString());
+	heroSelection.try_emplace(HeroTypeID::CAMP_STRONGEST, tr("Strongest").toStdString());
+	heroSelection.try_emplace(HeroTypeID::CAMP_GENERATED, tr("Generated").toStdString());
+	heroSelection.try_emplace(HeroTypeID::CAMP_RANDOM, tr("Random").toStdString());
 
 	for(auto & hero : heroSelection)
 	{
@@ -127,18 +129,18 @@ void StartingBonus::initControls()
 		ui->comboBoxSecondarySkillMastery->addItem(QString::fromStdString(LIBRARY->generaltexth->translate("core.skilllev", i)), QVariant(i));
 
 	for(auto & res : std::vector<EGameResID>({EGameResID::WOOD, EGameResID::MERCURY, EGameResID::ORE, EGameResID::SULFUR, EGameResID::CRYSTAL, EGameResID::GEMS, EGameResID::GOLD}))
-		ui->comboBoxResourceResourceType->addItem(QString::fromStdString(MetaString::createFromName(res).toString()), QVariant(res));
+		ui->comboBoxResourceResourceType->addItem(QString::fromStdString(MetaString::createFromName(res).toString(&Translator::instance())), QVariant(res));
 	ui->comboBoxResourceResourceType->addItem(
 		tr("Common (%1 and %2)")
-		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::WOOD).toString()))
-		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::ORE).toString()))
+		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::WOOD).toString(&Translator::instance())))
+		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::ORE).toString(&Translator::instance())))
 		, QVariant(EGameResID::COMMON));
 	ui->comboBoxResourceResourceType->addItem(
 		tr("Rare (%1, %2, %3, %4)")
-		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::MERCURY).toString()))
-		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::SULFUR).toString()))
-		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::CRYSTAL).toString()))
-		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::GEMS).toString()))
+		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::MERCURY).toString(&Translator::instance())))
+		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::SULFUR).toString(&Translator::instance())))
+		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::CRYSTAL).toString(&Translator::instance())))
+		.arg(QString::fromStdString(MetaString::createFromName(EGameResID::GEMS).toString(&Translator::instance())))
 		, QVariant(EGameResID::RARE));
 }
 
@@ -206,9 +208,9 @@ void StartingBonus::loadBonus()
 			on_radioButtonPrimarySkill_toggled();
 			setComboBoxValue(ui->comboBoxPrimarySkillRecipient, bonusValue.hero.getNum());
 			ui->spinBoxPrimarySkillAttack->setValue(bonusValue.amounts[0]);
-			ui->spinBoxPrimarySkillDefense->setValue(bonusValue.amounts[0]);
-			ui->spinBoxPrimarySkillSpell->setValue(bonusValue.amounts[0]);
-			ui->spinBoxPrimarySkillKnowledge->setValue(bonusValue.amounts[0]);
+			ui->spinBoxPrimarySkillDefense->setValue(bonusValue.amounts[1]);
+			ui->spinBoxPrimarySkillSpell->setValue(bonusValue.amounts[2]);
+			ui->spinBoxPrimarySkillKnowledge->setValue(bonusValue.amounts[3]);
 			break;
 		}
 		case CampaignBonusType::SECONDARY_SKILL:
@@ -328,22 +330,22 @@ QString StartingBonus::getBonusListTitle(CampaignBonus bonus, std::shared_ptr<CM
 					if(ins->getHeroTypeID().getNum() == id)
 						tmp.appendTextID(ins->getNameTextID());
 		}
-		return QString::fromStdString(tmp.toString());
+		return QString::fromStdString(tmp.toString(&Translator::instance()));
 	};
 	auto getSpellName = [](SpellID id){
 		MetaString tmp;
 		tmp.appendName(id);
-		return QString::fromStdString(tmp.toString());
+		return QString::fromStdString(tmp.toString(&Translator::instance()));
 	};
 	auto getMonsterName = [](CreatureID id, int amount){
 		MetaString tmp;
 		tmp.appendName(id, amount);
-		return QString::fromStdString(tmp.toString());
+		return QString::fromStdString(tmp.toString(&Translator::instance()));
 	};
 	auto getArtifactName = [](ArtifactID id){
 		MetaString tmp;
 		tmp.appendName(id);
-		return QString::fromStdString(tmp.toString());
+		return QString::fromStdString(tmp.toString(&Translator::instance()));
 	};
 
 	switch(bonus.getType())

@@ -19,8 +19,6 @@
 #include "../bonuses/CBonusSystemNode.h"
 #include "../int3.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 class CStack;
 class CStackInstance;
 class CStackBasicDescriptor;
@@ -77,7 +75,8 @@ public:
 	BattleInfo(IGameInfoCallback *cb, const BattleLayout & layout);
 	BattleInfo(IGameInfoCallback *cb);
 	virtual ~BattleInfo();
-
+	
+	const scripting::Pool & getScriptContextPool() const override;
 	const IBattleInfo * getBattle() const override;
 	std::optional<PlayerColor> getPlayerID() const override;
 
@@ -131,9 +130,8 @@ public:
 
 	void addUnit(uint32_t id, const JsonNode & data) override;
 	void moveUnit(uint32_t id, const BattleHex & destination) override;
-	void setUnitState(uint32_t id, const JsonNode & data, int64_t healthDelta) override;
+	void updateUnit(uint32_t id, const JsonNode & data, int64_t healthDelta) override;
 	void removeUnit(uint32_t id) override;
-	void updateUnit(uint32_t id, const JsonNode & data) override;
 
 	void addUnitBonus(uint32_t id, const std::vector<Bonus> & bonus) override;
 	void updateUnitBonus(uint32_t id, const std::vector<Bonus> & bonus) override;
@@ -166,11 +164,6 @@ public:
 	static std::unique_ptr<BattleInfo> setupBattle(IGameInfoCallback *cb, const int3 & tile, TerrainId, const BattleField & battlefieldType, BattleSideArray<const CArmedInstance *> armies, BattleSideArray<const CGHeroInstance *> heroes, const BattleLayout & layout, const CGTownInstance * town);
 
 	BattleSide whatSide(const PlayerColor & player) const;
-
-protected:
-#if SCRIPTING_ENABLED
-	scripting::Pool * getContextPool() const override;
-#endif
 };
 
 
@@ -183,5 +176,3 @@ public:
 	bool operator()(const battle::Unit * a, const battle::Unit * b) const;
 	CMP_stack(int Phase = 1, int Turn = 0, BattleSide Side = BattleSide::ATTACKER);
 };
-
-VCMI_LIB_NAMESPACE_END

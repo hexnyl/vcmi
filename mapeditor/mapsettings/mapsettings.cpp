@@ -10,6 +10,7 @@
 
 #include "StdInc.h"
 #include "mapsettings.h"
+#include "../helper.h"
 #include "ui_mapsettings.h"
 #include "mainwindow.h"
 
@@ -27,7 +28,7 @@ MapSettings::MapSettings(MapController & ctrl, QWidget *parent) :
 	ui->setupUi(this);
 
 	setWindowModality(Qt::WindowModal);
-	setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
+	Helper::decorateDialog(this);
 	
 	assert(controller.map());
 	controller.settingsDialog = this;
@@ -42,11 +43,14 @@ MapSettings::MapSettings(MapController & ctrl, QWidget *parent) :
 	}
 	for(auto const & objectPtr : LIBRARY->spellh->objects)
 	{
-		auto * item = new QListWidgetItem(QString::fromStdString(objectPtr->getNameTranslated()));
-		item->setData(Qt::UserRole, QVariant::fromValue(objectPtr->getIndex()));
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setCheckState(controller.map()->allowedSpells.count(objectPtr->getId()) ? Qt::Checked : Qt::Unchecked);
-		ui->listSpells->addItem(item);
+		if(objectPtr->isCommonHeroSpell())
+		{
+			auto * item = new QListWidgetItem(QString::fromStdString(objectPtr->getNameTranslated()));
+			item->setData(Qt::UserRole, QVariant::fromValue(objectPtr->getIndex()));
+			item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+			item->setCheckState(controller.map()->allowedSpells.count(objectPtr->getId()) ? Qt::Checked : Qt::Unchecked);
+			ui->listSpells->addItem(item);
+		}
 	}
 	for(auto const & objectPtr : LIBRARY->arth->objects)
 	{

@@ -10,12 +10,10 @@
 
 #pragma once
 
-#include "../lib/constants/EntityIdentifiers.h"
+#include "../../lib/constants/EntityIdentifiers.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
 class Point;
 class Rect;
-VCMI_LIB_NAMESPACE_END
 
 enum class EShortcut;
 class AdventureMapInterface;
@@ -82,6 +80,7 @@ class AdventureMapShortcuts
 	void zoom( int distance);
 	void search(bool next);
 	void moveHeroDirectional(const Point & direction);
+	void enterDisembarkMode();
 	void showWiki();
 
 public:
@@ -89,7 +88,7 @@ public:
 
 	std::vector<AdventureMapShortcutState> getShortcuts();
 
-	bool optionCanViewQuests();
+	bool optionCanViewJournal();
 	bool optionCanToggleLevel();
 	int optionMapLevel();
 	bool optionHeroSleeping();
@@ -101,16 +100,20 @@ public:
 	bool optionCanEndTurn();
 	bool optionSpellcasting();
 	bool optionInMapView();
+	bool optionReplayTurn();
 	bool optionInWorldView();
 	bool optionSidePanelActive();
+	bool optionLobbyActive();
 	bool optionMapScrollingActive();
 	bool optionMapViewActive();
 	bool optionMarketplace();
-	bool optionHeroBoat(EPathfindingLayer layer);
+	bool optionHeroBoat(const EPathfindingLayer & layer);
 	bool optionHeroDig();
 	bool optionViewStatistic();
 	bool optionIsLocal();
 	bool optionQuickSaveLoad();
+	bool optionCanDisembark();
+	bool optionDisembarking();
 
 	void setState(EAdventureState newState);
 	EAdventureState getState() const;

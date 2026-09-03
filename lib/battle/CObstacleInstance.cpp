@@ -15,8 +15,6 @@
 #include "../serializer/JsonDeserializer.h"
 #include "../serializer/JsonSerializer.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
-
 const ObstacleInfo & CObstacleInstance::getInfo() const
 {
 	assert( obstacleType == USUAL || obstacleType == ABSOLUTE_OBSTACLE);
@@ -74,13 +72,10 @@ const AudioPath & CObstacleInstance::getAppearSound() const
 
 int CObstacleInstance::getAnimationYOffset(int imageHeight) const
 {
-	int offset = imageHeight % 42;
 	if(obstacleType == CObstacleInstance::USUAL)
-	{
-		if(getInfo().blockedTiles.front() < 0 || offset > 37) //second or part is for holy ground ID=62,65,63
-			offset -= 42;
-	}
-	return offset;
+		return 42 * getInfo().height + 10;
+
+	return imageHeight;
 }
 
 bool CObstacleInstance::stopsMovement() const
@@ -106,19 +101,11 @@ SpellID CObstacleInstance::getTrigger() const
 void CObstacleInstance::serializeJson(JsonSerializeFormat & handler)
 {
 	auto hidden = false;
-	auto needAnimationOffsetFix = obstacleType == CObstacleInstance::USUAL;
-	int animationYOffset = 0;
-		
-	if(getInfo().blockedTiles.front() < 0) //TODO: holy ground ID=62,65,63
-		animationYOffset -= 42;
-
 	//We need only a subset of obstacle info for correct render
 	si16 posValue = pos.toInt();
 	handler.serializeInt("position", posValue);
 	pos = posValue;
-	handler.serializeInt("animationYOffset", animationYOffset);
 	handler.serializeBool("hidden", hidden);
-	handler.serializeBool("needAnimationOffsetFix", needAnimationOffsetFix);
 }
 
 void CObstacleInstance::toInfo(ObstacleChanges & info, BattleChanges::EOperation operation)
@@ -142,7 +129,6 @@ SpellCreatedObstacle::SpellCreatedObstacle()
 	trap(false),
 	removeOnTrigger(false),
 	revealed(false),
-	animationYOffset(0),
 	nativeVisible(true),
 	minimalDamage(0)
 {
@@ -212,8 +198,7 @@ void SpellCreatedObstacle::serializeJson(JsonSerializeFormat & handler)
 	handler.serializeStruct("appearSound", appearSound);
 	handler.serializeStruct("appearAnimation", appearAnimation);
 	handler.serializeStruct("animation", animation);
-
-	handler.serializeInt("animationYOffset", animationYOffset);
+	handler.serializeStruct("removalAnimation", removalAnimation);
 
 	{
 		JsonArraySerializer customSizeJson = handler.enterArray("customSize");
@@ -256,14 +241,5 @@ const AudioPath & SpellCreatedObstacle::getAppearSound() const
 
 int SpellCreatedObstacle::getAnimationYOffset(int imageHeight) const
 {
-	int offset = imageHeight % 42;
-
-	if(obstacleType == CObstacleInstance::SPELL_CREATED || obstacleType == CObstacleInstance::MOAT)
-	{
-		offset += animationYOffset;
-	}
-
-	return offset;
+	return imageHeight;
 }
-
-VCMI_LIB_NAMESPACE_END

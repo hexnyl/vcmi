@@ -16,10 +16,11 @@
 #include "../LoadProgress.h"
 
 #include "GameStatistics.h"
+#include "ReplayLog.h"
 #include "RumorState.h"
 #include "mapObjects/CGObjectInstance.h"
 
-VCMI_LIB_NAMESPACE_BEGIN
+#include <vcmi/Environment.h>
 
 class EVictoryLossCheckResult;
 class Services;
@@ -41,7 +42,25 @@ class GameSettings;
 class BattleInfo;
 class UpgradeInfo;
 
+namespace scripting
+{
+class MapEventDispatcher;
+}
+
 DLL_LINKAGE std::ostream & operator<<(std::ostream & os, const EVictoryLossCheckResult & victoryLossCheckResult);
+
+class GameStateEnvironment final : public Environment
+{
+	CGameState & owner;
+public:
+	explicit GameStateEnvironment(CGameState & owner)
+		:owner(owner)
+	{}
+
+	const Services * services() const final;
+	const BattleCb * battle(const BattleID & battleID) const final;
+	const GameCb * game() const final;
+};
 
 class DLL_LINKAGE CGameState : public CNonConstInfoCallback, public Serializeable
 {
@@ -51,11 +70,12 @@ class DLL_LINKAGE CGameState : public CNonConstInfoCallback, public Serializeabl
 	std::shared_ptr<StartInfo> scenarioOps;
 	std::unique_ptr<CMap> map;
 
-	void saveCompatibilityRegisterMissingArtifacts();
-public:
-	ArtifactInstanceID saveCompatibilityLastAllocatedArtifactID;
-	std::vector<std::shared_ptr<CArtifactInstance>> saveCompatibilityUnregisteredArtifacts;
+	std::unique_ptr<GameStateEnvironment> scriptingEnvironment;
+	std::unique_ptr<scripting::Pool> scriptingPool;
+	/// Runs the map's converted event script; null when the map has no event system. Server-only, rebuilt on load.
+	std::unique_ptr<scripting::MapEventDispatcher> mapEventDispatcher;
 
+public:
 	/// List of currently ongoing battles
 	std::vector<std::unique_ptr<BattleInfo>> currentBattles;
 	/// ID that can be allocated to next battle
@@ -83,6 +103,9 @@ public:
 	std::map<TeamID, TeamState> teams;
 	CBonusSystemNode globalEffects;
 	RumorState currentRumor;
+
+	/// recording of this game, filled by the server and stored as part of every savegame
+	ReplayLog replayLog;
 
 	// NOTE: effectively AI mutex, only used by adventure map AI
 	static std::shared_mutex mutex;
@@ -122,6 +145,9 @@ public:
 	PlayerColor checkForStandardWin() const; //returns color of player that accomplished standard victory conditions or 255 (NEUTRAL) if no winner
 	bool checkForStandardLoss(const PlayerColor & player) const; //checks if given player lost the game
 
+	void markObjectControlled(PlayerColor player, ObjectInstanceID id);
+	bool hasEverControlled(PlayerColor player, ObjectInstanceID id) const;
+
 	//fills tgi with info about other players that is available at given level of thieves' guild
 	void obtainPlayersStats(SThievesGuildInfo & tgi, int level) const;
 	const IGameSettings & getSettings() const override;
@@ -138,6 +164,7 @@ public:
 	{
 		return initialOpts.get();
 	}
+	void setSaveDirectory(const std::string & value);
 
 	CMap & getMap()
 	{
@@ -165,15 +192,23 @@ public:
 		return false;
 	}
 
-	static int getDate(int day, Date mode);
-	int getDate(Date mode=Date::DAY) const override; //mode=0 - total days in game, mode=1 - day of week, mode=2 - current week, mode=3 - current month
+	Calendar getCalendar() const override;
 
-#if SCRIPTING_ENABLED
-	scripting::Pool * getGlobalContextPool() const override;
-#endif
+	const scripting::Pool & getScriptContextPool() const final;
+	const Environment & getScriptingEnvironment() const { return *scriptingEnvironment; }
+	/// Null when the map has no event script - callers must check.
+	scripting::MapEventDispatcher * getMapEventDispatcher() const { return mapEventDispatcher.get(); }
 
 	void saveGame(CSaveFile & file) const;
 	void loadGame(CLoadFile & file);
+
+	/// Serializes the whole gamestate into a memory buffer. The replay log is deliberately left
+	/// out - a snapshot lives inside that very log, and including it would nest snapshots.
+	std::vector<std::byte> saveToMemory();
+
+	/// Replaces contents of this gamestate with a snapshot made by saveToMemory().
+	/// Identity of this object is preserved, so all shared_ptr's to it stay valid.
+	void loadFromMemory(std::vector<std::byte> data);
 
 	template <typename Handler> void serialize(Handler &h)
 	{
@@ -182,26 +217,19 @@ public:
 		h & actingPlayers;
 		h & day;
 		h & map;
-		if (!h.hasFeature(Handler::Version::NO_RAW_POINTERS_IN_SERIALIZER))
-			saveCompatibilityRegisterMissingArtifacts();
 		h & players;
 		h & teams;
-		if (h.hasFeature(Handler::Version::NO_RAW_POINTERS_IN_SERIALIZER))
-			h & *heroesPool;
-		else
-			h & heroesPool;
+		h & *heroesPool;
 		h & globalEffects;
 		h & currentRumor;
 		h & campaign;
-		if (!h.hasFeature(Handler::Version::RANDOMIZATION_REWORK))
+
+		if(h.hasFeature(Handler::Version::GAME_REPLAY_RECORDING))
 		{
-			std::map<ArtifactID, int> allocatedArtifactsUnused;
-			h & allocatedArtifactsUnused;
-		}
-		if (!h.hasFeature(Handler::Version::SERVER_STATISTICS))
-		{
-			StatisticDataSet statistic;
-			h & statistic;
+			// battles never survive a day boundary, but the counter must - a recorded
+			// BattleStart carries the ID the server had handed out when it was recorded
+			h & nextBattleID;
+			h & replayLog;
 		}
 
 		if(!h.saving && h.loadingGamestate)
@@ -212,15 +240,18 @@ private:
 	// ----- initialization -----
 	void initNewGame(const IMapService * mapService, vstd::RNG & randomGenerator, bool allowSavingRandomMap, Load::ProgressAccumulator & progressTracking);
 	void initGlobalBonuses();
+	void initScriptVariables();
 	void initGrailPosition(vstd::RNG & randomGenerator);
 	void initRandomFactionsForPlayers(vstd::RNG & randomGenerator);
 	void initOwnedObjects();
 	void randomizeMapObjects(IGameRandomizer & gameRandomizer);
+	void rebuildObjectControlHistory();
 	void initPlayerStates();
 	void placeStartingHeroes(vstd::RNG & randomGenerator);
 	void placeStartingHero(const PlayerColor & playerColor, const HeroTypeID & heroTypeId, int3 townPos);
 	void removeHeroPlaceholders();
 	void initDifficulty();
+	void adjustObjectsToMapBounds();
 	void initHeroes(IGameRandomizer & gameRandomizer);
 	void placeHeroesInTowns();
 	void initFogOfWar();
@@ -255,5 +286,3 @@ private:
 	friend class CMapHandler;
 	friend class CGameHandler;
 };
-
-VCMI_LIB_NAMESPACE_END

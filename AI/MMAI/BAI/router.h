@@ -10,10 +10,13 @@
 
 #pragma once
 
+#include "StdInc.h"
+
+#include <functional>
+
 #include "battle/AutocombatPreferences.h"
 #include "battle/CPlayerBattleCallback.h"
-
-#include "BAI/base.h"
+#include "callback/CBattleGameInterface.h"
 
 namespace MMAI::BAI
 {
@@ -22,6 +25,12 @@ class Router : public CBattleGameInterface
 public:
 	Router();
 	~Router() override;
+
+	Router(const Router &) = delete;
+	Router & operator=(const Router &) = delete;
+
+	Router(Router &&) = delete;
+	Router & operator=(Router &&) = delete;
 
 	/*
 	 * Handled locally (not delegated)
@@ -44,7 +53,7 @@ public:
 	void battleLogMessage(const BattleID & bid, const std::vector<MetaString> & lines) override;
 	void battleNewRound(const BattleID & bid) override;
 	void battleNewRoundFirst(const BattleID & bid) override;
-	void battleObstaclesChanged(const BattleID & bid, const std::vector<ObstacleChanges> & obstacles) override;
+	void battleObstaclesChanged(const BattleID & bid, const ObstacleChanges & obstacle) override;
 	void battleSpellCast(const BattleID & bid, const BattleSpellCast * sc) override;
 	void battleStackMoved(const BattleID & bid, const CStack * stack, const BattleHexArray & dest, int distance, bool teleport) override;
 	void battleStacksAttacked(const BattleID & bid, const std::vector<BattleStackAttacked> & bsa, bool ranged) override;
@@ -72,6 +81,7 @@ private:
 	struct BattleContext
 	{
 		std::shared_ptr<CBattleGameInterface> bai;
+		std::string logtag;
 	};
 
 	std::shared_ptr<Environment> env;
@@ -82,20 +92,15 @@ private:
 	AutocombatPreferences autocombatPreferences;
 	std::string addrstr = "?";
 	std::string colorname = "?";
+	const std::string basetag = "?";
+	std::string logtag = "?";
 
 #ifdef ENABLE_MMAI_TEST
 	TestBattleAIFactory testBattleAIFactory;
 #endif
 
 	CBattleGameInterface & getBattleAI(const BattleID & bid);
-	std::shared_ptr<CBattleGameInterface> createDelegatedBAI(BattleSide side);
+	BattleContext createDelegatedBAI(const BattleID & bid, BattleSide side);
 	std::string formatActiveBattleIds() const;
-
-	void error(const std::string & text) const;
-	void warn(const std::string & text) const;
-	void info(const std::string & text) const;
-	void debug(const std::string & text) const;
-	void trace(const std::string & text) const;
-	void log(ELogLevel::ELogLevel level, const std::string & text) const;
 };
 }

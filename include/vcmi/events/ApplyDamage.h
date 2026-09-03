@@ -12,8 +12,7 @@
 
 #include "Event.h"
 #include "SubscriptionRegistry.h"
-
-VCMI_LIB_NAMESPACE_BEGIN
+#include "../scripting/ApiTags.h"
 
 struct BattleStackAttacked;
 
@@ -25,7 +24,7 @@ namespace battle
 namespace events
 {
 
-class DLL_LINKAGE ApplyDamage : public Event
+class DLL_LINKAGE ApplyDamage : public Event, public scripting::ApiRawPointer<ApplyDamage>
 {
 public:
 	using Sub = SubscriptionRegistry<ApplyDamage>;
@@ -45,5 +44,3 @@ public:
 };
 
 }
-
-VCMI_LIB_NAMESPACE_END
