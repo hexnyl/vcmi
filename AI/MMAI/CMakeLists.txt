@@ -143,7 +143,7 @@ if(ENABLE_MMAI_TEST)
   cmake_language(DEFER DIRECTORY ${CMAKE_SOURCE_DIR} CALL vcmi_add_mmai_router_test)
 
   # Run tests with:
-  # ctest --test-dir build/AI/MMAI/
+  # ./MMAI_router_test --gtest_filter='RouterRoutingTest.*'
 endif()
 
 vcmi_set_output_dir(MMAI "AI")

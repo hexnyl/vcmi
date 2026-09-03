@@ -153,14 +153,22 @@ TEST_F(RouterRoutingTest, SequentialBattles)
 	router->activeStack(battleA, nullptr);
 	router->battleStacksAttacked(battleA, {}, false);
 	router->battleEnd(battleA, nullptr, QueryID(-1));
+	ASSERT_EQ(router->activeBattleCount(), 0u);
 
 	router->battleStart(battleB, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false);
 	router->activeStack(battleB, nullptr);
 	router->battleEnd(battleB, nullptr, QueryID(-1));
 
 	ASSERT_NE(ai(17).getInstanceId(), ai(18).getInstanceId());
-	ASSERT_EQ(ai(17).getEvents().back(), "battleEnd:17:id=1");
-	ASSERT_EQ(ai(18).getEvents().back(), "battleEnd:18:id=2");
+	EXPECT_EQ(
+		ai(17).getEvents(),
+		(std::vector<std::string>{"battleStart:17:id=1", "activeStack:17:id=1", "battleStacksAttacked:17:id=1", "battleEnd:17:id=1"})
+	);
+	EXPECT_EQ(
+		ai(18).getEvents(),
+		(std::vector<std::string>{"battleStart:18:id=2", "activeStack:18:id=2", "battleEnd:18:id=2"})
+	);
+	ASSERT_EQ(router->activeBattleCount(), 0u);
 }
 
 TEST_F(RouterRoutingTest, ConcurrentBattlesRouteToMatchingInstance)
@@ -170,15 +178,21 @@ TEST_F(RouterRoutingTest, ConcurrentBattlesRouteToMatchingInstance)
 
 	router->battleStart(battleA, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false);
 	router->battleStart(battleB, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false);
-
+	ASSERT_EQ(router->activeBattleCount(), 2u);
 	ASSERT_NE(ai(17).getInstanceId(), ai(18).getInstanceId());
 
 	router->activeStack(battleA, nullptr);
 	router->battleStacksAttacked(battleB, {}, false);
 	router->actionStarted(battleA, BattleAction());
 
-	ASSERT_EQ(ai(17).getEvents().back(), "actionStarted:17:id=1");
-	ASSERT_EQ(ai(18).getEvents().back(), "battleStacksAttacked:18:id=2");
+	EXPECT_EQ(
+		ai(17).getEvents(),
+		(std::vector<std::string>{"battleStart:17:id=1", "activeStack:17:id=1", "actionStarted:17:id=1"})
+	);
+	EXPECT_EQ(
+		ai(18).getEvents(),
+		(std::vector<std::string>{"battleStart:18:id=2", "battleStacksAttacked:18:id=2"})
+	);
 }
 
 TEST_F(RouterRoutingTest, EndFirstBattleLeavesSecondActive)
@@ -190,10 +204,17 @@ TEST_F(RouterRoutingTest, EndFirstBattleLeavesSecondActive)
 	router->battleStart(battleB, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false);
 
 	router->battleEnd(battleA, nullptr, QueryID(-1));
+	ASSERT_EQ(router->activeBattleCount(), 1u);
 	router->activeStack(battleB, nullptr);
 
-	ASSERT_EQ(ai(17).getEvents().back(), "battleEnd:17:id=1");
-	ASSERT_EQ(ai(18).getEvents().back(), "activeStack:18:id=2");
+	EXPECT_EQ(
+		ai(17).getEvents(),
+		(std::vector<std::string>{"battleStart:17:id=1", "battleEnd:17:id=1"})
+	);
+	EXPECT_EQ(
+		ai(18).getEvents(),
+		(std::vector<std::string>{"battleStart:18:id=2", "activeStack:18:id=2"})
+	);
 }
 
 TEST_F(RouterRoutingTest, EndSecondBattleLeavesFirstActive)
@@ -205,15 +226,55 @@ TEST_F(RouterRoutingTest, EndSecondBattleLeavesFirstActive)
 	router->battleStart(battleB, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false);
 
 	router->battleEnd(battleB, nullptr, QueryID(-1));
+	ASSERT_EQ(router->activeBattleCount(), 1u);
 	router->activeStack(battleA, nullptr);
 
-	ASSERT_EQ(ai(18).getEvents().back(), "battleEnd:18:id=2");
-	ASSERT_EQ(ai(17).getEvents().back(), "activeStack:17:id=1");
+	EXPECT_EQ(
+		ai(18).getEvents(),
+		(std::vector<std::string>{"battleStart:18:id=2", "battleEnd:18:id=2"})
+	);
+	EXPECT_EQ(
+		ai(17).getEvents(),
+		(std::vector<std::string>{"battleStart:17:id=1", "activeStack:17:id=1"})
+	);
 }
 
-TEST_F(RouterRoutingTest, UnknownBattleIdFailsClearly)
+TEST_F(RouterRoutingTest, UnknownBattleIdDoesNotAffectOtherBattles)
 {
-	EXPECT_THROW(router->activeStack(makeBattleId(999), nullptr), std::runtime_error);
+	const BattleID battleA = makeBattleId(17);
+	router->battleStart(battleA, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false);
+	const auto before = ai(17).getEvents();
+
+	EXPECT_NO_THROW(router->activeStack(makeBattleId(999), nullptr));
+	EXPECT_NO_THROW(router->battleStacksAttacked(makeBattleId(999), {}, false));
+	EXPECT_EQ(ai(17).getEvents(), before);
+	ASSERT_EQ(router->activeBattleCount(), 1u);
+}
+
+TEST_F(RouterRoutingTest, CallbackAfterEndDoesNotReachOtherBattle)
+{
+	const BattleID battleA = makeBattleId(17);
+	const BattleID battleB = makeBattleId(18);
+
+	router->battleStart(battleA, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false);
+	router->battleStart(battleB, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false);
+	router->battleEnd(battleA, nullptr, QueryID(-1));
+
+	EXPECT_NO_THROW(router->activeStack(battleA, nullptr));
+	EXPECT_NO_THROW(router->battleEnd(battleA, nullptr, QueryID(-1)));
+	EXPECT_EQ(
+		ai(17).getEvents(),
+		(std::vector<std::string>{"battleStart:17:id=1", "battleEnd:17:id=1"})
+	);
+	EXPECT_EQ(ai(18).getEvents(), (std::vector<std::string>{"battleStart:18:id=2"}));
+
+	router->activeStack(battleB, nullptr);
+	EXPECT_EQ(
+		ai(18).getEvents(),
+		(std::vector<std::string>{"battleStart:18:id=2", "activeStack:18:id=2"})
+	);
+	router->battleEnd(battleB, nullptr, QueryID(-1));
+	ASSERT_EQ(router->activeBattleCount(), 0u);
 }
 
 TEST_F(RouterRoutingTest, DuplicateBattleStartFailsClearly)
@@ -224,5 +285,7 @@ TEST_F(RouterRoutingTest, DuplicateBattleStartFailsClearly)
 		router->battleStart(battleA, nullptr, nullptr, int3(), nullptr, nullptr, BattleSide::DEFENDER, false),
 		std::runtime_error
 	);
+	ASSERT_EQ(router->activeBattleCount(), 1u);
+	EXPECT_EQ(ai(17).getEvents(), (std::vector<std::string>{"battleStart:17:id=1"}));
 }
 }

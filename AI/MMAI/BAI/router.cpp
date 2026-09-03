@@ -160,9 +160,9 @@ namespace
 
 }
 
-#define MMAI_LOG_TAG LogTag _(logtag + "." + __func__)
+#define MMAI_LOG_TAG LogTag _(basetag + "." + __func__)
 
-Router::Router() : addrstr(MakeAddrStr(this)), basetag(addrstr + ":MMAI"), logtag(basetag) {}
+Router::Router() : addrstr(MakeAddrStr(this)), basetag(addrstr + ":MMAI") {}
 
 Router::~Router()
 {
@@ -174,6 +174,11 @@ Router::~Router()
 void Router::setTestBattleAIFactory(TestBattleAIFactory factory)
 {
 	testBattleAIFactory = std::move(factory);
+}
+
+size_t Router::activeBattleCount() const
+{
+	return battles.size();
 }
 #endif
 
@@ -195,26 +200,37 @@ void Router::initBattleInterface(std::shared_ptr<Environment> ENV, std::shared_p
 	initBattleInterface(ENV, CB);
 }
 
-CBattleGameInterface & Router::getBattleAI(const BattleID & bid)
+const Router::BattleContext * Router::findBattle(const BattleID & bid) const
 {
 	const auto it = battles.find(bid);
 	if(it == battles.end())
+		return nullptr;
+	return &it->second;
+}
+
+void Router::logMissingBattle(const BattleID & bid, const char * func) const
+{
+	logAi->error("MMAI Router: no BAI for BattleID %d in %s, active battles: [%s]", bid.getNum(), func, formatActiveBattleIds());
+}
+
+std::string Router::battleLogTag(const BattleContext & ctx) const
+{
+	return ctx.logtag.empty() ? basetag : ctx.logtag;
+}
+
+template<typename Fn>
+void Router::withBattle(const BattleID & bid, const char * func, Fn && fn)
+{
+	const auto * ctx = findBattle(bid);
+	if(!ctx || !ctx->bai)
 	{
-		const auto message = "MMAI Router: no BAI for BattleID " + std::to_string(bid.getNum()) + ", active battles: [" + formatActiveBattleIds() + "]";
-		logAi->error("%s", message);
-		throw std::runtime_error(message);
+		logMissingBattle(bid, func);
+		return;
 	}
 
-	if(!it->second.bai)
-	{
-		const auto message = "MMAI Router: null BAI for BattleID " + std::to_string(bid.getNum());
-		logAi->error("%s", message);
-		throw std::runtime_error(message);
-	}
-
-	logtag = it->second.logtag.empty() ? basetag : it->second.logtag;
-	logAi->trace("MMAI Router: BattleID %d -> BAI %s", bid.getNum(), MakeAddrStr(it->second.bai.get()));
-	return *it->second.bai;
+	LogTag _(battleLogTag(*ctx) + "." + func);
+	logAi->trace("MMAI Router: %s BattleID %d -> BAI %s", func, bid.getNum(), MakeAddrStr(ctx->bai.get()));
+	fn(*ctx->bai);
 }
 
 std::string Router::formatActiveBattleIds() const
@@ -287,51 +303,54 @@ Router::BattleContext Router::createDelegatedBAI(const BattleID & bid, BattleSid
 
 void Router::actionFinished(const BattleID & bid, const BattleAction & action)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.actionFinished(bid, action);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.actionFinished(bid, action);
+	});
 }
 
 void Router::actionStarted(const BattleID & bid, const BattleAction & action)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.actionStarted(bid, action);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.actionStarted(bid, action);
+	});
 }
 
 void Router::activeStack(const BattleID & bid, const CStack * astack)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.activeStack(bid, astack);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.activeStack(bid, astack);
+	});
 }
 
 void Router::battleAttack(const BattleID & bid, const BattleAttack * ba)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleAttack(bid, ba);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleAttack(bid, ba);
+	});
 }
 
 void Router::battleCatapultAttacked(const BattleID & bid, const CatapultAttack & ca)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleCatapultAttacked(bid, ca);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleCatapultAttacked(bid, ca);
+	});
 }
 
 void Router::battleEnd(const BattleID & bid, const BattleResult * br, QueryID queryID)
 {
 	const auto it = battles.find(bid);
-	if(it == battles.end())
+	if(it == battles.end() || !it->second.bai)
 	{
-		const auto message = "MMAI Router: battleEnd for unknown BattleID " + std::to_string(bid.getNum()) + ", active battles: [" + formatActiveBattleIds() + "]";
-		logAi->error("%s", message);
-		throw std::runtime_error(message);
+		logMissingBattle(bid, __func__);
+		return;
 	}
 
-	logtag = it->second.logtag.empty() ? basetag : it->second.logtag;
-	MMAI_LOG_TAG;
+	LogTag _(battleLogTag(it->second) + "." + __func__);
 	logAi->debug("MMAI Router: battleEnd bid=%d -> BAI %s", bid.getNum(), MakeAddrStr(it->second.bai.get()));
 	auto bai = it->second.bai;
 	battles.erase(it);
@@ -341,65 +360,74 @@ void Router::battleEnd(const BattleID & bid, const BattleResult * br, QueryID qu
 
 void Router::battleGateStateChanged(const BattleID & bid, const EGateState state)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleGateStateChanged(bid, state);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleGateStateChanged(bid, state);
+	});
 };
 
 void Router::battleLogMessage(const BattleID & bid, const std::vector<MetaString> & lines)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleLogMessage(bid, lines);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleLogMessage(bid, lines);
+	});
 };
 
 void Router::battleNewRound(const BattleID & bid)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleNewRound(bid);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleNewRound(bid);
+	});
 }
 
 void Router::battleNewRoundFirst(const BattleID & bid)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleNewRoundFirst(bid);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleNewRoundFirst(bid);
+	});
 }
 
 void Router::battleObstaclesChanged(const BattleID & bid, const ObstacleChanges & obstacle)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleObstaclesChanged(bid, obstacle);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleObstaclesChanged(bid, obstacle);
+	});
 };
 
 void Router::battleSpellCast(const BattleID & bid, const BattleSpellCast * sc)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleSpellCast(bid, sc);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleSpellCast(bid, sc);
+	});
 }
 
 void Router::battleStackMoved(const BattleID & bid, const CStack * stack, const BattleHexArray & dest, int distance, bool teleport)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleStackMoved(bid, stack, dest, distance, teleport);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleStackMoved(bid, stack, dest, distance, teleport);
+	});
 }
 
 void Router::battleStacksAttacked(const BattleID & bid, const std::vector<BattleStackAttacked> & bsa, bool ranged)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleStacksAttacked(bid, bsa, ranged);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleStacksAttacked(bid, bsa, ranged);
+	});
 }
 
 void Router::battleStacksEffectsSet(const BattleID & bid, const SetStackEffect & sse)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleStacksEffectsSet(bid, sse);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleStacksEffectsSet(bid, sse);
+	});
 }
 
 void Router::battleStart(
@@ -434,8 +462,7 @@ void Router::battleStart(
 	ctx = createDelegatedBAI(bid, side);
 #endif
 
-	logtag = ctx.logtag.empty() ? basetag : ctx.logtag;
-	LogTag _2(logtag + "." + __func__);
+	LogTag _2(battleLogTag(ctx) + "." + __func__);
 	logAi->debug("MMAI Router: battleStart bid=%d -> BAI %s", bid.getNum(), MakeAddrStr(ctx.bai.get()));
 	battles.emplace(bid, ctx);
 	ctx.bai->battleStart(bid, army1, army2, tile, hero1, hero2, side, replayAllowed);
@@ -443,22 +470,25 @@ void Router::battleStart(
 
 void Router::battleTriggerEffect(const BattleID & bid, const BattleTriggerEffect & bte)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleTriggerEffect(bid, bte);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleTriggerEffect(bid, bte);
+	});
 }
 
 void Router::battleUnitsChanged(const BattleID & bid, const std::vector<UnitChanges> & changes)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.battleUnitsChanged(bid, changes);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.battleUnitsChanged(bid, changes);
+	});
 }
 
 void Router::yourTacticPhase(const BattleID & bid, int distance)
 {
-	auto & ai = getBattleAI(bid);
-	MMAI_LOG_TAG;
-	ai.yourTacticPhase(bid, distance);
+	withBattle(bid, __func__, [&](CBattleGameInterface & ai)
+	{
+		ai.yourTacticPhase(bid, distance);
+	});
 }
 }

@@ -75,6 +75,7 @@ public:
 #ifdef ENABLE_MMAI_TEST
 	using TestBattleAIFactory = std::function<std::shared_ptr<CBattleGameInterface>(const BattleID &, BattleSide side)>;
 	void setTestBattleAIFactory(TestBattleAIFactory factory);
+	size_t activeBattleCount() const;
 #endif
 
 private:
@@ -93,14 +94,17 @@ private:
 	std::string addrstr = "?";
 	std::string colorname = "?";
 	const std::string basetag = "?";
-	std::string logtag = "?";
 
 #ifdef ENABLE_MMAI_TEST
 	TestBattleAIFactory testBattleAIFactory;
 #endif
 
-	CBattleGameInterface & getBattleAI(const BattleID & bid);
+	const BattleContext * findBattle(const BattleID & bid) const;
+	void logMissingBattle(const BattleID & bid, const char * func) const;
+	template<typename Fn>
+	void withBattle(const BattleID & bid, const char * func, Fn && fn);
 	BattleContext createDelegatedBAI(const BattleID & bid, BattleSide side);
 	std::string formatActiveBattleIds() const;
+	std::string battleLogTag(const BattleContext & ctx) const;
 };
 }
