@@ -12,6 +12,8 @@
 
 #include "StdInc.h"
 
+#include <functional>
+
 #include "battle/AutocombatPreferences.h"
 #include "battle/CPlayerBattleCallback.h"
 #include "callback/CBattleGameInterface.h"
@@ -70,16 +72,39 @@ public:
 	void battleUnitsChanged(const BattleID & bid, const std::vector<UnitChanges> & changes) override;
 	void yourTacticPhase(const BattleID & bid, int distance) override;
 
+#ifdef ENABLE_MMAI_TEST
+	using TestBattleAIFactory = std::function<std::shared_ptr<CBattleGameInterface>(const BattleID &, BattleSide side)>;
+	void setTestBattleAIFactory(TestBattleAIFactory factory);
+	size_t activeBattleCount() const;
+#endif
+
 private:
+	struct BattleContext
+	{
+		std::shared_ptr<CBattleGameInterface> bai;
+		std::string logtag;
+	};
+
 	std::shared_ptr<Environment> env;
 	std::shared_ptr<CBattleCallback> cb;
-	std::shared_ptr<CBattleGameInterface> bai; // calls will be delegated to this object
+	std::map<BattleID, BattleContext> battles;
 
 	bool wasWaitingForRealize = false;
 	AutocombatPreferences autocombatPreferences;
 	std::string addrstr = "?";
 	std::string colorname = "?";
 	const std::string basetag = "?";
-	std::string logtag = "?";
+
+#ifdef ENABLE_MMAI_TEST
+	TestBattleAIFactory testBattleAIFactory;
+#endif
+
+	const BattleContext * findBattle(const BattleID & bid) const;
+	void logMissingBattle(const BattleID & bid, const char * func) const;
+	template<typename Fn>
+	void withBattle(const BattleID & bid, const char * func, Fn && fn);
+	BattleContext createDelegatedBAI(const BattleID & bid, BattleSide side);
+	std::string formatActiveBattleIds() const;
+	std::string battleLogTag(const BattleContext & ctx) const;
 };
 }
